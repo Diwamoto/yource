@@ -10,5 +10,8 @@
     ],
     "require": {
         "cakephp/cakephp": "4.2.1"
+    },
+    "require-dev": {
+        "zircote/swagger-php": "^3.1"
     }
 }

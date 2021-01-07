@@ -1,0 +1,105 @@
+swagger: "2.0"
+host: "yource.space"
+info:
+  description: "yourceで使用するrest apiについてのswaggerドキュメントです。"
+  version: "1.0.0"
+  title: "yourceAPI"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "daiki.work.0118@gmail.com"
+  license:
+    name: "MIT"
+    url: "https://licenses.opensource.jp/MIT/MIT.html"
+paths:
+  /user:
+    post:
+      summary: "CREATE"
+      description: "指定されたユーザが存在しなければ作成し、そのユーザのオブジェクトを返す。指定されたユーザがいたらそのユーザの情報を返す。"
+      responses:
+        200:
+          description: "成功時"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "integer"
+                format: "int64"
+              name:
+                type: "string"
+                example: "山田 太郎"
+  /user/{userId}:
+    get:
+      summary: "READ"
+      description: "指定されたuserIdの情報を返します"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "取得したいユーザのID"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "成功時"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "integer"
+                format: "int64"
+              name:
+                type: "string"
+                example: "山田 太郎"
+    put:
+      summary: "UPDATE"
+      description: "指定されたuserIdの情報を更新して返します。"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "更新したいユーザのID"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "更新成功時"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "integer"
+                format: "int64"
+              name:
+                type: "string"
+                example: "山田 太郎"
+    delete:
+      summary: "delete"
+      description: "指定されたuserIdの情報を削除します。"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "削除したいユーザのID"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "更新成功時"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "integer"
+                format: "int64"
+              name:
+                type: "string"
+                example: "山田 太郎"
+
+
+
+
+
+
+
+
+

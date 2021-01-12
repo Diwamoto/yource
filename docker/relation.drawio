@@ -1,0 +1,100 @@
+<mxfile host="65bd71144e" modified="2021-01-12T08:15:12.588Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.52.1 Chrome/83.0.4103.122 Electron/9.3.5 Safari/537.36" version="13.10.0" etag="lPvKWCXcCYhaUie3i5Ki" type="embed">
+    <diagram id="m-Zc1UpuPPj8QaQGWfN0" name="ページ1">
+        <mxGraphModel dx="918" dy="431" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="3" value="ユーザー" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+                    <mxGeometry x="80" y="160" width="30" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="130" y="189.57" as="sourcePoint"/>
+                        <mxPoint x="300" y="189.57" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="5" value="" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="300" y="210" as="sourcePoint"/>
+                        <mxPoint x="130" y="210" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="7" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeWidth=3;" vertex="1" parent="1">
+                    <mxGeometry x="230" y="110" width="560" height="370" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="データベース&lt;br&gt;(mysql)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;strokeWidth=3;fillColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="460" y="330" width="100" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="フロントエンド&lt;br&gt;(Vue.js)" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;strokeWidth=3;fillColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="305" y="160" width="120" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="バックエンド&lt;br&gt;(gin)" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;strokeWidth=3;fillColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="580" y="160" width="120" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="" style="shape=image;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;strokeWidth=3;fillColor=none;image=https://jp.vuejs.org/images/logo.png;" vertex="1" parent="1">
+                    <mxGeometry x="280" y="240" width="70" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="460" y="189.57" as="sourcePoint"/>
+                        <mxPoint x="540" y="190" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="13" value="" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="535" y="210.07" as="sourcePoint"/>
+                        <mxPoint x="460" y="209.57" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="14" value="ブラウザからアクセス" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="150" y="160" width="130" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="APIでアクセス" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="460" y="160" width="90" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="560" y="320" as="sourcePoint"/>
+                        <mxPoint x="610" y="260" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="23" value="" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="620" y="270" as="sourcePoint"/>
+                        <mxPoint x="570" y="330" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="24" value="" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="450" y="330" as="sourcePoint"/>
+                        <mxPoint x="385" y="270" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="25" value="" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="260" as="sourcePoint"/>
+                        <mxPoint x="460" y="320" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="29" value="DBアクセス" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="600" y="300" width="70" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="" style="shape=image;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;strokeWidth=3;fillColor=none;image=https://raw.githubusercontent.com/gin-gonic/logo/master/color.png;" vertex="1" parent="1">
+                    <mxGeometry x="690" y="227.5" width="67.6" height="95" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" value="基本はアクセスしない" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="360" y="287.5" width="130" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="38" value="Json" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="480" y="220" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="39" value="SPA" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="190" y="220" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" value="データ" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="540" y="268" width="40" height="20" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

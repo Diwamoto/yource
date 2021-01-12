@@ -1,0 +1,40 @@
+version: '2'
+services:
+  db:
+    container_name: db
+    image: mysql:5.7
+    environment:
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: "projects"
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./db/mysql/conf.d:/etc/mysql/conf.d
+      - ./db/logs/mysql:/var/log/mysql
+      - ./db/mysql_data:/var/lib/mysql
+  backend:
+    container_name: go
+    tty: true
+    build:
+      context: ./
+      dockerfile: ./go/Dockerfile
+    command: go run main.go
+    ports:
+      - '8081:8081'
+    volumes:
+      - ../backend:/go/app
+  frontend:
+    container_name: vue
+    tty: true
+    build:
+      context: ./
+      dockerfile: ./vue/Dockerfile
+    command: npm run dev
+    ports:
+      - '8082:8082'
+    volumes:
+      - ../frontend:/app

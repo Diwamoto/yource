@@ -1,26 +1,20 @@
 # yource
 A service that allows you to create a blog like slack.
 
+
 # 環境構築
+
+## 環境イメージ図
+![関係イメージ図](https://github.com/Diwamoto/yource/tree/main/docker/relation.png '関係イメージ図')
 
 ## フロント開発
 
 フロントにはvue.jsを使用し、SPAとして動かします。
 
-環境はvueについてくるサーバーを利用します。
-カレントディレクトリから
-
-```
-cd front
-npm run dev
-```
-
-で起動します。
+`http://localhost:8082` で起動します。
 
 ## バックエンド開発
 
-バックエンドにはcakePHPを使用し、APIサーバーとして稼働させます。
+バックエンドにはginを使用し、dbアクセスのAPIサーバーとして動かします。
 
-環境は[Diwamoto/vagrant-lamp](https://github.com/Diwamoto/vagrant-lamp)を使用しvagrant上にdockerを立ててlampで運用します。
-`./backend/config/app_local.php`のデータベース設定を編集してください。
-後は`http://yource.localhost`で動きます。
+`http://localhost:8081` で起動します。

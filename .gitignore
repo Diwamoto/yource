@@ -1,2 +1,5 @@
-/vendor/
+backend/gin-bin
+backend/main
+backend/tmp/*
 .DS_Store
+docker/db/mysql_data/*

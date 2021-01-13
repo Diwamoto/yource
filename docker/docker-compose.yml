@@ -48,5 +48,13 @@ services:
     depends_on:
       - "backend"
       - "frontend"
+      - "adminer"
     volumes:
       - ./nginx/log:/var/log/nginx
+  adminer:
+    container_name: adminer
+    image: adminer:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "db"

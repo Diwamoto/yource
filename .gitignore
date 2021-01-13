@@ -3,3 +3,4 @@ backend/main
 backend/tmp/*
 .DS_Store
 docker/db/mysql_data/*
+docker/nginx/log/*

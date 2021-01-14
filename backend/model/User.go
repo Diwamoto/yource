@@ -3,7 +3,6 @@ package model
 import (
 
 	"main/database"
-
 )
 
 type User struct {
@@ -14,12 +13,11 @@ type User struct {
 	Status bool 
 	Profiles UserProfile 
 	Created string 
-	Updated string 
+	Modified string 
 }
 
 //プロフィールを引っ張ってきて返す
 func JoinUserProfile(u *User) {
-
 
 	up := GetUserProfileByUserId(1)
 	//up変数に値が入っていれば追加
@@ -29,6 +27,11 @@ func JoinUserProfile(u *User) {
 
 }
 
+func CreateUser(u User) User{
+	return u
+}
+
+//指定ユーザidの情報を返す
 func GetUser(id int) User{
 
 	db := database.ConnectDB()

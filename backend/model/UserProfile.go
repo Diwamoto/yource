@@ -17,7 +17,7 @@ type UserProfile struct {
 	Instagram string
 	Other string
 	Created string
-	Updated string
+	Modified string
 }
 
 func GetUserProfile(id int) UserProfile{

@@ -1,6 +1,7 @@
 backend/gin-bin
 backend/main
 backend/tmp/*
+backend/.env
 .DS_Store
 docker/db/mysql_data/*
 docker/nginx/log/*

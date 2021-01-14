@@ -2,7 +2,7 @@ package model
 
 import (
 
-	"main/database"
+	"main/config/database"
 )
 
 type UserProfile struct {

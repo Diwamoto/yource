@@ -11,11 +11,12 @@ import (
 )
 
 
-func GetRouter() *gin.Engine {    // *gin.Engineの表記は返り値の型
+func GetRouter() *gin.Engine {
     router := gin.Default()
 	router.LoadHTMLGlob("view/*.html")
  
-    // router.GET("/", controller.IndexDisplayAction)
-	router.GET("/", controller.Get)
+	//
+	router.POST("/user", controller.CreateUserAction)
+	router.GET("/user/:id", controller.GetUserAction)
     return router
 }

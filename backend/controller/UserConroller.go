@@ -3,19 +3,30 @@ package controller
 import (
 	//標準ライブラリ
 	"net/http"
+	"strconv"
 
 	//自作ライブラリ
 	"main/model"
 
-	//githubライブラリ 
+	//githubライブラリ
 	"github.com/gin-gonic/gin"
-
 )
 
-func Get(c *gin.Context) {
+func CreateUserAction(c *gin.Context) {
+	user, err := model.CreateUser(c)
+	if err == true {
+		c.JSON(http.StatusCreated, user)
+	} else {
+		c.JSON(http.StatusConflict, user)
+	}
+}
 
-	User := model.GetUser(1)
+//@param id User.Id
+func GetUserAction(c *gin.Context) {
 
-	c.JSON(http.StatusOK, User)
-	c.JSON(http.StatusOK, User.Id)
+	id, _ := strconv.Atoi(c.Param("id"))
+	user := model.GetUser(id)
+
+	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, user.Id)
 }

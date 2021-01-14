@@ -10,7 +10,6 @@ import (
 
 func main() {
 
-
     r := config.GetRouter()
     r.Run(":3001")
 }

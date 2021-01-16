@@ -7,5 +7,6 @@ RUN set -eux && \
   apk update && \
   apk add --no-cache git curl bash vim gcc alpine-sdk build-base && \
   go get -u github.com/codegangsta/gin && \
+  go get -u github.com/go-delve/delve/cmd/dlv && \
   go build -o /go/bin/gin github.com/codegangsta/gin
 ENV GO111MODULE on

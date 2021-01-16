@@ -2,31 +2,48 @@ package controller
 
 import (
 	//標準ライブラリ
+
+	"main/model"
 	"net/http"
 	"strconv"
 
 	//自作ライブラリ
-	"main/model"
 
 	//githubライブラリ
 	"github.com/gin-gonic/gin"
 )
 
+//ユーザー作成アクション
+//POSTされた要素でデータを作成する
 func CreateUserAction(c *gin.Context) {
-	user, err := model.CreateUser(c)
-	if err == true {
+
+	u := model.User{
+		Email:    c.PostForm("Email"),
+		Password: c.PostForm("Password"),
+		Name:     c.PostForm("Name"),
+		Phone:    c.PostForm("Phone"),
+		Status:   true,
+		Profiles: model.UserProfile{},
+	}
+
+	msg, err := model.CreateUser(u)
+	//エラーじゃなければuserの情報を返す
+	if err == false {
+		userID, _ := strconv.Atoi(msg[0])
+		user, _ := model.GetUser(userID)
 		c.JSON(http.StatusCreated, user)
 	} else {
-		c.JSON(http.StatusConflict, user)
+		//作成できなければエラーメッセージを返す。
+		c.JSON(http.StatusConflict, msg)
+
 	}
 }
 
-//@param id User.Id
+//ユーザの情報を返すアクション
 func GetUserAction(c *gin.Context) {
 
 	id, _ := strconv.Atoi(c.Param("id"))
-	user := model.GetUser(id)
+	user, _ := model.GetUser(id)
 
 	c.JSON(http.StatusOK, user)
-	c.JSON(http.StatusOK, user.Id)
 }

@@ -1,15 +1,15 @@
 package main
+
 import (
-    //標準ライブラリ
-    
-    //自作ライブラリ
-    "main/config"
-    
-    //githubライブラリ 
+	//標準ライブラリ
+
+	//自作ライブラリ
+	"main/server"
+	//githubライブラリ
 )
 
 func main() {
 
-    r := config.GetRouter()
-    r.Run(":3001")
+	r := server.GetRouter()
+	r.Run(":3001")
 }

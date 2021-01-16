@@ -3,26 +3,27 @@ package model
 import (
 
 	//標準ライブラリ
+	"fmt"
 	"strconv"
 
 	//自作ライブラリ
 	"main/config/database"
 
 	//githubライブラリ
-	"github.com/gin-gonic/gin"
+
 	"github.com/go-playground/validator"
+	"github.com/jinzhu/gorm"
 )
 
+//User
 type User struct {
-	Id       int
-	Email    string `validate:"email"`
-	Password string //hash()
-	Name     string
-	Phone    string
+	gorm.Model
+	Email    string `validate:"required,email"`
+	Password string //フロントで弾いてhash化された物が入るイメージ、不正にデータが作られた場合はログインできない為問題ない
+	Name     string `validate:"required"`
+	Phone    string `validate:"required"`
 	Status   bool
 	Profiles UserProfile
-	Created  string
-	Modified string
 }
 
 var db = database.ConnectDB()
@@ -32,48 +33,72 @@ func JoinUserProfile(u *User) {
 
 	up := GetUserProfileByUserId(1)
 	//up変数に値が入っていれば追加
-	if up.Id > 0 {
+	if up.ID > 0 {
 		u.Profiles = up
 	}
 
 }
 
 //バリデーションをかける
-func ValidateUser(u User) (string, bool) {
+//文字の整形系はフロントで行うので
+//最低限の入力チェックのみをgoで行う
+func ValidateUser(u User) ([]string, bool) {
 
 	validate := validator.New()
 	err := validate.Struct(u)
+	var messages []string
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
-
 			fieldName := err.Field()
 			switch fieldName {
 			case "Email":
-				return "Please enter a valid email address.", true
+				var typ = err.Tag() //バリデーションでNGになったタグ名を取得
+				switch typ {
+				case "required":
+					messages = append(messages, "メールアドレスを入力してください")
+				case "email":
+					messages = append(messages, "正しいメールアドレスを入力してください")
+				}
+			case "Name":
+				messages = append(messages, "名前を入力してください")
+			case "Phone":
+				messages = append(messages, "電話番号を入力してください")
 			}
 		}
 	}
 
-	return "", false
+	if len(messages) > 0 {
+		return messages, true
+	} else {
+		return []string{}, false
+	}
+
 }
 
 //ユーザを作成する
-func CreateUser(c *gin.Context) (User, bool) {
+func CreateUser(u User) ([]string, bool) {
 
 	var user User
-	if c.PostForm("id") != "" {
-		user.Id, _ = strconv.Atoi(c.PostForm("id"))
-		user.Email = c.PostForm("Email")
+	db.AutoMigrate(&user)
 
-		return user, false
+	msg, err := ValidateUser(u)
+
+	if err == false {
+		//バリデーションが通れば作成し、メッセージの中に作成したユーザIDを入れて返す
+
+		db.Create(&u)
+		fmt.Println(u.ID)
+		msg = append(msg, strconv.Itoa(int(u.ID)))
+		return msg, false
 	} else {
-		return User{}, true
+		//作成できなければエラーメッセージを返す
+		return msg, err
 	}
 
 }
 
 //指定ユーザidの情報を返す
-func GetUser(id int) User {
+func GetUser(id int) (User, bool) {
 
 	//var ret User
 	var u User
@@ -82,11 +107,26 @@ func GetUser(id int) User {
 	db.Close()
 
 	//値が取得できたら
-	if u.Id == id {
+	if u.ID == uint(id) {
 		JoinUserProfile(&u)
-
+		return u, true
+	} else {
+		return User{}, false
 	}
 
-	return u
+}
 
+func UpdateUser(u User) User {
+
+	return u
+}
+
+func DeleteUser(id int) bool {
+	u, err := GetUser(id)
+	if err == false {
+		db.Delete(&u)
+		return true
+	} else {
+		return false
+	}
 }

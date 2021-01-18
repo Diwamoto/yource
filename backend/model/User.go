@@ -3,21 +3,20 @@ package model
 import (
 
 	//標準ライブラリ
-	"fmt"
+
 	"strconv"
+	"time"
 
 	//自作ライブラリ
 	"main/config/database"
 
 	//githubライブラリ
-
 	"github.com/go-playground/validator"
-	"github.com/jinzhu/gorm"
 )
 
 //User
 type User struct {
-	gorm.Model
+	AppModel
 	Email    string `validate:"required,email"`
 	Password string //フロントで弾いてhash化された物が入るイメージ、不正にデータが作られた場合はログインできない為問題ない
 	Name     string `validate:"required"`
@@ -25,8 +24,6 @@ type User struct {
 	Status   bool
 	Profiles UserProfile
 }
-
-var db = database.ConnectDB()
 
 //プロフィールを引っ張ってきて返す
 func JoinUserProfile(u *User) {
@@ -79,20 +76,21 @@ func ValidateUser(u User) ([]string, bool) {
 func CreateUser(u User) ([]string, bool) {
 
 	var user User
+	var db = database.ConnectDB()
 	db.AutoMigrate(&user)
 
 	msg, err := ValidateUser(u)
 
-	if err == false {
+	if !err {
 		//バリデーションが通れば作成し、メッセージの中に作成したユーザIDを入れて返す
-
 		db.Create(&u)
-		fmt.Println(u.ID)
-		msg = append(msg, strconv.Itoa(int(u.ID)))
+		msg = append(msg, strconv.Itoa(int(u.Id)))
+		db.Close()
 		return msg, false
 	} else {
 		//作成できなければエラーメッセージを返す
-		return msg, err
+		db.Close()
+		return msg, true
 	}
 
 }
@@ -102,31 +100,88 @@ func GetUser(id int) (User, bool) {
 
 	//var ret User
 	var u User
+	var db = database.ConnectDB()
+
 	db.AutoMigrate(&u)
 	db.First(&u, id)
 	db.Close()
 
 	//値が取得できたら
-	if u.ID == uint(id) {
+	if u.Id == id {
 		JoinUserProfile(&u)
-		return u, true
+		return u, false
 	} else {
-		return User{}, false
+		return User{}, true
 	}
 
 }
 
-func UpdateUser(u User) User {
+// //検索インターフェース
+// //検索文字列はいったんuser構造体に格納してやりとりする
+// func WhereUser(u User) User {
+// 	db.AutoMigrate(&u)
 
-	return u
+// 	//id
+// 	db.Where("ID = ?", u.ID)
+// 	db.Where("Email = ?", )
+
+// 	return u
+// }
+
+//更新メソッド
+//ユーザの情報を更新する
+func UpdateUser(id int, u User) (User, bool) {
+	var tu User
+	var db = database.ConnectDB()
+	db.AutoMigrate(&tu)
+	db.First(&tu, id)
+
+	//引数のユーザの情報を移す
+	tu.Email = u.Email
+	tu.Name = u.Name
+	tu.Password = u.Password
+	tu.Phone = u.Phone
+	//更新日を現在にする
+	tu.Modified = time.Now()
+
+	//バリデーションをかける
+	_, err := ValidateUser(u)
+
+	//バリデーションが成功していたら
+	if !err {
+		//セーブした結果がエラーであれば更新失敗
+		if result := db.Save(&tu); result.Error != nil {
+			db.Close()
+			return User{}, false
+		} else {
+			db.Close()
+			return tu, false
+		}
+	} else {
+		//作成できなければエラーメッセージを返す
+		db.Close()
+		return tu, false
+	}
+
 }
 
-func DeleteUser(id int) bool {
-	u, err := GetUser(id)
-	if err == false {
-		db.Delete(&u)
-		return true
-	} else {
-		return false
+//削除メソッド
+//ユーザを削除する
+func DeleteUser(id int) (string, bool) {
+
+	var db = database.ConnectDB()
+	//idで削除を実行する
+	_, err := GetUser(id)
+	if err { //削除するユーザがいなかったらダメ
+		return "削除するユーザが存在しません。", true
 	}
+	db.Delete(&User{}, id)
+	db.Close()
+	_, err2 := GetUser(id)
+	if err2 { //ユーザが取得できなかったら成功
+		return "削除に成功しました。", false
+	} else {
+		return "削除できませんでした。", true
+	}
+
 }

@@ -2,8 +2,12 @@ package test
 
 import (
 	"main/model"
+	"strconv"
 	"testing"
+	"time"
 )
+
+///かなーーーりブラックボックスなテストになっているのであとで直す
 
 //ユーザバリデーションのテスト
 func TestValidateUser(t *testing.T) {
@@ -93,36 +97,112 @@ func TestValidateUser(t *testing.T) {
 }
 
 func TestCreateUser(t *testing.T) {
+
+	//テストユーザ
 	u := model.User{
-		Email:    "test@example.com",
-		Password: "TestPassword",
-		Name:     "test name",
-		Phone:    "080-0299-8293",
+		Email:    "CreateTest@example.com",
+		Password: "CrtTestPsw",
+		Name:     "Crt Test",
+		Phone:    "029-8475-1109",
 		Status:   true,
 		Profiles: model.UserProfile{},
 	}
+	u.Created = time.Now()
+	u.Modified = time.Now()
+
 	msg, err := model.CreateUser(u)
 
 	//ユーザが作られなかったら失敗
-	if err == true {
+	if err {
 		t.Error(msg)
 	}
+	userID, _ := strconv.Atoi(msg[0])
+
+	//作成したユーザを削除
+	_, _ = model.DeleteUser(userID - 1)
+
 }
 
+//GetUser()のテスト
+//ユーザが取得できたらOK,できなければダメ
 func TestGetUser(t *testing.T) {
 
-	result, err := model.GetUser(1)
+	_, err := model.GetUser(1)
 	//エラーフラグがtrueなら失敗
-	if err == true {
-		t.Error("func GetUser() failed.")
-	} else {
-		t.Logf("ok, userId = %d", result.ID)
+	if err {
+		t.Error("ユーザを取得できませんでした。")
 	}
 }
 
+//UpdateUser()のテスト
+//ユーザの情報が更新できなかったらダメ
 func TestUpdateUser(t *testing.T) {
+
+	//テストユーザを作成
+	//ユーザの作成はブラックボックス
+	u := model.User{
+		Email:    "Upd@example.com",
+		Password: "UpdTestPsw",
+		Name:     "Upd Test",
+		Phone:    "048-8476-8173",
+		Status:   true,
+		Profiles: model.UserProfile{},
+	}
+	u.Created = time.Now()
+	u.Modified = time.Now()
+	msg, _ := model.CreateUser(u)
+	userID, _ := strconv.Atoi(msg[0])
+
+	//ユーザの情報をアップデート
+	testu := model.User{
+		Email:    "Upd2@example.com",
+		Password: "UpdTestPsw2",
+		Name:     "Upd Test2",
+		Phone:    "087-9898-0283",
+		Status:   true,
+		Profiles: model.UserProfile{},
+	}
+	model.UpdateUser(userID, testu)
+
+	//ユーザの情報を改めて取得し、変更点が反映されていればOKとする。
+	//一つでも変更できていなければ失敗
+	aftu, _ := model.GetUser(userID)
+	if aftu.Email != testu.Email {
+		t.Error("メールアドレスを変更することができませんでした。")
+	}
+	if aftu.Password != testu.Password {
+		t.Error("パスワードを変更することができませんでした。")
+	}
+	if aftu.Name != testu.Name {
+		t.Error("ユーザ名を変更することができませんでした。")
+	}
+	if aftu.Phone != testu.Phone {
+		t.Error("電話番号を変更することができませんでした。")
+	}
+
 }
 
 func TestDeleteUser(t *testing.T) {
 
+	//テストユーザを作成
+	//ユーザの作成はブラックボックス
+	u := model.User{
+		Email:    "DeleteTest@example.com",
+		Password: "DelTestPsw",
+		Name:     "Del Test",
+		Phone:    "010-0293-4739",
+		Status:   true,
+		Profiles: model.UserProfile{},
+	}
+	u.Created = time.Now()
+	u.Modified = time.Now()
+	msg, _ := model.CreateUser(u)
+	userID, _ := strconv.Atoi(msg[0])
+
+	//作成したユーザを削除
+	msg2, err := model.DeleteUser(userID - 1)
+	if err {
+		//削除失敗
+		t.Errorf("ユーザを削除できませんでした。userID = %d %s", userID, msg2)
+	}
 }

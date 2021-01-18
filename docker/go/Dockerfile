@@ -5,7 +5,9 @@ ENV GO111MODULE=off
 ENV GIN_MODE=debug
 RUN set -eux && \
   apk update && \
-  apk add --no-cache git curl bash vim gcc alpine-sdk build-base && \
+  apk add --no-cache git curl bash vim gcc alpine-sdk build-base tzdata && \
+  cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
+  apk del tzdata && \
   go get -u github.com/codegangsta/gin && \
   go get -u github.com/go-delve/delve/cmd/dlv && \
   go build -o /go/bin/gin github.com/codegangsta/gin

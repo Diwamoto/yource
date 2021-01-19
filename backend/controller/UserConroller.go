@@ -14,6 +14,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var um model.UserModel
+
 //ユーザー作成アクション
 //POSTされた要素でデータを作成する
 func CreateUserAction(c *gin.Context) {
@@ -29,11 +31,11 @@ func CreateUserAction(c *gin.Context) {
 	u.Created = time.Now()
 	u.Modified = time.Now()
 
-	msg, err := model.CreateUser(u)
+	msg, err := um.Create(u)
 	//エラーじゃなければuserの情報を返す
 	if !err {
 		userID, _ := strconv.Atoi(msg[0])
-		a, _ := model.GetUser(userID)
+		a, _ := um.GetById(userID)
 		a.Id = userID
 		c.JSON(http.StatusCreated, a)
 	} else {
@@ -48,7 +50,7 @@ func CreateUserAction(c *gin.Context) {
 func GetUserAction(c *gin.Context) {
 
 	id, _ := strconv.Atoi(c.Param("id"))
-	user, err := model.GetUser(id)
+	user, err := um.GetById(id)
 	if !err {
 		c.JSON(http.StatusOK, user)
 	} else {
@@ -63,14 +65,14 @@ func UpdateUserAction(c *gin.Context) {
 
 	userId, _ := strconv.Atoi(c.Param("id"))
 	//ユーザを取得し、取得できたら更新をかける
-	user, err := model.GetUser(userId)
+	user, err := um.GetById(userId)
 	if !err {
 		//フォームから更新内容を取得
 		user.Email = c.PostForm("Email")
 		user.Password = c.PostForm("Password")
 		user.Name = c.PostForm("Name")
 		user.Phone = c.PostForm("Phone")
-		user, err = model.UpdateUser(userId, user)
+		user, err = um.Update(userId, user)
 		if !err {
 			c.JSON(http.StatusOK, user)
 		} else {
@@ -85,7 +87,7 @@ func UpdateUserAction(c *gin.Context) {
 //ユーザの削除アクション
 func DeleteUserAction(c *gin.Context) {
 	userId, _ := strconv.Atoi(c.Param("id"))
-	msg, err := model.DeleteUser(userId)
+	msg, err := um.Delete(userId)
 	if err == false {
 		c.JSON(http.StatusOK, msg)
 	} else {

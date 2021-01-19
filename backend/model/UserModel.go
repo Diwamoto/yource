@@ -25,8 +25,12 @@ type User struct {
 	Profiles UserProfile
 }
 
+type UserModel struct {
+	AppModel
+}
+
 //プロフィールを引っ張ってきて返す
-func JoinUserProfile(u *User) {
+func (um UserModel) Join(u *User) {
 
 	up := GetUserProfileByUserId(1)
 	//up変数に値が入っていれば追加
@@ -39,7 +43,7 @@ func JoinUserProfile(u *User) {
 //バリデーションをかける
 //文字の整形系はフロントで行うので
 //最低限の入力チェックのみをgoで行う
-func ValidateUser(u User) ([]string, bool) {
+func (um *UserModel) Validate(u User) ([]string, bool) {
 
 	validate := validator.New()
 	err := validate.Struct(u)
@@ -73,13 +77,13 @@ func ValidateUser(u User) ([]string, bool) {
 }
 
 //ユーザを作成する
-func CreateUser(u User) ([]string, bool) {
+func (um *UserModel) Create(u User) ([]string, bool) {
 
 	var user User
 	var db = database.ConnectDB()
 	db.AutoMigrate(&user)
 
-	msg, err := ValidateUser(u)
+	msg, err := um.Validate(u)
 
 	if !err {
 		//バリデーションが通れば作成し、メッセージの中に作成したユーザIDを入れて返す
@@ -96,7 +100,7 @@ func CreateUser(u User) ([]string, bool) {
 }
 
 //指定ユーザidの情報を返す
-func GetUser(id int) (User, bool) {
+func (um UserModel) GetById(id int) (User, bool) {
 
 	//var ret User
 	var u User
@@ -108,7 +112,7 @@ func GetUser(id int) (User, bool) {
 
 	//値が取得できたら
 	if u.Id == id {
-		JoinUserProfile(&u)
+		um.Join(&u)
 		return u, false
 	} else {
 		return User{}, true
@@ -130,7 +134,7 @@ func GetUser(id int) (User, bool) {
 
 //更新メソッド
 //ユーザの情報を更新する
-func UpdateUser(id int, u User) (User, bool) {
+func (um UserModel) Update(id int, u User) (User, bool) {
 	var tu User
 	var db = database.ConnectDB()
 	db.AutoMigrate(&tu)
@@ -145,7 +149,7 @@ func UpdateUser(id int, u User) (User, bool) {
 	tu.Modified = time.Now()
 
 	//バリデーションをかける
-	_, err := ValidateUser(u)
+	_, err := um.Validate(u)
 
 	//バリデーションが成功していたら
 	if !err {
@@ -167,21 +171,21 @@ func UpdateUser(id int, u User) (User, bool) {
 
 //削除メソッド
 //ユーザを削除する
-func DeleteUser(id int) (string, bool) {
+func (um *UserModel) Delete(id int) ([]string, bool) {
 
 	var db = database.ConnectDB()
 	//idで削除を実行する
-	_, err := GetUser(id)
+	_, err := um.GetById(id)
 	if err { //削除するユーザがいなかったらダメ
-		return "削除するユーザが存在しません。", true
+		return []string{"削除するユーザが存在しません。"}, true
 	}
 	db.Delete(&User{}, id)
 	db.Close()
-	_, err2 := GetUser(id)
+	_, err2 := um.GetById(id)
 	if err2 { //ユーザが取得できなかったら成功
-		return "削除に成功しました。", false
+		return []string{"削除に成功しました。"}, false
 	} else {
-		return "削除できませんでした。", true
+		return []string{"削除できませんでした。"}, true
 	}
 
 }

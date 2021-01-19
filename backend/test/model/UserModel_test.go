@@ -12,11 +12,24 @@ import (
 //ユーザバリデーションのテスト
 func TestValidateUser(t *testing.T) {
 
-	var validUser model.User
-	var inValidUser model.User
+	var um model.UserModel
+
+	// tests := []struct {
+	// 	in   model.User
+	// 	want bool
+	// }{
+	// 	// TODO: Add test cases.
+	// }
+	// for _, tt := range tests {
+	// 	rs, err := um.Validate(tt.in)
+	// 	if err {
+	// 		t.Error(rs) //エラー文
+	// 	}
+
+	// }
 
 	//①: 正しいデータのユーザ
-	validUser = model.User{
+	validUser := model.User{
 		Email:    "test@example.com",
 		Password: "4AeNkWVisJ",
 		Name:     "test name",
@@ -24,14 +37,14 @@ func TestValidateUser(t *testing.T) {
 		Status:   true,
 		Profiles: model.UserProfile{},
 	}
-	result, err := model.ValidateUser(validUser)
+	result, err := um.Validate(validUser)
 	//正しいユーザのデータならバリデーションは通るはず
 	if err == true {
 		t.Error(result)
 	}
 
 	//②: メールアドレスがないデータのユーザ
-	inValidUser = model.User{
+	inValidUser := model.User{
 		Email:    "", //メールアドレスが空欄
 		Password: "4AeNkWVisJ",
 		Name:     "test name",
@@ -39,7 +52,7 @@ func TestValidateUser(t *testing.T) {
 		Status:   true,
 		Profiles: model.UserProfile{},
 	}
-	result, err = model.ValidateUser(inValidUser)
+	result, err = um.Validate(inValidUser)
 
 	//エラーが出なければテスト失敗
 	if err == false {
@@ -55,7 +68,7 @@ func TestValidateUser(t *testing.T) {
 		Status:   true,
 		Profiles: model.UserProfile{},
 	}
-	result, err = model.ValidateUser(inValidUser)
+	result, err = um.Validate(inValidUser)
 
 	//エラーが出なければテスト失敗
 	if err == false {
@@ -71,7 +84,7 @@ func TestValidateUser(t *testing.T) {
 		Status:   true,
 		Profiles: model.UserProfile{},
 	}
-	result, err = model.ValidateUser(inValidUser)
+	result, err = um.Validate(inValidUser)
 
 	//エラーが出なければテスト失敗
 	if err == false {
@@ -87,7 +100,7 @@ func TestValidateUser(t *testing.T) {
 		Status:   true,
 		Profiles: model.UserProfile{},
 	}
-	result, err = model.ValidateUser(inValidUser)
+	result, err = um.Validate(inValidUser)
 
 	//エラーが出なければテスト失敗
 	if err == false {
@@ -98,6 +111,7 @@ func TestValidateUser(t *testing.T) {
 
 func TestCreateUser(t *testing.T) {
 
+	var um model.UserModel
 	//テストユーザ
 	u := model.User{
 		Email:    "CreateTest@example.com",
@@ -110,7 +124,7 @@ func TestCreateUser(t *testing.T) {
 	u.Created = time.Now()
 	u.Modified = time.Now()
 
-	msg, err := model.CreateUser(u)
+	msg, err := um.Create(u)
 
 	//ユーザが作られなかったら失敗
 	if err {
@@ -119,7 +133,7 @@ func TestCreateUser(t *testing.T) {
 	userID, _ := strconv.Atoi(msg[0])
 
 	//作成したユーザを削除
-	_, _ = model.DeleteUser(userID - 1)
+	_, _ = um.Delete(userID)
 
 }
 
@@ -127,7 +141,8 @@ func TestCreateUser(t *testing.T) {
 //ユーザが取得できたらOK,できなければダメ
 func TestGetUser(t *testing.T) {
 
-	_, err := model.GetUser(1)
+	var um model.UserModel
+	_, err := um.GetById(1)
 	//エラーフラグがtrueなら失敗
 	if err {
 		t.Error("ユーザを取得できませんでした。")
@@ -138,6 +153,7 @@ func TestGetUser(t *testing.T) {
 //ユーザの情報が更新できなかったらダメ
 func TestUpdateUser(t *testing.T) {
 
+	var um model.UserModel
 	//テストユーザを作成
 	//ユーザの作成はブラックボックス
 	u := model.User{
@@ -150,7 +166,7 @@ func TestUpdateUser(t *testing.T) {
 	}
 	u.Created = time.Now()
 	u.Modified = time.Now()
-	msg, _ := model.CreateUser(u)
+	msg, _ := um.Create(u)
 	userID, _ := strconv.Atoi(msg[0])
 
 	//ユーザの情報をアップデート
@@ -162,11 +178,11 @@ func TestUpdateUser(t *testing.T) {
 		Status:   true,
 		Profiles: model.UserProfile{},
 	}
-	model.UpdateUser(userID, testu)
+	um.Update(userID, testu)
 
 	//ユーザの情報を改めて取得し、変更点が反映されていればOKとする。
 	//一つでも変更できていなければ失敗
-	aftu, _ := model.GetUser(userID)
+	aftu, _ := um.GetById(userID)
 	if aftu.Email != testu.Email {
 		t.Error("メールアドレスを変更することができませんでした。")
 	}
@@ -184,6 +200,7 @@ func TestUpdateUser(t *testing.T) {
 
 func TestDeleteUser(t *testing.T) {
 
+	var um model.UserModel
 	//テストユーザを作成
 	//ユーザの作成はブラックボックス
 	u := model.User{
@@ -196,11 +213,11 @@ func TestDeleteUser(t *testing.T) {
 	}
 	u.Created = time.Now()
 	u.Modified = time.Now()
-	msg, _ := model.CreateUser(u)
+	msg, _ := um.Create(u)
 	userID, _ := strconv.Atoi(msg[0])
 
 	//作成したユーザを削除
-	msg2, err := model.DeleteUser(userID - 1)
+	msg2, err := um.Delete(userID)
 	if err {
 		//削除失敗
 		t.Errorf("ユーザを削除できませんでした。userID = %d %s", userID, msg2)

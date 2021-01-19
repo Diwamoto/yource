@@ -9,7 +9,7 @@ type AppModel struct {
 	Modified time.Time
 }
 
-func Validate() {
+func (m *AppModel) Validate() {
 
 }
 

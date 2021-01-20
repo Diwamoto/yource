@@ -4,19 +4,19 @@ import (
 
 	//標準ライブラリ
 
+	"main/config/database"
 	"strconv"
 	"time"
 
 	//自作ライブラリ
-	"main/config/database"
 
 	//githubライブラリ
 	"github.com/go-playground/validator"
 )
 
-//User
+//UserEntity　Entityを埋め込まれている
 type User struct {
-	AppModel
+	Entity
 	Email    string `validate:"required,email"`
 	Password string //フロントで弾いてhash化された物が入るイメージ、不正にデータが作られた場合はログインできない為問題ない
 	Name     string `validate:"required"`
@@ -25,16 +25,31 @@ type User struct {
 	Profiles UserProfile
 }
 
+//呼び出し用ユーザモデル
+//AppModelを埋め込み
 type UserModel struct {
 	AppModel
 }
 
-//プロフィールを引っ張ってきて返す
-func (um UserModel) Join(u *User) {
+func NewUserModel(t string) *UserModel {
+	var um UserModel
+	um.db = database.ConnectDB(t)
+	um.nc = t
+	um.TableName = "users"
+	return &um
+}
 
-	up := GetUserProfileByUserId(1)
-	//up変数に値が入っていれば追加
-	if up.ID > 0 {
+func (User) TableName() string {
+	return "users"
+}
+
+//プロフィールを引っ張ってきて返す
+func (um *UserModel) Join(u *User) {
+
+	upm := NewUserProfileModel(um.nc) //現在接続中のdbと同じdbに接続するモデルを取得する
+	up, err := upm.GetById(1)
+	//正常に取得できれば引数のUserEntityに埋め込む
+	if !err {
 		u.Profiles = up
 	}
 
@@ -79,21 +94,19 @@ func (um *UserModel) Validate(u User) ([]string, bool) {
 //ユーザを作成する
 func (um *UserModel) Create(u User) ([]string, bool) {
 
-	var user User
-	var db = database.ConnectDB()
-	db.AutoMigrate(&user)
+	um.db.AutoMigrate(&u)
 
 	msg, err := um.Validate(u)
 
 	if !err {
+		u.Created = time.Now()
+		u.Modified = time.Now()
 		//バリデーションが通れば作成し、メッセージの中に作成したユーザIDを入れて返す
-		db.Create(&u)
+		um.db.Create(&u)
 		msg = append(msg, strconv.Itoa(int(u.Id)))
-		db.Close()
 		return msg, false
 	} else {
 		//作成できなければエラーメッセージを返す
-		db.Close()
 		return msg, true
 	}
 
@@ -102,13 +115,10 @@ func (um *UserModel) Create(u User) ([]string, bool) {
 //指定ユーザidの情報を返す
 func (um UserModel) GetById(id int) (User, bool) {
 
-	//var ret User
 	var u User
-	var db = database.ConnectDB()
 
-	db.AutoMigrate(&u)
-	db.First(&u, id)
-	db.Close()
+	um.db.AutoMigrate(&u)
+	um.db.First(&u, id)
 
 	//値が取得できたら
 	if u.Id == id {
@@ -120,25 +130,13 @@ func (um UserModel) GetById(id int) (User, bool) {
 
 }
 
-// //検索インターフェース
-// //検索文字列はいったんuser構造体に格納してやりとりする
-// func WhereUser(u User) User {
-// 	db.AutoMigrate(&u)
-
-// 	//id
-// 	db.Where("ID = ?", u.ID)
-// 	db.Where("Email = ?", )
-
-// 	return u
-// }
-
 //更新メソッド
 //ユーザの情報を更新する
-func (um UserModel) Update(id int, u User) (User, bool) {
+func (um UserModel) Update(id int, u User) ([]string, bool) {
 	var tu User
-	var db = database.ConnectDB()
-	db.AutoMigrate(&tu)
-	db.First(&tu, id)
+
+	um.db.AutoMigrate(&tu)
+	um.db.First(&tu, id)
 
 	//引数のユーザの情報を移す
 	tu.Email = u.Email
@@ -149,22 +147,19 @@ func (um UserModel) Update(id int, u User) (User, bool) {
 	tu.Modified = time.Now()
 
 	//バリデーションをかける
-	_, err := um.Validate(u)
+	msg, err := um.Validate(tu)
 
 	//バリデーションが成功していたら
 	if !err {
 		//セーブした結果がエラーであれば更新失敗
-		if result := db.Save(&tu); result.Error != nil {
-			db.Close()
-			return User{}, false
+		if result := um.db.Save(&tu); result.Error != nil {
+			return []string{"データベースに保存することができませんでした。"}, true
 		} else {
-			db.Close()
-			return tu, false
+			return []string{}, false
 		}
 	} else {
-		//作成できなければエラーメッセージを返す
-		db.Close()
-		return tu, false
+		//バリデーションが失敗していたらそのエラーメッセージを返す
+		return msg, true
 	}
 
 }
@@ -173,14 +168,12 @@ func (um UserModel) Update(id int, u User) (User, bool) {
 //ユーザを削除する
 func (um *UserModel) Delete(id int) ([]string, bool) {
 
-	var db = database.ConnectDB()
 	//idで削除を実行する
 	_, err := um.GetById(id)
 	if err { //削除するユーザがいなかったらダメ
 		return []string{"削除するユーザが存在しません。"}, true
 	}
-	db.Delete(&User{}, id)
-	db.Close()
+	um.db.Delete(&User{}, id)
 	_, err2 := um.GetById(id)
 	if err2 { //ユーザが取得できなかったら成功
 		return []string{"削除に成功しました。"}, false

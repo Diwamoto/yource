@@ -1,21 +1,16 @@
 package config
 
-//標準ライブラリ
-
-//自作ライブラリ
-
-//githubライブラリ
-type Config struct {
-	Key   string
-	Value string
-}
-
-var config = []Config{
+var config = map[string]string{
 	//任意Configを定義できる
-	{"test", "TestValue"},
+	"rootPath": "/go/src/github.com/Diwamoto/yource",
+	"envPath":  "/go/src/github.com/Diwamoto/yource/.env",
 }
 
-//configを取得
-func GetConfig() []Config {
-	return config
+//configの中から特定の値を取得
+func Get(key string) string {
+	if config[key] != "" {
+		return config[key]
+	} else {
+		return ""
+	}
 }

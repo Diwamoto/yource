@@ -1,5 +1,5 @@
 from golang:1.16-rc-alpine3.12
-WORKDIR /go/app
+WORKDIR /go/src/github.com/Diwamoto/yource
 ENV GO111MODULE=off
 #GIN_MODE = release 
 ENV GIN_MODE=debug

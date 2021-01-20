@@ -27,7 +27,7 @@ services:
       # - '2345:2345'
     command: gin -p 9091
     volumes:
-      - ../backend:/go/app
+      - ../backend:/go/src/github.com/Diwamoto/yource
   frontend:
     container_name: vue
     tty: true

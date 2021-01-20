@@ -17,7 +17,7 @@ type Channel struct {
 //チャンネルを取得する
 func GetChannel(id int) Channel {
 
-	db := database.ConnectDB()
+	db := database.ConnectDB("")
 	var ret Channel
 	db.First(&ret, id)
 

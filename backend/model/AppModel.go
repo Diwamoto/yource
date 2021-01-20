@@ -26,3 +26,8 @@ type Entity struct {
 func (m *AppModel) Close() {
 	m.db.Close()
 }
+
+//モデルからDBへ直接SQLを投げる
+func (m *AppModel) ExecRawSQL(s string) {
+	m.db.Exec(s)
+}

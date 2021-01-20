@@ -2,8 +2,24 @@ package test
 
 import (
 	"main/model"
+	"os"
 	"testing"
 )
+
+var um *model.UserModel
+
+//テストメイン関数
+//全てのテストはここから呼ばれる
+func TestMain(m *testing.M) {
+
+	//テストに使う共通テスト用モデルを呼び出す
+	um = model.NewUserModel("test")
+	code := m.Run()
+
+	//テスト用データベースの連番をリセット
+	um.ExecRawSQL("ALTER TABLE `users` auto_increment = 1;")
+	os.Exit(code)
+}
 
 //ValidateUser()のテスト
 func TestValidateUser(t *testing.T) {
@@ -79,7 +95,7 @@ func TestValidateUser(t *testing.T) {
 	for i, tt := range tests {
 		rs, err := um.Validate(tt.in)
 		if err != tt.want {
-			t.Errorf("%d番目のテストが失敗しました。ValidateUser()の出力結果: %s", i, rs)
+			t.Errorf("%d番目のテストが失敗しました。ValidateUser()の出力結果: %s", i+1, rs)
 		}
 
 	}
@@ -111,7 +127,7 @@ func TestCreateUser(t *testing.T) {
 	for i, tt := range tests {
 		rs, err := um.Create(tt.in)
 		if err != tt.want {
-			t.Errorf("%d番目のテストが失敗しました。の出力結果: %s", i, rs)
+			t.Errorf("%d番目のテストが失敗しました。の出力結果: %s", i+1, rs)
 		}
 	}
 
@@ -170,7 +186,7 @@ func TestUpdateUser(t *testing.T) {
 	for i, tt := range tests {
 		msg, err := um.Update(tt.id, tt.after)
 		if err != tt.want {
-			t.Errorf("%d番目のテストが失敗しました。エラーメッセージ:%s", i, msg)
+			t.Errorf("%d番目のテストが失敗しました。エラーメッセージ:%s", i+1, msg)
 		}
 	}
 
@@ -197,7 +213,7 @@ func TestDeleteUser(t *testing.T) {
 	for i, tt := range tests {
 		msg, err := um.Delete(tt.id)
 		if err != tt.want {
-			t.Errorf("%d番目のテストが失敗しました。エラーメッセージ:%s", i, msg)
+			t.Errorf("%d番目のテストが失敗しました。エラーメッセージ:%s", i+1, msg)
 		}
 	}
 }

@@ -16,7 +16,7 @@ var dataBase *gorm.DB
 var singleton_flg = false
 
 func GetInstance(t string) *gorm.DB {
-	if singleton_flg {
+	if !singleton_flg {
 		singleton_flg = true
 		dataBase = ConnectDB(t)
 	}

@@ -22,7 +22,7 @@ type User struct {
 	Name     string `validate:"required"`
 	Phone    string `validate:"required"`
 	Status   bool
-	Profiles UserProfile
+	Profile  UserProfile
 }
 
 //呼び出し用ユーザモデル
@@ -33,7 +33,8 @@ type UserModel struct {
 
 func NewUserModel(t string) *UserModel {
 	var um UserModel
-	um.db = database.ConnectDB(t)
+	um.db = database.GetInstance(t)
+	um.db.AutoMigrate(&User{})
 	um.nc = t
 	um.TableName = "users"
 	return &um
@@ -41,18 +42,6 @@ func NewUserModel(t string) *UserModel {
 
 func (User) TableName() string {
 	return "users"
-}
-
-//プロフィールを引っ張ってきて返す
-func (um *UserModel) Join(u *User) {
-
-	upm := NewUserProfileModel(um.nc) //現在接続中のdbと同じdbに接続するモデルを取得する
-	up, err := upm.GetById(1)
-	//正常に取得できれば引数のUserEntityに埋め込む
-	if !err {
-		u.Profiles = up
-	}
-
 }
 
 //バリデーションをかける
@@ -118,11 +107,10 @@ func (um UserModel) GetById(id int) (User, bool) {
 	var u User
 
 	um.db.AutoMigrate(&u)
-	um.db.First(&u, id)
+	um.db.First(&u, id).Related(&u.Profile)
 
 	//値が取得できたら
 	if u.Id == id {
-		um.Join(&u)
 		return u, false
 	} else {
 		return User{}, true
@@ -139,10 +127,23 @@ func (um UserModel) Update(id int, u User) ([]string, bool) {
 	um.db.First(&tu, id)
 
 	//引数のユーザの情報を移す
-	tu.Email = u.Email
-	tu.Name = u.Name
-	tu.Password = u.Password
-	tu.Phone = u.Phone
+	//空白チェックする
+	if u.Email != "" {
+		tu.Email = u.Email
+	}
+	if u.Name != "" {
+		tu.Name = u.Name
+	}
+	if u.Password != "" {
+		tu.Password = u.Password
+	}
+	if u.Phone != "" {
+		tu.Phone = u.Phone
+	}
+	if u.Status != tu.Status {
+		tu.Status = u.Status
+	}
+
 	//更新日を現在にする
 	tu.Modified = time.Now()
 

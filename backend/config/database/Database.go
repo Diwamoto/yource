@@ -9,6 +9,21 @@ import (
 	"github.com/joho/godotenv"
 )
 
+//データベースはモデルの数にかかわらず一つになるようにする（dbに接続しようとするとDB側からエラーが帰ってくる）
+//TODO: シングルトンの実装をすればよい。。。？
+//↓自分なりのシングルトン実装
+var dataBase *gorm.DB
+var singleton_flg = true
+
+func GetInstance(t string) *gorm.DB {
+	if singleton_flg {
+		singleton_flg = false
+		dataBase = ConnectDB(t)
+	}
+
+	return dataBase
+}
+
 func ConnectDB(t string) *gorm.DB {
 
 	//環境変数を読み込む
@@ -37,5 +52,6 @@ func ConnectDB(t string) *gorm.DB {
 	if err != nil {
 		panic(err.Error())
 	}
+
 	return db
 }

@@ -26,7 +26,7 @@ func CreateUserAction(c *gin.Context) {
 		Name:     c.PostForm("Name"),
 		Phone:    c.PostForm("Phone"),
 		Status:   true,
-		Profiles: model.UserProfile{},
+		Profile:  model.UserProfile{},
 	}
 	u.Created = time.Now()
 	u.Modified = time.Now()
@@ -72,18 +72,21 @@ func UpdateUserAction(c *gin.Context) {
 
 	userId, _ := strconv.Atoi(c.Param("id"))
 	//ユーザを取得し、取得できたら更新をかける
-	user, err := um.GetById(userId)
+	_, err := um.GetById(userId)
 	if !err {
-		//フォームから更新内容を取得
+		//フォームから更新内容を取得したユーザ構造体を作成
+		var user model.User
 		user.Email = c.PostForm("Email")
 		user.Password = c.PostForm("Password")
 		user.Name = c.PostForm("Name")
 		user.Phone = c.PostForm("Phone")
-		msgg, err2 := um.Update(userId, user)
+		Status, _ := strconv.ParseBool(c.PostForm("Status"))
+		user.Status = Status
+		msg, err2 := um.Update(userId, user)
 		if !err2 {
 			c.JSON(http.StatusOK, user)
 		} else {
-			c.JSON(http.StatusConflict, msgg)
+			c.JSON(http.StatusConflict, msg)
 		}
 	} else {
 		c.JSON(http.StatusNotFound, []string{})

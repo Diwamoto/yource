@@ -25,7 +25,7 @@ services:
     ports:
       - '9091:9091'
       # - '2345:2345'
-    command: gin -p 9091
+    command: bash -c "go mod tidy && gin -p 9091"
     volumes:
       - ../backend:/go/src/github.com/Diwamoto/yource
   frontend:

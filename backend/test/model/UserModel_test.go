@@ -1,31 +1,14 @@
-package test
+package test_model
 
 import (
 	"main/model"
-	"os"
 	"testing"
 )
 
-var um *model.UserModel
-
-//テストメイン関数
-//全てのテストはここから呼ばれる
-func TestMain(m *testing.M) {
-
-	//テストに使う共通テスト用モデルを呼び出す
-	um = model.NewUserModel("test")
-	code := m.Run()
-
-	//テスト用データベースの連番をリセット
-	um.ExecRawSQL("ALTER TABLE `users` auto_increment = 1;")
-	os.Exit(code)
-}
+var um = model.NewUserModel("test")
 
 //ValidateUser()のテスト
 func TestValidateUser(t *testing.T) {
-
-	//テスト用のデータベースからユーザモデルを呼び出す。
-	um := model.NewUserModel("test")
 
 	tests := []struct {
 		in   model.User
@@ -39,7 +22,7 @@ func TestValidateUser(t *testing.T) {
 				Name:     "test name",
 				Phone:    "000-0000-0000",
 				Status:   true,
-				Profiles: model.UserProfile{},
+				Profile:  model.UserProfile{},
 			},
 			false, //エラーはでないはず
 		},
@@ -51,7 +34,7 @@ func TestValidateUser(t *testing.T) {
 				Name:     "test name",
 				Phone:    "000-0000-0000",
 				Status:   true,
-				Profiles: model.UserProfile{},
+				Profile:  model.UserProfile{},
 			},
 			true, //エラーになるはず
 		},
@@ -63,7 +46,7 @@ func TestValidateUser(t *testing.T) {
 				Name:     "test name",
 				Phone:    "000-0000-0000",
 				Status:   true,
-				Profiles: model.UserProfile{},
+				Profile:  model.UserProfile{},
 			},
 			true, //エラーになるはず
 		},
@@ -75,7 +58,7 @@ func TestValidateUser(t *testing.T) {
 				Name:     "", //名前が入力されていない
 				Phone:    "000-0000-0000",
 				Status:   true,
-				Profiles: model.UserProfile{},
+				Profile:  model.UserProfile{},
 			},
 			true, //エラーになるはず
 		},
@@ -87,7 +70,7 @@ func TestValidateUser(t *testing.T) {
 				Name:     "test name",
 				Phone:    "", //電話番号が入力されていない
 				Status:   true,
-				Profiles: model.UserProfile{},
+				Profile:  model.UserProfile{},
 			},
 			true, //エラーになるはず
 		},
@@ -104,9 +87,6 @@ func TestValidateUser(t *testing.T) {
 //CreateUser()のテスト
 func TestCreateUser(t *testing.T) {
 
-	//テスト用のデータベースからユーザモデルを呼び出す。
-	um := model.NewUserModel("test")
-
 	tests := []struct {
 		in   model.User
 		want bool
@@ -119,7 +99,7 @@ func TestCreateUser(t *testing.T) {
 				Name:     "Crt Test",
 				Phone:    "029-8475-1109",
 				Status:   true,
-				Profiles: model.UserProfile{},
+				Profile:  model.UserProfile{},
 			},
 			false, //エラーはでないはず
 		},
@@ -136,9 +116,6 @@ func TestCreateUser(t *testing.T) {
 //GetUser()のテスト
 //ユーザが取得できたらOK,できなければダメ
 func TestGetUser(t *testing.T) {
-
-	//テスト用のデータベースからユーザモデルを呼び出す。
-	um := model.NewUserModel("test")
 
 	tests := []struct {
 		in   int //userID
@@ -162,9 +139,6 @@ func TestGetUser(t *testing.T) {
 //ユーザの情報が更新できなかったらダメ
 func TestUpdateUser(t *testing.T) {
 
-	//テスト用のデータベースからユーザモデルを呼び出す。
-	um := model.NewUserModel("test")
-
 	tests := []struct {
 		id    int
 		after model.User
@@ -178,7 +152,7 @@ func TestUpdateUser(t *testing.T) {
 				Name:     "Upd Test",
 				Phone:    "048-8476-8173",
 				Status:   true,
-				Profiles: model.UserProfile{},
+				Profile:  model.UserProfile{},
 			},
 			false, //エラーはでないはず
 		},
@@ -193,9 +167,6 @@ func TestUpdateUser(t *testing.T) {
 }
 
 func TestDeleteUser(t *testing.T) {
-
-	//テスト用のデータベースからユーザモデルを呼び出す。
-	um := model.NewUserModel("test")
 
 	tests := []struct {
 		id   int

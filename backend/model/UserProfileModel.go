@@ -12,7 +12,7 @@ type UserProfile struct {
 	Entity
 	UserID    int
 	Profile   string
-	Birthday  string
+	Birthday  time.Time
 	From      string
 	Job       string
 	Twitter   string
@@ -28,6 +28,7 @@ type UserProfileModel struct {
 func NewUserProfileModel(t string) *UserProfileModel {
 	var upm UserProfileModel
 	upm.db = database.ConnectDB(t)
+	upm.db.AutoMigrate(&UserProfile{})
 	upm.nc = t
 	return &upm
 }

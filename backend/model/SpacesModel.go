@@ -32,7 +32,6 @@ func NewSpaceModel(t string) *SpaceModel {
 	var sm SpaceModel
 	sm.db = database.GetInstance(t)
 	sm.nc = t
-	sm.TableName = "spaces"
 	return &sm
 }
 
@@ -43,7 +42,7 @@ func (Space) TableName() string {
 //バリデーションをかける
 //文字の整形系はフロントで行うので
 //最低限の入力チェックのみをgoで行う
-func (sm *SpaceModel) Validate(s Space) ([]string, bool) {
+func (sm SpaceModel) Validate(s Space) ([]string, bool) {
 
 	validate := validator.New()
 	err := validate.Struct(s)
@@ -58,7 +57,6 @@ func (sm *SpaceModel) Validate(s Space) ([]string, bool) {
 				messages = append(messages, "スペース名を入力してください。")
 			case "SubDomain":
 				messages = append(messages, "サブドメインを入力してください。")
-				//正規表現チェックは独自で行う
 			}
 
 		}
@@ -68,7 +66,7 @@ func (sm *SpaceModel) Validate(s Space) ([]string, bool) {
 	um := NewUserModel(sm.nc)
 	_, err2 := um.GetById(s.UserId)
 	if err2 {
-		messages = append(messages, "存在しないユーザIDのプロフィールは作成できません。")
+		messages = append(messages, "存在しないユーザIDを持つスペースは作成できません。")
 	}
 
 	//正規表現チェックを追加
@@ -87,7 +85,7 @@ func (sm *SpaceModel) Validate(s Space) ([]string, bool) {
 }
 
 //スペースを作成する
-func (sm *SpaceModel) Create(s Space) ([]string, bool) {
+func (sm SpaceModel) Create(s Space) ([]string, bool) {
 
 	sm.db.AutoMigrate(&s)
 
@@ -163,7 +161,7 @@ func (sm SpaceModel) Update(id int, s Space) ([]string, bool) {
 
 //削除メソッド
 //スペースを削除する
-func (sm *SpaceModel) Delete(id int) ([]string, bool) {
+func (sm SpaceModel) Delete(id int) ([]string, bool) {
 
 	//idで削除を実行する
 	_, err := sm.GetById(id)

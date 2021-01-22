@@ -32,7 +32,6 @@ func NewPostModel(t string) *PostModel {
 	var pm PostModel
 	pm.db = database.GetInstance(t) //データベースオブジェクトの
 	pm.nc = t
-	pm.TableName = "posts"
 	return &pm
 }
 
@@ -43,7 +42,7 @@ func (Post) TableName() string {
 //バリデーションをかける
 //文字の整形系はフロントで行うので
 //最低限の入力チェックのみをgoで行う
-func (pm *PostModel) Validate(p Post) ([]string, bool) {
+func (pm PostModel) Validate(p Post) ([]string, bool) {
 
 	validate := validator.New()
 	err := validate.Struct(p)
@@ -64,6 +63,20 @@ func (pm *PostModel) Validate(p Post) ([]string, bool) {
 		}
 	}
 
+	//存在しないチャンネルの投稿は作成できない
+	sm := NewSpaceModel(pm.nc)
+	_, err2 := sm.GetById(p.ChannelId)
+	if err2 {
+		messages = append(messages, "存在しないチャンネルの投稿は作成できません。")
+	}
+
+	//存在しないチャンネルの投稿は作成できない
+	um := NewUserModel(pm.nc)
+	_, err3 := um.GetById(p.UserId)
+	if err3 {
+		messages = append(messages, "存在しないユーザIDの投稿は作成できません。")
+	}
+
 	if len(messages) > 0 {
 		return messages, true
 	} else {
@@ -73,7 +86,7 @@ func (pm *PostModel) Validate(p Post) ([]string, bool) {
 }
 
 //投稿を作成する
-func (pm *PostModel) Create(p Post) ([]string, bool) {
+func (pm PostModel) Create(p Post) ([]string, bool) {
 
 	pm.db.AutoMigrate(&p)
 
@@ -143,7 +156,7 @@ func (pm PostModel) Update(id int, p Post) ([]string, bool) {
 
 //削除メソッド
 //投稿を削除する
-func (pm *PostModel) Delete(id int) ([]string, bool) {
+func (pm PostModel) Delete(id int) ([]string, bool) {
 
 	//idで削除を実行する
 	_, err := pm.GetById(id)

@@ -61,18 +61,18 @@ func (cm ChannelModel) Validate(c Channel) ([]string, bool) {
 			}
 		}
 	}
-	//スペースIDは存在するスペースのIDのみを使用できる
+	//存在するスペースIDのみを使用できる
 	sm := NewSpaceModel(cm.nc)
 	_, err2 := sm.GetById(c.SpaceId)
 	if err2 {
-		messages = append(messages, "存在しないスペースIDのプロフィールは作成できません。")
+		messages = append(messages, "存在しないスペースIDのチャンネルは作成できません。")
 	}
 
-	//ユーザIDは存在するユーザのIDのみを使用できる
+	//存在するユーザIDのみを使用できる
 	um := NewUserModel(cm.nc)
 	_, err3 := um.GetById(c.UserId)
 	if err3 {
-		messages = append(messages, "存在しないユーザIDのプロフィールは作成できません。")
+		messages = append(messages, "存在しないユーザIDのチャンネルは作成できません。")
 	}
 
 	if len(messages) > 0 {

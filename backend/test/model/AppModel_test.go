@@ -6,8 +6,6 @@ import (
 	"os"
 	"testing"
 	"time"
-
-	"github.com/jinzhu/gorm"
 )
 
 //テストメイン関数
@@ -23,20 +21,8 @@ func TestMain(m *testing.M) {
 	db.AutoMigrate(&model.Channel{})
 	db.AutoMigrate(&model.Post{})
 
-	setup(db)
-	code := m.Run()
+	//テスト用のユーザを作成
 
-	//テスト用のデータベースの全てのテーブルを破棄
-	db.DropTable(&model.User{})
-	db.DropTable(&model.UserProfile{})
-	db.DropTable(&model.Space{})
-	db.DropTable(&model.Channel{})
-	db.DropTable(&model.Post{})
-	db.Close()
-	os.Exit(code)
-}
-
-func setup(db *gorm.DB) {
 	//ユーザ以外のテストに使用するテストユーザを作成
 	mtu := model.User{
 		Email:    "master@example.com",
@@ -74,4 +60,15 @@ func setup(db *gorm.DB) {
 	mtc.Modified = time.Now()
 	db.Create(&mtc)
 
+	//テストを実行
+	code := m.Run()
+
+	//テスト用のデータベースの全てのテーブルを破棄
+	db.DropTable(&model.User{})
+	db.DropTable(&model.UserProfile{})
+	db.DropTable(&model.Space{})
+	db.DropTable(&model.Channel{})
+	db.DropTable(&model.Post{})
+	db.Close()
+	os.Exit(code)
 }

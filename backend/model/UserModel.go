@@ -57,14 +57,14 @@ func (um UserModel) Validate(u User) ([]string, bool) {
 				var typ = err.Tag() //バリデーションでNGになったタグ名を取得
 				switch typ {
 				case "required":
-					messages = append(messages, "メールアドレスを入力してください")
+					messages = append(messages, "メールアドレスを入力してください。")
 				case "email":
-					messages = append(messages, "正しいメールアドレスを入力してください")
+					messages = append(messages, "正しいメールアドレスを入力してください。")
 				}
 			case "Name":
-				messages = append(messages, "名前を入力してください")
+				messages = append(messages, "名前を入力してください。")
 			case "Phone":
-				messages = append(messages, "電話番号を入力してください")
+				messages = append(messages, "電話番号を入力してください。")
 			}
 		}
 	}

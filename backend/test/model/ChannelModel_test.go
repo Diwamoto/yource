@@ -127,8 +127,8 @@ func TestUpdateChannel(t *testing.T) {
 			model.Channel{
 				SpaceId:     1,
 				UserId:      1,
-				Name:        "test name",
-				Discription: "test disc",
+				Name:        "upd name",
+				Discription: "upd disc",
 			},
 			false, //エラーはでないはず
 		},

@@ -43,7 +43,7 @@ func (UserProfileModel) TableName() string {
 //バリデーションをかける
 //文字の整形系はフロントで行うので
 //最低限の入力チェックのみをgoで行う
-func (upm *UserProfileModel) Validate(up UserProfile) ([]string, bool) {
+func (upm UserProfileModel) Validate(up UserProfile) ([]string, bool) {
 
 	validate := validator.New()
 	err := validate.Struct(up)
@@ -73,7 +73,7 @@ func (upm *UserProfileModel) Validate(up UserProfile) ([]string, bool) {
 }
 
 //データを作成する
-func (upm *UserProfileModel) Create(up UserProfile) ([]string, bool) {
+func (upm UserProfileModel) Create(up UserProfile) ([]string, bool) {
 
 	upm.db.AutoMigrate(&up)
 
@@ -154,7 +154,7 @@ func (upm UserProfileModel) Update(id int, up UserProfile) ([]string, bool) {
 }
 
 //削除メソッド データを削除する
-func (upm *UserProfileModel) Delete(id int) ([]string, bool) {
+func (upm UserProfileModel) Delete(id int) ([]string, bool) {
 
 	//idで削除を実行する
 	_, err := upm.GetById(id)

@@ -43,8 +43,6 @@ func CreateUserAction(c *gin.Context) {
 		c.JSON(http.StatusConflict, msg)
 
 	}
-
-	um.Close()
 }
 
 //ユーザの情報を返すアクション
@@ -60,8 +58,6 @@ func GetUserAction(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusNotFound, []string{})
 	}
-
-	um.Close()
 }
 
 //ユーザの情報を更新するアクション
@@ -91,8 +87,6 @@ func UpdateUserAction(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusNotFound, []string{})
 	}
-
-	um.Close()
 }
 
 //ユーザの削除アクション
@@ -106,6 +100,4 @@ func DeleteUserAction(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusConflict, msg)
 	}
-
-	um.Close()
 }

@@ -123,7 +123,7 @@ func TestGetUser(t *testing.T) {
 	}{
 		{
 			//①先ほど作成したユーザ
-			1,
+			2,
 			false, //エラーはでないはず
 		},
 	}
@@ -145,7 +145,7 @@ func TestUpdateUser(t *testing.T) {
 		want  bool
 	}{
 		{
-			1, //先ほどテストで作ったユーザ
+			2, //先ほどテストで作ったユーザ
 			model.User{
 				Email:    "Upd@example.com",
 				Password: "UpdTestPsw",
@@ -173,12 +173,12 @@ func TestDeleteUser(t *testing.T) {
 		want bool
 	}{
 		{
-			1,     //テストで作ったユーザ
+			2,     //テストで作ったユーザ
 			false, //エラーはでないはず
 		},
 		{
 			9999999999,
-			true, //ユーザIDの最大値を持つユーザはまだ存在していないという設定
+			true, //存在しないユーザは削除できない
 		},
 	}
 	for i, tt := range tests {

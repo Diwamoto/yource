@@ -34,7 +34,6 @@ type UserModel struct {
 func NewUserModel(t string) *UserModel {
 	var um UserModel
 	um.db = database.GetInstance(t)
-	um.db.AutoMigrate(&User{})
 	um.nc = t
 	um.TableName = "users"
 	return &um
@@ -47,7 +46,7 @@ func (User) TableName() string {
 //バリデーションをかける
 //文字の整形系はフロントで行うので
 //最低限の入力チェックのみをgoで行う
-func (um *UserModel) Validate(u User) ([]string, bool) {
+func (um UserModel) Validate(u User) ([]string, bool) {
 
 	validate := validator.New()
 	err := validate.Struct(u)
@@ -81,7 +80,7 @@ func (um *UserModel) Validate(u User) ([]string, bool) {
 }
 
 //ユーザを作成する
-func (um *UserModel) Create(u User) ([]string, bool) {
+func (um UserModel) Create(u User) ([]string, bool) {
 
 	um.db.AutoMigrate(&u)
 
@@ -105,8 +104,6 @@ func (um *UserModel) Create(u User) ([]string, bool) {
 func (um UserModel) GetById(id int) (User, bool) {
 
 	var u User
-
-	um.db.AutoMigrate(&u)
 	um.db.First(&u, id).Related(&u.Profile)
 
 	//値が取得できたら
@@ -127,7 +124,7 @@ func (um UserModel) Update(id int, u User) ([]string, bool) {
 	um.db.First(&tu, id)
 
 	//引数のユーザの情報を移す
-	//空白チェックする
+	//ここでは変更の検知のみ
 	if u.Email != "" {
 		tu.Email = u.Email
 	}
@@ -167,7 +164,7 @@ func (um UserModel) Update(id int, u User) ([]string, bool) {
 
 //削除メソッド
 //ユーザを削除する
-func (um *UserModel) Delete(id int) ([]string, bool) {
+func (um UserModel) Delete(id int) ([]string, bool) {
 
 	//idで削除を実行する
 	_, err := um.GetById(id)

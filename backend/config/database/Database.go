@@ -10,7 +10,6 @@ import (
 )
 
 //データベースはモデルの数にかかわらず一つになるようにする（dbに接続しようとするとDB側からエラーが帰ってくる）
-//TODO: シングルトンの実装をすればよい。。。？
 //↓自分なりのシングルトン実装
 var dataBase *gorm.DB
 var singleton_flg = false

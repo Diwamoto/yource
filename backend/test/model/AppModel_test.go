@@ -5,6 +5,7 @@ import (
 	"main/model"
 	"os"
 	"testing"
+	"time"
 )
 
 //テストメイン関数
@@ -19,7 +20,18 @@ func TestMain(m *testing.M) {
 	db.AutoMigrate(&model.Space{})
 	db.AutoMigrate(&model.Channel{})
 	db.AutoMigrate(&model.Post{})
-
+	//ユーザ以外のテストに使用するテストユーザを作成
+	mtestuser := model.User{
+		Email:    "master@example.com",
+		Password: "4AeNkWVisJ",
+		Name:     "master name",
+		Phone:    "028-0728-9727",
+		Status:   true,
+		Profile:  model.UserProfile{},
+	}
+	mtestuser.Created = time.Now()
+	mtestuser.Modified = time.Now()
+	db.Create(&mtestuser)
 	code := m.Run()
 
 	//テスト用のデータベースの全てのテーブルを破棄

@@ -53,15 +53,22 @@ func (sm *SpaceModel) Validate(s Space) ([]string, bool) {
 			fieldName := err.Field()
 			switch fieldName {
 			case "UserId":
-				messages = append(messages, "ユーザidを入力してください")
+				messages = append(messages, "ユーザidを入力してください。")
 			case "Name":
-				messages = append(messages, "スペース名を入力してください")
+				messages = append(messages, "スペース名を入力してください。")
 			case "SubDomain":
-				messages = append(messages, "サブドメインを入力してください")
+				messages = append(messages, "サブドメインを入力してください。")
 				//正規表現チェックは独自で行う
 			}
 
 		}
+	}
+
+	//ユーザIDは存在するユーザのIDのみを使用できる
+	um := NewUserModel(sm.nc)
+	_, err2 := um.GetById(s.UserId)
+	if err2 {
+		messages = append(messages, "存在しないユーザIDのプロフィールは作成できません。")
 	}
 
 	//正規表現チェックを追加

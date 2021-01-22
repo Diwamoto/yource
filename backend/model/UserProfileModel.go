@@ -10,7 +10,7 @@ import (
 
 type UserProfile struct {
 	Entity
-	UserID    int
+	UserId    int
 	Profile   string
 	Birthday  time.Time
 	From      string
@@ -28,7 +28,6 @@ type UserProfileModel struct {
 func NewUserProfileModel(t string) *UserProfileModel {
 	var upm UserProfileModel
 	upm.db = database.ConnectDB(t)
-	upm.db.AutoMigrate(&UserProfile{})
 	upm.nc = t
 	return &upm
 }
@@ -36,10 +35,10 @@ func NewUserProfileModel(t string) *UserProfileModel {
 //バリデーションをかける
 //文字の整形系はフロントで行うので
 //最低限の入力チェックのみをgoで行う
-func (upm *UserProfileModel) Validate(u UserProfile) ([]string, bool) {
+func (upm *UserProfileModel) Validate(up UserProfile) ([]string, bool) {
 
 	validate := validator.New()
-	err := validate.Struct(u)
+	err := validate.Struct(up)
 	var messages []string
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
@@ -50,6 +49,14 @@ func (upm *UserProfileModel) Validate(u UserProfile) ([]string, bool) {
 		}
 	}
 
+	//IDは存在するユーザのIDのみを使用できる
+	um := NewUserModel(upm.nc)
+	_, err2 := um.GetById(up.UserId)
+	if err2 {
+		messages = append(messages, "存在しないユーザIDのプロフィールは作成できません。")
+	}
+	//ユーザ
+
 	if len(messages) > 0 {
 		return messages, true
 	} else {
@@ -59,21 +66,21 @@ func (upm *UserProfileModel) Validate(u UserProfile) ([]string, bool) {
 }
 
 //データを作成する
-func (upm *UserProfileModel) Create(u UserProfile) ([]string, bool) {
+func (upm *UserProfileModel) Create(up UserProfile) ([]string, bool) {
 
-	upm.db.AutoMigrate(&u)
+	upm.db.AutoMigrate(&up)
 
-	msg, err := upm.Validate(u)
+	msg, err := upm.Validate(up)
 
 	if !err {
+		up.Created = time.Now()
+		up.Modified = time.Now()
 		//バリデーションが通れば作成し、メッセージの中に作成したデータのIDを入れて返す
-		upm.db.Create(&u)
-		msg = append(msg, strconv.Itoa(int(u.Id)))
-		upm.db.Close()
+		upm.db.Create(&up)
+		msg = append(msg, strconv.Itoa(int(up.Id)))
 		return msg, false
 	} else {
 		//作成できなければエラーメッセージを返す
-		upm.db.Close()
 		return msg, true
 	}
 
@@ -86,7 +93,6 @@ func (upm UserProfileModel) GetById(id int) (UserProfile, bool) {
 
 	upm.db.AutoMigrate(&up)
 	upm.db.First(&up, id)
-	upm.db.Close()
 
 	//値が取得できたら
 	if up.Id == id {
@@ -97,25 +103,14 @@ func (upm UserProfileModel) GetById(id int) (UserProfile, bool) {
 
 }
 
-// //検索インターフェース
-// //検索文字列はいったんuser構造体に格納してやりとりする
-// func WhereUser(u User) User {
-// 	upm.db.AutoMigrate(&u)
-
-// 	//id
-// 	upm.db.Where("ID = ?", u.ID)
-// 	upm.db.Where("Email = ?", )
-
-// 	return u
-// }
-
 //更新メソッド 情報を更新する
-func (upm UserProfileModel) Update(id int, up UserProfile) (UserProfile, bool) {
+func (upm UserProfileModel) Update(id int, up UserProfile) ([]string, bool) {
 	var tup UserProfile
 	upm.db.AutoMigrate(&tup)
 	upm.db.First(&tup, id)
 
 	//引数の情報を移す
+	//ユーザプロフィールはnull許容なのでチェックはなし
 	tup.Profile = up.Profile
 	tup.Birthday = up.Birthday
 	tup.From = up.From
@@ -128,22 +123,25 @@ func (upm UserProfileModel) Update(id int, up UserProfile) (UserProfile, bool) {
 	tup.Modified = time.Now()
 
 	//バリデーションをかける
-	_, err := upm.Validate(tup)
+	msg, err := upm.Validate(tup)
+
+	//ユーザIDは変更できない
+	if tup.UserId != up.UserId {
+		msg = append(msg, "ユーザIDは変更することはできません。")
+		err = true
+	}
 
 	//バリデーションが成功していたら
 	if !err {
 		//セーブした結果がエラーであれば更新失敗
 		if result := upm.db.Save(&tup); result.Error != nil {
-			upm.db.Close()
-			return UserProfile{}, false
+			return []string{"データベースに保存することができませんでした。"}, false
 		} else {
-			upm.db.Close()
-			return tup, false
+			return []string{}, false
 		}
 	} else {
 		//作成できなければエラーメッセージを返す
-		upm.db.Close()
-		return tup, false
+		return msg, false
 	}
 
 }
@@ -157,7 +155,6 @@ func (upm *UserProfileModel) Delete(id int) ([]string, bool) {
 		return []string{"削除するユーザプロフィールが存在しません。"}, true
 	}
 	upm.db.Delete(&UserProfile{}, id)
-	upm.db.Close()
 	_, err2 := upm.GetById(id)
 	if err2 { //取得できなかったら成功
 		return []string{"削除に成功しました。"}, false

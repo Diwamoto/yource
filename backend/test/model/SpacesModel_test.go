@@ -123,7 +123,7 @@ func TestGetSpace(t *testing.T) {
 	}{
 		{
 			//①先ほど作成したスペース
-			1,
+			2,
 			false, //エラーはでないはず
 		},
 	}
@@ -145,7 +145,7 @@ func TestUpdateSpace(t *testing.T) {
 		want  bool
 	}{
 		{
-			1, //先ほどテストで作ったスペース
+			2, //先ほどテストで作ったスペース
 			model.Space{
 				UserId:      1,
 				Name:        "Upd Name",
@@ -173,7 +173,7 @@ func TestDeleteSpace(t *testing.T) {
 		want bool
 	}{
 		{
-			1,     //テストで作ったスペース
+			2,     //テストで作ったスペース
 			false, //エラーはでないはず
 		},
 		{

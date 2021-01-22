@@ -3,12 +3,11 @@ package model
 import (
 
 	//標準ライブラリ
-
-	"main/config/database"
 	"strconv"
 	"time"
 
 	//自作ライブラリ
+	"main/config/database"
 
 	//githubライブラリ
 	"github.com/go-playground/validator"
@@ -35,11 +34,10 @@ func NewUserModel(t string) *UserModel {
 	var um UserModel
 	um.db = database.GetInstance(t)
 	um.nc = t
-	um.TableName = "users"
 	return &um
 }
 
-func (User) TableName() string {
+func (UserModel) TableName() string {
 	return "users"
 }
 

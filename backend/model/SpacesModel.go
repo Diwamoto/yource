@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	//独自パッケージ
+	//自作パッケージ
 	"main/config/database"
 
 	//githubパッケージ

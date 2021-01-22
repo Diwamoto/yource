@@ -6,6 +6,8 @@ import (
 	"os"
 	"testing"
 	"time"
+
+	"github.com/jinzhu/gorm"
 )
 
 //テストメイン関数
@@ -20,18 +22,8 @@ func TestMain(m *testing.M) {
 	db.AutoMigrate(&model.Space{})
 	db.AutoMigrate(&model.Channel{})
 	db.AutoMigrate(&model.Post{})
-	//ユーザ以外のテストに使用するテストユーザを作成
-	mtestuser := model.User{
-		Email:    "master@example.com",
-		Password: "4AeNkWVisJ",
-		Name:     "master name",
-		Phone:    "028-0728-9727",
-		Status:   true,
-		Profile:  model.UserProfile{},
-	}
-	mtestuser.Created = time.Now()
-	mtestuser.Modified = time.Now()
-	db.Create(&mtestuser)
+
+	setup(db)
 	code := m.Run()
 
 	//テスト用のデータベースの全てのテーブルを破棄
@@ -42,4 +34,44 @@ func TestMain(m *testing.M) {
 	db.DropTable(&model.Post{})
 	db.Close()
 	os.Exit(code)
+}
+
+func setup(db *gorm.DB) {
+	//ユーザ以外のテストに使用するテストユーザを作成
+	mtu := model.User{
+		Email:    "master@example.com",
+		Password: "4AeNkWVisJ",
+		Name:     "master name",
+		Phone:    "028-0728-9727",
+		Status:   true,
+		Profile:  model.UserProfile{},
+	}
+	mtu.Created = time.Now()
+	mtu.Modified = time.Now()
+	db.Create(&mtu)
+
+	//スペース以外のテストに使用するテストスペースを作成
+	mts := model.Space{
+		UserId:      1,
+		Name:        "master name",
+		Discription: "master disc",
+		SubDomain:   "master",
+		Status:      true,
+		Publish:     true,
+	}
+	mts.Created = time.Now()
+	mts.Modified = time.Now()
+	db.Create(&mts)
+
+	//チャンネル以外のテストに使用するテストチャンネルを作成
+	mtc := model.Channel{
+		SpaceId:     1,
+		UserId:      1,
+		Name:        "master name",
+		Discription: "master disc",
+	}
+	mtc.Created = time.Now()
+	mtc.Modified = time.Now()
+	db.Create(&mtc)
+
 }

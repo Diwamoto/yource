@@ -1,10 +1,14 @@
 package model
 
 import (
-	"main/config/database"
+	//標準ライブラリ
 	"strconv"
 	"time"
 
+	//自作ライブラリ
+	"main/config/database"
+
+	//githubライブラリ
 	"github.com/go-playground/validator"
 )
 
@@ -32,6 +36,10 @@ func NewUserProfileModel(t string) *UserProfileModel {
 	return &upm
 }
 
+func (UserProfileModel) TableName() string {
+	return "user_profiles"
+}
+
 //バリデーションをかける
 //文字の整形系はフロントで行うので
 //最低限の入力チェックのみをgoで行う
@@ -49,13 +57,12 @@ func (upm *UserProfileModel) Validate(up UserProfile) ([]string, bool) {
 		}
 	}
 
-	//IDは存在するユーザのIDのみを使用できる
+	//ユーザIDは存在するユーザのIDのみを使用できる
 	um := NewUserModel(upm.nc)
 	_, err2 := um.GetById(up.UserId)
 	if err2 {
 		messages = append(messages, "存在しないユーザIDのプロフィールは作成できません。")
 	}
-	//ユーザ
 
 	if len(messages) > 0 {
 		return messages, true

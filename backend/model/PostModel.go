@@ -1,10 +1,14 @@
 package model
 
 import (
-	"main/config/database"
+	//標準ライブラリ
 	"strconv"
 	"time"
 
+	//自作ライブラリ
+	"main/config/database"
+
+	//githubライブラリ
 	"github.com/go-playground/validator"
 )
 

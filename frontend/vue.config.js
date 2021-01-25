@@ -5,5 +5,8 @@ module.exports = {
   devServer: {
     port: 9092,
     disableHostCheck: true,
+    watchOptions: {
+      poll: true
+    }
 },
 }

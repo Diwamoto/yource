@@ -8,11 +8,13 @@ import (
 	"main/controller"
 
 	//githubライブラリ
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func GetRouter() *gin.Engine {
 	router := gin.Default()
+	router.Use(cors.Default())
 	router.LoadHTMLGlob("view/*.html")
 
 	router.GET("/", func(c *gin.Context) {

@@ -4,4 +4,5 @@ RUN set -eux && \
   apk update && \
   apk add --no-cache git curl bash vim && \
   npm install && \
-  npm install -g @vue/cli
+  npm install -g @vue/cli && \
+  npm install axios --save

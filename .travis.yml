@@ -10,7 +10,6 @@ before_install:
 
 script: 
   - go mod tidy
-  - mysql -e 'CREATE DATABASE test_yource;'
-  - cp ./backend/.travis/.env ./env
-  - cd backend
+  - mysql -u travis -e 'CREATE DATABASE test_yource;'
+  - cp .travis/.env ./env
   - go test ./... -v -count=1

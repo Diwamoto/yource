@@ -48,7 +48,6 @@ services:
       - "80:80"
     depends_on:
       - "backend"
-      - "frontend"
       - "adminer"
     volumes:
       - ./nginx/log:/var/log/nginx

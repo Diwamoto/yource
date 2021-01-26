@@ -10,9 +10,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
   </head>
   <body>
-    <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
+    <p>
+      <!-- ナビゲーションに router-link コンポーネントを使う -->
+      <!-- リンク先を `to` プロパティに指定します -->
+      <!-- デフォルトで `<router-link>` は `<a>` タグとして描画されます -->
+      <router-link to="/foo">Go   dfs oo</router-link>
+      <router-link to="/bar">Go to Bar</router-link>
+    </p>
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>

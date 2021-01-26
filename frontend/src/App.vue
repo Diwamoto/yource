@@ -38,9 +38,14 @@
     </v-app-bar>
 
     <v-main>
-      <router-view/>
+      <router-view></router-view>
     </v-main>
   </v-app>
 </template>
 
-<script></script>
+<script>
+export default {
+  name: 'app',
+  components: {
+  }
+}</script>

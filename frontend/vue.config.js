@@ -8,5 +8,14 @@ module.exports = {
     watchOptions: {
       poll: true
     }
-},
+  },
+  pluginOptions: {
+    browserSync: {
+      host: 'localhost',
+      port: 3000,
+      server: { baseDir: ['src'] }
+    }
+  }
 }
+
+

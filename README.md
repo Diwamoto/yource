@@ -18,3 +18,7 @@ A service that allows you to create a blog like slack.
 バックエンドにはginを使用し、dbアクセスのAPIサーバーとして動かします。
 
 `http://localhost:8081` で起動します。
+
+# CI
+
+自動テスト環境にはtravisCIを使用しています。

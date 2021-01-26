@@ -5,6 +5,9 @@ go:
 env:
   - GO111MODULE=on
 
+before_install:
+  - cd backend
+
 script: 
   - go mod tidy
   - mysql -e 'CREATE DATABASE test_yource;'

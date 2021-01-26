@@ -1,7 +1,6 @@
 package database
 
 import (
-	"main/config"
 	"os"
 
 	"github.com/jinzhu/gorm"
@@ -26,7 +25,7 @@ func GetInstance(t string) *gorm.DB {
 func ConnectDB(t string) *gorm.DB {
 
 	//環境変数を読み込む
-	err := godotenv.Load(config.Get("envPath"))
+	err := godotenv.Load(os.Getenv("ENV_PATH"))
 	if err != nil {
 		panic(err.Error())
 	}

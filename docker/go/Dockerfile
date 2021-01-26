@@ -12,3 +12,4 @@ RUN set -eux && \
   go get -u github.com/go-delve/delve/cmd/dlv && \
   go build -o /go/bin/gin github.com/codegangsta/gin
 ENV GO111MODULE on
+ENV ENV_PATH /go/src/github.com/Diwamoto/yource/.env

@@ -9,6 +9,7 @@ dist: xenial
 
 env:
   - GO111MODULE=on
+  - ENV_PATH=/go/src/github.com/Diwamoto/yource/backend/.env
 
 before_install:
   - cd backend
@@ -18,3 +19,6 @@ script:
   - mysql -u travis -e 'CREATE DATABASE test_yource;'
   - cp .travis/.env ./env
   - go test ./... -v -count=1
+
+notifications:
+  email: false

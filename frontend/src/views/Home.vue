@@ -1,72 +1,96 @@
 <template>
-  <div class="header">
-    <v-row>
-      <!-- logo -->
-      <!-- TODO:タイトルとロゴを統一した画像にする -->
-      
-      <v-col sm="1">
-        <router-link to="/summary">
+  <div class="home">
+    <Header></Header>
+    <div class="title">
+      <v-row>
+        <v-col xs5 class="message">
+          <h1>Your Space is here.</h1>
+          <h2>自分を表現しよう。</h2>
+        </v-col>
+        <v-col xs6>
           <v-img
-            width="75"
-            class="main-logo_image"
-            src="/img/logo.png"
+            class="team"
+            src="/img/team.svg"
+            width="500"
           ></v-img>
-        </router-link>
-      </v-col>
-      <v-col sm="3">
-        <router-link to="/summary">
-        <v-img
-          width="130"
-          class="main-logo_name"
-          src="/img/logo_name.png"
-        ></v-img>
-         </router-link>
-      </v-col>
-     
-      <!-- /logo -->
+        </v-col>
+      </v-row>
+    </div>
 
-      <!-- menu -->
-      <v-col sm="1" offset-sm="3" class="menu-element">
-        <router-link to="/summary">概要</router-link>
-      </v-col>
+    <div class="card">
+      <v-row>
+        <v-col xs5>
+          <v-img
+            class="hero"
+            src="/img/hero.svg"
+            width="500"
+          ></v-img>
+        </v-col>
+        <v-col xs6 class="message">
+          <h1>Bloadcast your mind.</h1>
+          <h3>気持ちを発信しよう。</h3>
+        </v-col>  
+      </v-row>
+    </div>
 
-      <v-col sm="1" class="menu-element">
-        <router-link to="/howtojoin">参加方法</router-link>
-      </v-col>
-
-      <v-col sm="1" class="menu-element">
-        <router-link to="/join">会員登録</router-link>
-      </v-col>
-
-      <!-- /menu -->
-     
-    </v-row>   
+    <div class="card">
+      <v-row>
+        <v-col xs6 class="message">
+          <h1>Discuss awesome agenda.</h1>
+          <h3>未来を話し合おう。</h3>
+        </v-col>
+        <v-col xs5>
+          <v-img
+            class="chat"
+            src="/img/chat.svg"
+            width="500"
+          ></v-img>
+        </v-col>
+      </v-row>
+    </div>
+    <Footer></Footer>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-
+import Header from '@/components/Header.vue'
+import Footer from '@/components/Footer.vue'
 export default {
   name: 'Home',
-  
+  components: {
+    Header,
+    Footer,
+  }
 }
 </script>
 
 <style>
-.header{
-  margin-top: 30px;
-  margin-left: 70px; 
+.title {
+  height: 1000px;
+  padding-top: 10%;
+  padding-left: 10%;
+  margin: 0 auto;
+  text-align: left;
 }
-.main-logo_name{
-  margin-top: 16px;
-  margin-left: -20px;
+.title h2{
+  margin-top: 1%;
 }
-.menu-element{
-  margin-top: 40px;
+.message{
+  margin-top: 5%;
+  margin-left: 5%;
 }
-.menu-element a{
-  color: black;
-  text-decoration: none;
+
+.card{
+  margin-left: 5%;
+  height: 700px;
+}
+.card .row{
+  margin-top: 10%;
+}
+.card .team{
+  margin-left: 10%;
+}
+.card .message{
+  margin-left: 10%;
 }
 </style>

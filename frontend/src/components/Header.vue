@@ -1,9 +1,9 @@
 <template>
   <div class="header">
-    <v-app-bar flat height="100px" color="white" app elevate-on-scroll scroll-target="card">
+    <v-app-bar flat class="app_bar" color="white" app elevate-on-scroll scroll-target="card">
       <v-row>
         <!-- logo -->
-        <v-col sm="2" offset-sm="1">
+        <v-col md="1" lg="2" offset-md="1">
           <router-link to="/">
             <v-img
               class="main-logo_image"
@@ -16,11 +16,11 @@
         <!-- /logo -->
 
         <!-- menu -->
-        <v-col sm="1" offset-sm="6" class="menu-element">
+        <v-col md="1" offset-md="6" class="menu-element">
           <router-link to="/about">概要</router-link>
         </v-col>
 
-        <v-col sm="1" class="menu-element btn-join">
+        <v-col md="1" class="menu-element btn-join">
           <router-link to="/join">
             <v-btn
               color="red"
@@ -31,7 +31,7 @@
             >新規登録</v-btn>
           </router-link>
         </v-col>
-        <v-col sm="1" class="hamburger">
+        <v-col md="1" class="hamburger">
           <v-app-bar-nav-icon></v-app-bar-nav-icon>
         </v-col>
         <!-- /menu -->

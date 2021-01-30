@@ -42,9 +42,6 @@ export default {
 </script>
 
 <style>
-.footer{
-    height:10%;
-}
 .footer a{
     color: white;
     text-decoration: none;

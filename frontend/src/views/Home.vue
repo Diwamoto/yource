@@ -1,6 +1,7 @@
 <template>
   <div class="home">
     <Header></Header>
+    <v-main id="main">
     <v-container>
       <div class="title">
         <v-row>
@@ -74,6 +75,7 @@
       </div>
       </v-scroll-x-transition>
     </v-container>
+    </v-main>
     <Footer></Footer>
   </div>
 </template>
@@ -92,8 +94,8 @@ export default {
 
 <style>
 .title {
-  height: 800px;
-  padding-top: 10%;
+  height: 900px;
+  padding-top: 16%;
   padding-left: 10%;
   margin: 0 auto;
   text-align: left;

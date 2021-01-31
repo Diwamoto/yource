@@ -60,6 +60,20 @@ func GetUserAction(c *gin.Context) {
 	}
 }
 
+//全てのユーザの情報を返すアクション
+//GETでパラメータのユーザの情報を取得する
+func GetAllUserAction(c *gin.Context) {
+
+	um := model.NewUserModel("")
+
+	users, err := um.GetAll()
+	if !err {
+		c.JSON(http.StatusOK, users)
+	} else {
+		c.JSON(http.StatusNotFound, []string{})
+	}
+}
+
 //ユーザの情報を更新するアクション
 //PUTでフォームの情報からユーザの情報を更新する
 func UpdateUserAction(c *gin.Context) {

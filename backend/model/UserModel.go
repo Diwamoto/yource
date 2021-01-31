@@ -99,6 +99,26 @@ func (um UserModel) Create(u User) ([]string, bool) {
 }
 
 //指定ユーザidの情報を返す
+func (um UserModel) GetAll() ([]User, bool) {
+
+	var users []User
+	var c int //count
+	um.db.Find(&users)
+	for i := range users {
+		c++
+		um.db.Model(users[i]).Related(&users[i].Profile, "Profile")
+	}
+
+	//値が取得できたら
+	if c > 0 {
+		return users, false
+	} else {
+		return []User{}, true
+	}
+
+}
+
+//指定ユーザidの情報を返す
 func (um UserModel) GetById(id int) (User, bool) {
 
 	var u User

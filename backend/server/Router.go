@@ -22,9 +22,10 @@ func GetRouter() *gin.Engine {
 	})
 
 	//ユーザルーティング
-	router.POST("/user", controller.CreateUserAction)
-	router.GET("/user/:id", controller.GetUserAction)
-	router.PUT("/user/:id", controller.UpdateUserAction)
-	router.DELETE("/user/:id", controller.DeleteUserAction)
+	router.GET("/users", controller.GetAllUserAction)
+	router.POST("/users", controller.CreateUserAction)
+	router.GET("/users/:id", controller.GetUserAction)
+	router.PUT("/users/:id", controller.UpdateUserAction)
+	router.DELETE("/users/:id", controller.DeleteUserAction)
 	return router
 }

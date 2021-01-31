@@ -113,9 +113,28 @@ func TestCreateUser(t *testing.T) {
 
 }
 
-//GetUser()のテスト
+//UserModel.GetAll()のテスト
 //ユーザが取得できたらOK,できなければダメ
-func TestGetUser(t *testing.T) {
+func TestGetAllUser(t *testing.T) {
+
+	tests := []struct {
+		want bool
+	}{
+		{
+			false, //エラーはでないはず
+		},
+	}
+	for _, tt := range tests {
+		_, err := um.GetAll()
+		if err != tt.want {
+			t.Errorf("GetAll()を用いてユーザを取得することができませんでした。")
+		}
+	}
+}
+
+//UserModel.GetById()のテスト
+//ユーザが取得できたらOK,できなければダメ
+func TestGetUserById(t *testing.T) {
 
 	tests := []struct {
 		in   int //userID

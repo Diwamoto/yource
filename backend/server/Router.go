@@ -14,11 +14,19 @@ import (
 
 func GetRouter() *gin.Engine {
 	router := gin.Default()
+
+	//corsの標準設定を使用する
 	router.Use(cors.Default())
+
+	//apikeyの認証を行う
+
 	router.LoadHTMLGlob("view/*.html")
 
 	router.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, "Welcome to Yource API v0.1")
+		//apikeyの認証を行い、okならアクション、違えば認証失敗
+		if controller.CheckApiKey(c) == true {
+			c.JSON(http.StatusOK, "Welcome to Yource API v0.1")
+		}
 	})
 
 	//ユーザルーティング

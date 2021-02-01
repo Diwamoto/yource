@@ -3,6 +3,7 @@ package server
 import (
 	//標準ライブラリ
 	"net/http"
+	"os"
 
 	//自作ライブラリ
 	"main/controller"
@@ -10,6 +11,7 @@ import (
 	//githubライブラリ
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func GetRouter() *gin.Engine {
@@ -18,15 +20,13 @@ func GetRouter() *gin.Engine {
 	//corsの標準設定を使用する
 	router.Use(cors.Default())
 
-	//apikeyの認証を行う
-
 	router.LoadHTMLGlob("view/*.html")
 
+	//apikeyの認証を行う
+	router.Use(CheckApiKey())
+
 	router.GET("/", func(c *gin.Context) {
-		//apikeyの認証を行い、okならアクション、違えば認証失敗
-		if controller.CheckApiKey(c) == true {
-			c.JSON(http.StatusOK, "Welcome to Yource API v0.1")
-		}
+		c.JSON(http.StatusOK, "Welcome to Yource API v0.1")
 	})
 
 	//ユーザルーティング
@@ -36,4 +36,30 @@ func GetRouter() *gin.Engine {
 	router.PUT("/users/:id", controller.UpdateUserAction)
 	router.DELETE("/users/:id", controller.DeleteUserAction)
 	return router
+}
+
+//ミドルウェア
+//リクエストヘッダのapiキーを確認し、なければそれ以降の処理を中断する
+func CheckApiKey() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		err := godotenv.Load(os.Getenv("ENV_PATH"))
+		if err != nil {
+			panic(err.Error())
+		}
+
+		if c.Request.Header.Get("Apikey") == os.Getenv("APIKEY") {
+			c.Set("Authorized", true)
+		} else {
+			c.Set("Authorized", false)
+			if c.Request.Header.Get("Apikey") == "" {
+				c.JSON(http.StatusBadRequest, "Auth failed: Apikey not found")
+			} else {
+				c.JSON(http.StatusBadRequest, "Auth failed: Invalid Apikey")
+			}
+			//ルーティング以降の処理を中断する
+			c.Abort()
+		}
+
+	}
 }

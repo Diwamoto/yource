@@ -3,6 +3,7 @@ package model
 import (
 
 	//標準ライブラリ
+	"log"
 	"strconv"
 	"time"
 
@@ -131,6 +132,30 @@ func (um UserModel) GetById(id int) (User, bool) {
 		return User{}, true
 	}
 
+}
+
+//検索メソッド
+//ユーザの任意の条件に一致するユーザを取得する
+//TODO: 検索に失敗するということの定義を考える
+//→指定条件で検索したところ、その条件にあうユーザは
+//いなかった。これはエラーなのか？結果が０なだけで
+//検索には成功しているのではないか？
+//→この場合における「検索の失敗」とはSQLの構文エラーが起こることであり、
+//現状の実装だとそこのエラーハンドリングは呼び出し元が請け負っているので
+//Find()でエラーが発生することはありえないと思われる
+func (um UserModel) Find(u User) ([]User, bool) {
+
+	var r []User
+	log.Println(u.Email)
+	log.Println(u.Password)
+	um.db.Debug().Where(&User{Email: u.Email, Password: u.Password}).Find(&r)
+
+	//dbに問い合わせて存在していればユーザを返す。なければエラーを返す ←？？
+	if r[0].Id > 0 {
+		return r, false
+	} else {
+		return []User{}, true
+	}
 }
 
 //更新メソッド

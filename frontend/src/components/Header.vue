@@ -109,7 +109,7 @@ export default {
 }
 .main-logo-image_scrolling{
   width: 100px;
-  margin-top: 10px;
+  margin-top: 15px;
   margin-left: 45%;
   transition: all 0.2s ease-in-out;
 }

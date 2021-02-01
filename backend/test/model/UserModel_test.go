@@ -97,7 +97,7 @@ func TestCreateUser(t *testing.T) {
 				Email:    "CreateTest@example.com",
 				Password: "CrtTestPsw",
 				Name:     "Crt Test",
-				Phone:    "029-8475-1109",
+				Phone:    "000-0000-0000",
 				Status:   true,
 				Profile:  model.UserProfile{},
 			},
@@ -121,7 +121,7 @@ func TestGetAllUser(t *testing.T) {
 		want bool
 	}{
 		{
-			false, //エラーはでないはず
+			false, //取得できるはず
 		},
 	}
 	for _, tt := range tests {
@@ -145,11 +145,66 @@ func TestGetUserById(t *testing.T) {
 			2,
 			false, //エラーはでないはず
 		},
+		{
+			//②存在しないidのユーザ
+			9999999,
+			true, //エラーになるはず
+		},
 	}
 	for _, tt := range tests {
 		_, err := um.GetById(tt.in)
 		if err != tt.want {
 			t.Errorf("userID:%dのユーザを取得できませんでした。", tt.in)
+		}
+	}
+}
+
+//UserModel.Find()のテスト
+//ユーザを検索する
+//検索の失敗についての定義は議論中
+func TestFindUser(t *testing.T) {
+	tests := []struct {
+		in   model.User
+		t    string //検索の種類
+		want bool
+	}{
+		{
+			//①: メールアドレスで検索
+			model.User{
+				Email: "CreateTest@example.com",
+			},
+			"メールアドレス",
+			false, //検索は成功するはず
+		},
+		{
+			//②: ユーザ名で検索
+			model.User{
+				Name: "Crt Test",
+			},
+			"ユーザ名",
+			false, //検索は成功するはず
+		},
+		{
+			//③: 電話番号で検索
+			model.User{
+				Phone: "000-0000-0000",
+			},
+			"電話番号",
+			false, //検索は成功するはず
+		},
+		{
+			//④: ステータスが有効になっているユーザを全て取得
+			model.User{
+				Status: true,
+			},
+			"有効状態のユーザ",
+			false, //検索は成功するはず
+		},
+	}
+	for _, tt := range tests {
+		_, err := um.Find(tt.in)
+		if err != tt.want {
+			t.Errorf("「%s」での検索が失敗しました。", tt.t)
 		}
 	}
 }

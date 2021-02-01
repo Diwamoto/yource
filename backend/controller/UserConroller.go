@@ -3,6 +3,7 @@ package controller
 import (
 	//標準ライブラリ
 
+	"log"
 	"main/model"
 	"net/http"
 	"strconv"
@@ -114,4 +115,21 @@ func DeleteUserAction(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusConflict, msg)
 	}
+}
+
+func LoginAction(c *gin.Context) {
+
+	um := model.NewUserModel("default")
+	var user model.User
+	log.Println(c.PostForm("Email"))
+	user.Email = c.PostForm("Email")
+	user.Password = c.PostForm("Password")
+	users, err := um.Find(user)
+	//正しく検索できており、かつ取得できたユーザが一名であればログイン成功
+	if !err && len(users) == 1 {
+		c.JSON(http.StatusOK, "login success.")
+	} else {
+		c.JSON(http.StatusUnauthorized, "login failed: invalid email or password")
+	}
+
 }

@@ -51,6 +51,7 @@ services:
       - "adminer"
     volumes:
       - ./nginx/log:/var/log/nginx
+      - ../frontend/dist:/usr/share/nginx/html
   adminer:
     container_name: adminer
     image: adminer:latest

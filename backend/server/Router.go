@@ -25,14 +25,18 @@ func GetRouter() *gin.Engine {
 	//apikeyの認証を行う
 	//router.Use(CheckApiKey())
 
-	//ユーザルーティング
-	router.GET("/users", controller.GetAllUserAction)
-	router.POST("/users", controller.CreateUserAction)
-	router.GET("/users/:id", controller.GetUserAction)
-	router.PUT("/users/:id", controller.UpdateUserAction)
-	router.DELETE("/users/:id", controller.DeleteUserAction)
+	//apiはhttps://hogehoge.com/api/v1以下のルーティングで判断する
+	v1 := router.Group("/api/v1")
+	{
+		//ユーザルーティング
+		v1.GET("/users", controller.GetAllUserAction)
+		v1.POST("/users", controller.CreateUserAction)
+		v1.GET("/users/:id", controller.GetUserAction)
+		v1.PUT("/users/:id", controller.UpdateUserAction)
+		v1.DELETE("/users/:id", controller.DeleteUserAction)
 
-	router.POST("/users/login", controller.LoginAction)
+		v1.POST("/users/login", controller.LoginAction)
+	}
 
 	return router
 }

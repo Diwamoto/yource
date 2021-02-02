@@ -79,6 +79,19 @@ func TestValidateUser(t *testing.T) {
 			},
 			true, //エラーになるはず
 		},
+		{
+			//⑥: メールアドレスが既にデータベースに存在しているユーザ
+			model.User{
+				Email:    "CreateTest@example.com",
+				Password: "4AeNkWVisJ",
+				Name:     "test name",
+				Phone:    "000-0000-0000",
+				Nickname: "Crt Nick name",
+				Status:   true,
+				Profile:  model.UserProfile{},
+			},
+			false, //エラーはでないはず
+		},
 	}
 	for i, tt := range tests {
 		rs, err := um.Validate(tt.in)

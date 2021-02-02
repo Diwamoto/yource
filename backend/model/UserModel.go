@@ -17,7 +17,7 @@ import (
 //UserEntity　Entityを埋め込まれている
 type User struct {
 	Entity
-	Email    string `validate:"required,email"`
+	Email    string `validate:"required,email,unique"`
 	Password string //フロントで弾いてhash化された物が入るイメージ、不正にデータが作られた場合はログインできない為問題ない
 	Name     string `validate:"required"`
 	Nickname string
@@ -49,6 +49,7 @@ func (UserModel) TableName() string {
 func (um UserModel) Validate(u User) ([]string, bool) {
 
 	validate := validator.New()
+	validate.RegisterValidation("unique", um.ValidateUniqueEmail)
 	err := validate.Struct(u)
 	var messages []string
 	if err != nil {
@@ -62,6 +63,8 @@ func (um UserModel) Validate(u User) ([]string, bool) {
 					messages = append(messages, "メールアドレスを入力してください。")
 				case "email":
 					messages = append(messages, "正しいメールアドレスを入力してください。")
+				case "unique":
+					messages = append(messages, "既に登録されているメールアドレスです。")
 				}
 			case "Name":
 				messages = append(messages, "名前を入力してください。")
@@ -147,10 +150,10 @@ func (um UserModel) GetById(id int) (User, bool) {
 func (um UserModel) Find(u User) ([]User, bool) {
 
 	var r []User
-	um.db.Where(&User{Email: u.Email, Password: u.Password}).Find(&r)
+	um.db.Where(&u).Find(&r)
 
 	//dbに問い合わせて存在していればユーザを返す。なければエラーを返す ←？？
-	if r[0].Id > 0 {
+	if len(r) > 0 {
 		return r, false
 	} else {
 		return []User{}, true
@@ -224,4 +227,13 @@ func (um UserModel) Delete(id int) ([]string, bool) {
 		return []string{"削除できませんでした。"}, true
 	}
 
+}
+
+func (um UserModel) ValidateUniqueEmail(fl validator.FieldLevel) bool {
+	email := fl.Field().String()
+	u := User{
+		Email: email,
+	}
+	_, err := um.Find(u)
+	return err
 }

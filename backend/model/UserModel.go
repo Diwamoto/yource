@@ -3,7 +3,7 @@ package model
 import (
 
 	//標準ライブラリ
-	"log"
+
 	"strconv"
 	"time"
 
@@ -20,6 +20,7 @@ type User struct {
 	Email    string `validate:"required,email"`
 	Password string //フロントで弾いてhash化された物が入るイメージ、不正にデータが作られた場合はログインできない為問題ない
 	Name     string `validate:"required"`
+	Nickname string
 	Phone    string `validate:"required"`
 	Status   bool
 	Profile  UserProfile
@@ -146,9 +147,7 @@ func (um UserModel) GetById(id int) (User, bool) {
 func (um UserModel) Find(u User) ([]User, bool) {
 
 	var r []User
-	log.Println(u.Email)
-	log.Println(u.Password)
-	um.db.Debug().Where(&User{Email: u.Email, Password: u.Password}).Find(&r)
+	um.db.Where(&User{Email: u.Email, Password: u.Password}).Find(&r)
 
 	//dbに問い合わせて存在していればユーザを返す。なければエラーを返す ←？？
 	if r[0].Id > 0 {
@@ -173,6 +172,9 @@ func (um UserModel) Update(id int, u User) ([]string, bool) {
 	}
 	if u.Name != "" {
 		tu.Name = u.Name
+	}
+	if u.Nickname != "" {
+		tu.Nickname = u.Nickname
 	}
 	if u.Password != "" {
 		tu.Password = u.Password

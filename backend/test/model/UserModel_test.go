@@ -21,6 +21,7 @@ func TestValidateUser(t *testing.T) {
 				Password: "4AeNkWVisJ",
 				Name:     "test name",
 				Phone:    "000-0000-0000",
+				Nickname: "Crt Nick name",
 				Status:   true,
 				Profile:  model.UserProfile{},
 			},
@@ -33,6 +34,7 @@ func TestValidateUser(t *testing.T) {
 				Password: "4AeNkWVisJ",
 				Name:     "test name",
 				Phone:    "000-0000-0000",
+				Nickname: "Crt Nick name",
 				Status:   true,
 				Profile:  model.UserProfile{},
 			},
@@ -45,6 +47,7 @@ func TestValidateUser(t *testing.T) {
 				Password: "4AeNkWVisJ",
 				Name:     "test name",
 				Phone:    "000-0000-0000",
+				Nickname: "Crt Nick name",
 				Status:   true,
 				Profile:  model.UserProfile{},
 			},
@@ -57,6 +60,7 @@ func TestValidateUser(t *testing.T) {
 				Password: "4AeNkWVisJ",
 				Name:     "", //名前が入力されていない
 				Phone:    "000-0000-0000",
+				Nickname: "Crt Nick name",
 				Status:   true,
 				Profile:  model.UserProfile{},
 			},
@@ -69,6 +73,7 @@ func TestValidateUser(t *testing.T) {
 				Password: "4AeNkWVisJ",
 				Name:     "test name",
 				Phone:    "", //電話番号が入力されていない
+				Nickname: "Crt Nick name",
 				Status:   true,
 				Profile:  model.UserProfile{},
 			},
@@ -98,6 +103,7 @@ func TestCreateUser(t *testing.T) {
 				Password: "CrtTestPsw",
 				Name:     "Crt Test",
 				Phone:    "000-0000-0000",
+				Nickname: "Crt Nick name",
 				Status:   true,
 				Profile:  model.UserProfile{},
 			},
@@ -193,11 +199,19 @@ func TestFindUser(t *testing.T) {
 			false, //検索は成功するはず
 		},
 		{
-			//④: ステータスが有効になっているユーザを全て取得
+			//④: ステータスで検索
 			model.User{
 				Status: true,
 			},
 			"有効状態のユーザ",
+			false, //検索は成功するはず
+		},
+		{
+			//⑤: ニックネームで検索
+			model.User{
+				Nickname: "Crt Nick name",
+			},
+			"ニックネーム",
 			false, //検索は成功するはず
 		},
 	}
@@ -225,6 +239,7 @@ func TestUpdateUser(t *testing.T) {
 				Password: "UpdTestPsw",
 				Name:     "Upd Test",
 				Phone:    "048-8476-8173",
+				Nickname: "Upd nickname",
 				Status:   true,
 				Profile:  model.UserProfile{},
 			},

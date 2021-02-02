@@ -19,9 +19,9 @@ type User struct {
 	Entity
 	Email    string `validate:"required,email,unique"`
 	Password string //フロントで弾いてhash化された物が入るイメージ、不正にデータが作られた場合はログインできない為問題ない
-	Name     string `validate:"required"`
+	Name     string
 	Nickname string
-	Phone    string `validate:"required"`
+	Phone    string
 	Status   bool
 	Profile  UserProfile
 }
@@ -66,10 +66,11 @@ func (um UserModel) Validate(u User) ([]string, bool) {
 				case "unique":
 					messages = append(messages, "既に登録されているメールアドレスです。")
 				}
-			case "Name":
-				messages = append(messages, "名前を入力してください。")
-			case "Phone":
-				messages = append(messages, "電話番号を入力してください。")
+				//emailとパスワードで登録させるためにいったん名前と電話番号のvalidationを外す
+				// case "Name":
+				// 	messages = append(messages, "名前を入力してください。")
+				// case "Phone":
+				// 	messages = append(messages, "電話番号を入力してください。"
 			}
 		}
 	}

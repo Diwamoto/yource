@@ -53,32 +53,33 @@ func TestValidateUser(t *testing.T) {
 			},
 			true, //エラーになるはず
 		},
-		{
-			//④: 名前が入力されていないユーザ
-			model.User{
-				Email:    "test@example.com",
-				Password: "4AeNkWVisJ",
-				Name:     "", //名前が入力されていない
-				Phone:    "000-0000-0000",
-				Nickname: "Crt Nick name",
-				Status:   true,
-				Profile:  model.UserProfile{},
-			},
-			true, //エラーになるはず
-		},
-		{
-			//⑤: 電話番号が入力されていないユーザ
-			model.User{
-				Email:    "test@example.com",
-				Password: "4AeNkWVisJ",
-				Name:     "test name",
-				Phone:    "", //電話番号が入力されていない
-				Nickname: "Crt Nick name",
-				Status:   true,
-				Profile:  model.UserProfile{},
-			},
-			true, //エラーになるはず
-		},
+		// 2021/2/2 メールアドレスとパスワードで登録できる様にするためにいったんテストを止める
+		// {
+		// 	//④: 名前が入力されていないユーザ
+		// 	model.User{
+		// 		Email:    "test@example.com",
+		// 		Password: "4AeNkWVisJ",
+		// 		Name:     "", //名前が入力されていない
+		// 		Phone:    "000-0000-0000",
+		// 		Nickname: "Crt Nick name",
+		// 		Status:   true,
+		// 		Profile:  model.UserProfile{},
+		// 	},
+		// 	true, //エラーになるはず
+		// },
+		// {
+		// 	//⑤: 電話番号が入力されていないユーザ
+		// 	model.User{
+		// 		Email:    "test@example.com",
+		// 		Password: "4AeNkWVisJ",
+		// 		Name:     "test name",
+		// 		Phone:    "", //電話番号が入力されていない
+		// 		Nickname: "Crt Nick name",
+		// 		Status:   true,
+		// 		Profile:  model.UserProfile{},
+		// 	},
+		// 	true, //エラーになるはず
+		// },
 		{
 			//⑥: メールアドレスが既にデータベースに存在しているユーザ
 			model.User{

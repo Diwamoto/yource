@@ -26,7 +26,7 @@ func CreateUserAction(c *gin.Context) {
 		Password: c.PostForm("Password"),
 		Name:     c.PostForm("Name"),
 		Phone:    c.PostForm("Phone"),
-		Status:   true,
+		Status:   false, //メールアドレス認証ができるまでステータスは有効にならない
 		Profile:  model.UserProfile{},
 	}
 	u.Created = time.Now()

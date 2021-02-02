@@ -64,7 +64,7 @@ func (um UserModel) Validate(u User) ([]string, bool) {
 				case "email":
 					messages = append(messages, "正しいメールアドレスを入力してください。")
 				case "unique":
-					messages = append(messages, "既に登録されているメールアドレスです。")
+					messages = append(messages, "入力されたメールアドレスは既に登録されています。")
 				}
 				//emailとパスワードで登録させるためにいったん名前と電話番号のvalidationを外す
 				// case "Name":

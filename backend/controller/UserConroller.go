@@ -38,6 +38,9 @@ func CreateUserAction(c *gin.Context) {
 		userID, _ := strconv.Atoi(msg[0])
 		a, _ := um.GetById(userID)
 		a.Id = userID
+
+		//ユーザのメールアドレス死活監視トークンを生成する。
+
 		c.JSON(http.StatusCreated, a)
 	} else {
 		//作成できなければエラーメッセージを返す。
@@ -129,9 +132,9 @@ func LoginAction(c *gin.Context) {
 	users, err := um.Find(user)
 	//正しく検索できており、かつ取得できたユーザが一名であればログイン成功
 	if !err && len(users) == 1 {
-		c.JSON(http.StatusOK, "login success.")
+		c.JSON(http.StatusOK, "") //クッキーのトークンを送るべき
 	} else {
-		c.JSON(http.StatusUnauthorized, "login failed: invalid email or password")
+		c.JSON(http.StatusUnauthorized, "メールアドレスもしくはパスワードが間違っています。")
 	}
 
 }

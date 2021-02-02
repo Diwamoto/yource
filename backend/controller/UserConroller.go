@@ -124,6 +124,8 @@ func LoginAction(c *gin.Context) {
 	log.Println(c.PostForm("Email"))
 	user.Email = c.PostForm("Email")
 	user.Password = c.PostForm("Password")
+	//ログインできるのは有効なユーザだけ
+	user.Status = true
 	users, err := um.Find(user)
 	//正しく検索できており、かつ取得できたユーザが一名であればログイン成功
 	if !err && len(users) == 1 {

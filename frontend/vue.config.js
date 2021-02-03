@@ -2,6 +2,13 @@ module.exports = {
   "transpileDependencies": [
     "vuetify"
   ],
+  publicPath: "./",
+  pages: {
+    index: {
+      entry: "src/main.js",
+      title: "yource | ポートフォリオを簡単に公開する",
+    }
+  },
   devServer: {
     port: 9092,
     disableHostCheck: true,

@@ -50,7 +50,6 @@ func ConnectDB(t string) *gorm.DB {
 
 	CONNECT := USER + ":" + PASS + "@" + PROTOCOL + "/" + DBNAME + "?parseTime=true&loc=Asia%2FTokyo"
 	db, err := gorm.Open(DBMS, CONNECT)
-
 	if err != nil {
 		panic(err.Error())
 	}

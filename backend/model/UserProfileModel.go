@@ -17,9 +17,9 @@ type UserProfile struct {
 	Entity
 	UserId    int //MEMO: 本当であればバリデーションを用いたいが、Userの子になっているUserProfileではなぜか独自バリデーションが読み込まれないのでCreate()時に判断する
 	Profile   string
-	Birthday  time.Time `db:"birthday"`
-	From      string    //TODO: 出身地は別にテーブルを設けてidで判断する？ → フロントでselectboxで判断すればテーブルを用意する必要はなさそう
-	Job       string    //TODO: 上に同じ
+	Birthday  time.Time
+	From      string //TODO: 出身地は別にテーブルを設けてidで判断する？ → フロントでselectboxで判断すればテーブルを用意する必要はなさそう
+	Job       string //TODO: 上に同じ
 	Twitter   string
 	Facebook  string
 	Instagram string
@@ -64,9 +64,10 @@ func (upm UserProfileModel) Validate(up UserProfile) ([]string, bool) {
 
 	//プロフィールは存在するユーザのIDのみを使用できる
 	um := NewUserModel(upm.nc)
+
 	_, err2 := um.GetById(up.UserId)
 	if err2 {
-		messages = append(messages, "存在しないユーザIDのプロフィールは作成できません。")
+		return []string{"存在しないユーザIDのプロフィールは作成できません。"}, true
 	}
 
 	if len(messages) > 0 {
@@ -139,6 +140,20 @@ func (upm UserProfileModel) GetById(id int) (UserProfile, bool) {
 
 }
 
+//ユーザIDで検索する
+//プロフィールは基本ユーザIDで検索する
+func (upm UserProfileModel) GetByUserId(userId int) (UserProfile, bool) {
+	var up UserProfile
+	upm.db.Where("user_id = ?", userId).First(&up)
+
+	//値が取得できたら
+	if up.UserId == userId {
+		return up, false
+	} else {
+		return UserProfile{}, true
+	}
+}
+
 //検索メソッド
 //任意の条件に一致するプロフィールを取得する
 func (upm UserProfileModel) Find(up UserProfile) ([]UserProfile, bool) {
@@ -157,10 +172,20 @@ func (upm UserProfileModel) Find(up UserProfile) ([]UserProfile, bool) {
 }
 
 //更新メソッド 情報を更新する
-func (upm UserProfileModel) Update(id int, up UserProfile) ([]string, bool) {
+//プロフィールの連番は気にせずユーザIDで判断する
+func (upm UserProfileModel) Update(userId int, up UserProfile) ([]string, bool) {
 	var tup UserProfile
 	upm.db.AutoMigrate(&tup)
-	upm.db.First(&tup, id)
+	tup, err := upm.GetByUserId(userId)
+
+	//存在しなければエラーを返す
+	if err {
+		return []string{"指定されたユーザが存在しません。"}, true
+	}
+	//ユーザIDは変更できない
+	if tup.UserId != up.UserId {
+		return []string{"ユーザIDは変更することはできません。"}, true
+	}
 
 	//引数の情報を移す
 	//ユーザプロフィールプロフィールはnull許容なのでチェックはなし
@@ -177,12 +202,6 @@ func (upm UserProfileModel) Update(id int, up UserProfile) ([]string, bool) {
 
 	//バリデーションをかける
 	msg, err := upm.Validate(tup)
-
-	//プロフィールIDは変更できない
-	if tup.UserId != up.UserId {
-		msg = append(msg, "ユーザIDは変更することはできません。")
-		err = true
-	}
 
 	//バリデーションが成功していたら
 	if !err {
@@ -224,5 +243,9 @@ func (upm UserProfileModel) ValidateUniqueUserId(id int) bool {
 		UserId: id,
 	}
 	_, err := upm.Find(up)
+	//取得できなかったら1.ユーザが存在しないのかどうかをチェック
+	if err {
+
+	}
 	return err
 }

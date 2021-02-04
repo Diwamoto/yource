@@ -13,16 +13,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//ユーザー作成アクション
+//ユーザープロフィール作成アクション
 //POSTされた要素でデータを作成する
 func CreateUserProfileAction(c *gin.Context) {
 
 	upm := model.NewUserProfileModel("default")
 	//誕生日を時間型に変換
 	birth, _ := time.Parse("2006/01/02 15:04:05", c.PostForm("Birthday"))
+	//useridをintに変換
+	userId, _ := strconv.Atoi(c.Param("id"))
 
 	up := model.UserProfile{
-		UserId:    1,
+		UserId:    userId,
 		Profile:   c.PostForm("Profile"),
 		Birthday:  birth,
 		From:      c.PostForm("From"),
@@ -36,7 +38,7 @@ func CreateUserProfileAction(c *gin.Context) {
 	up.Modified = time.Now()
 
 	msg, err := upm.Create(up)
-	//エラーじゃなければuserの情報を返す
+	//エラーじゃなければユーザプロフィールの情報を返す
 	if !err {
 		userID, _ := strconv.Atoi(msg[0])
 		a, _ := upm.GetById(userID)
@@ -81,15 +83,15 @@ func GetAllUserProfileAction(c *gin.Context) {
 	}
 }
 
-//ユーザの情報を更新するアクション
+//ユーザのプロフィールを更新するアクション
 //PUTでフォームの情報からユーザの情報を更新する
 func UpdateUserProfileAction(c *gin.Context) {
 
 	upm := model.NewUserProfileModel("default")
 
-	upId, _ := strconv.Atoi(c.Param("Id"))
+	userId, _ := strconv.Atoi(c.Param("Id"))
 	//ユーザを取得し、取得できたら更新をかける
-	_, err := upm.GetById(upId)
+	_, err := upm.GetByUserId(userId)
 	if !err {
 		//フォームから更新内容を取得したユーザ構造体を作成
 		var up model.UserProfile
@@ -105,8 +107,9 @@ func UpdateUserProfileAction(c *gin.Context) {
 		up.Instagram = c.PostForm("Instagram")
 		up.Other = c.PostForm("Other")
 
-		msg, err2 := upm.Update(upId, up)
+		msg, err2 := upm.Update(userId, up)
 		if !err2 {
+			up, _ = upm.GetByUserId(userId)
 			c.JSON(http.StatusOK, up)
 		} else {
 			c.JSON(http.StatusConflict, msg)

@@ -115,9 +115,8 @@ func (um UserModel) GetAll() ([]User, bool) {
 
 	var users []User
 	um.db.Find(&users)
-	upm := NewUserProfileModel(um.nc)
 	for _, u := range users {
-		u.Profile, _ = upm.GetByUserId(u.Id)
+		um.db.Model(&u).Related(&u.Profile, "Profile")
 	}
 
 	//値が取得できたら

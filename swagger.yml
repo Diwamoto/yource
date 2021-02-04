@@ -1,7 +1,8 @@
 swagger: "2.0"
-host: "yource.space"
+# host: "yource.space"
+host: "b17a4a5e3b39.ngrok.io"
 info:
-  description: "yourceで使用するrest apiについてのswaggerドキュメントです。"
+  description: "yourceで使用するrest apiについてのswaggerドキュメント"
   version: "1.0.0"
   title: "yourceAPI"
   termsOfService: "http://swagger.io/terms/"
@@ -10,9 +11,35 @@ info:
   license:
     name: "MIT"
     url: "https://licenses.opensource.jp/MIT/MIT.html"
+basePath: "/api/v1"
+tags:
+- name: "user"
+  description: "ユーザ"
+- name: "profile"
+  description: "プロフィール"
+schemes:
+- "https"
 paths:
-  /user:
+  /users:
+    get:
+      tags:
+      - "user"
+      summary: "ユーザの情報を全て取得する"  
+      responses:
+        200:
+          description: "成功時"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"
+        404:
+          description: "指定したIDを持つユーザが見つからなかった場合"
+          schema:
+            type: "string"
+            example: "{}"
     post:
+      tags:
+      - "user"
       consumes:
           - application/x-www-form-urlencoded
       summary: "指定されたユーザが存在しなければ作成し、そのユーザのオブジェクトを返す。"
@@ -33,84 +60,20 @@ paths:
           required: true
           type: string
       responses:
-        200:
+        201:
           description: "成功時"
           schema:
-            type: "object"
-            properties:
-              Id:
-                type: "integer"
-                format: "int64"
-                example: 1
-              Created:
-                type: "string"
-                example: "2021-01-01T00:00:00+09:00"
-              Modified:
-                type: "string"
-                example: "2021-01-01T00:00:00+09:00"
-              Email: 
-                type: "string"
-                example: "test@example.com"
-              Password:
-                type: "string"
-                example: "test"
-              Name:
-                type: "string"
-                example: "test"
-              Phone:
-                type: "string"
-                example: "090-0909-0909"
-              Status:
-                type: "boolean"
-                example: true
-              Profile:
-                type: "object"
-                properties:
-                  Id:
-                    type: "integer"
-                    format: "int64"
-                    example: 0
-                  Created:
-                    type: "string"
-                    example: "2021-01-01T00:00:00+09:00"
-                  Modified:
-                    type: "string"
-                    example: "2021-01-01T00:00:00+09:00"
-                  UserId: 
-                    type: "integer"
-                    example: 1
-                  Profile:
-                    type: "string"
-                    example: "My Name is Mike. I am a Engineer at EXAM Company!"
-                  Birthday:
-                    type: "string"
-                    example: "1992-01-01T00:00:00+09:00"
-                  From:
-                    type: "string"
-                    example: "Germany"
-                  Job:
-                    type: "string"
-                    example: "Engineer"
-                  Twitter:
-                    type: "string"
-                    example: "@Twitter"
-                  Facebook: 
-                    type: "string"
-                    example: "url..."
-                  Instagram:
-                    type: "string"
-                    example: "@myawesomeinsta"
-                  Other:
-                    type: "string"
-                    example: "https://my.awesome.homepage.com"
+            $ref: "#/definitions/User"
         409:
           description: "なんらかの理由で作成に失敗した時"
           schema:
             type: "string"
             example: "作成失敗理由"
-  /user/{userId}:
+  /users/{userId}:
     get:
-      summary: "指定されたuserIdの情報を返します"  
+      tags:
+      - "user"
+      summary: "指定されたuserIdの情報を返す"  
       parameters:
       - name: "userId"
         in: "path"
@@ -122,80 +85,16 @@ paths:
         200:
           description: "成功時"
           schema:
-            type: "object"
-            properties:
-              Id:
-                type: "integer"
-                format: "int64"
-                example: 1
-              Created:
-                type: "string"
-                example: "2021-01-01T00:00:00+09:00"
-              Modified:
-                type: "string"
-                example: "2021-01-01T00:00:00+09:00"
-              Email: 
-                type: "string"
-                example: "test@example.com"
-              Password:
-                type: "string"
-                example: "test"
-              Name:
-                type: "string"
-                example: "test"
-              Phone:
-                type: "string"
-                example: "090-0909-0909"
-              Status:
-                type: "boolean"
-                example: true
-              Profile:
-                type: "object"
-                properties:
-                  Id:
-                    type: "integer"
-                    format: "int64"
-                    example: 0
-                  Created:
-                    type: "string"
-                    example: "2021-01-01T00:00:00+09:00"
-                  Modified:
-                    type: "string"
-                    example: "2021-01-01T00:00:00+09:00"
-                  UserId: 
-                    type: "integer"
-                    example: 1
-                  Profile:
-                    type: "string"
-                    example: "My Name is Mike. I am a Engineer at EXAM Company!"
-                  Birthday:
-                    type: "string"
-                    example: "1992-01-01T00:00:00+09:00"
-                  From:
-                    type: "string"
-                    example: "Germany"
-                  Job:
-                    type: "string"
-                    example: "Engineer"
-                  Twitter:
-                    type: "string"
-                    example: "@Twitter"
-                  Facebook: 
-                    type: "string"
-                    example: "url..."
-                  Instagram:
-                    type: "string"
-                    example: "@myawesomeinsta"
-                  Other:
-                    type: "string"
-                    example: "https://my.awesome.homepage.com"
+            $ref: "#/definitions/User"
         404:
           description: "指定したIDを持つユーザが見つからなかった場合"
           schema:
             type: "string"
-            example: ""
+            example: "{}"
     put:
-      summary: "指定されたuserIdの情報を更新して返します。"
+      tags:
+      - "user"
+      summary: "指定されたuserIdの情報を更新して返す。"
       parameters:
       - name: "userId"
         in: "path"
@@ -205,75 +104,9 @@ paths:
         format: "int64"
       responses:
         200:
-          description: "更新成功時"
+          description: "更新成功時 変更後のユーザオブジェクトが表示される"
           schema:
-            type: "object"
-            properties:
-              Id:
-                type: "integer"
-                format: "int64"
-                example: 1
-              Created:
-                type: "string"
-                example: "2021-01-01T00:00:00+09:00"
-              Modified:
-                type: "string"
-                example: "2021-01-01T00:00:00+09:00"
-              Email: 
-                type: "string"
-                example: "test@example.com"
-              Password:
-                type: "string"
-                example: "test"
-              Name:
-                type: "string"
-                example: "test"
-              Phone:
-                type: "string"
-                example: "090-0909-0909"
-              Status:
-                type: "boolean"
-                example: true
-              Profile:
-                type: "object"
-                properties:
-                  Id:
-                    type: "integer"
-                    format: "int64"
-                    example: 0
-                  Created:
-                    type: "string"
-                    example: "2021-01-01T00:00:00+09:00"
-                  Modified:
-                    type: "string"
-                    example: "2021-01-01T00:00:00+09:00"
-                  UserId: 
-                    type: "integer"
-                    example: 1
-                  Profile:
-                    type: "string"
-                    example: "My Name is Mike. I am a Engineer at EXAM Company!"
-                  Birthday:
-                    type: "string"
-                    example: "1992-01-01T00:00:00+09:00"
-                  From:
-                    type: "string"
-                    example: "Germany"
-                  Job:
-                    type: "string"
-                    example: "Engineer"
-                  Twitter:
-                    type: "string"
-                    example: "@Twitter"
-                  Facebook: 
-                    type: "string"
-                    example: "url..."
-                  Instagram:
-                    type: "string"
-                    example: "@myawesomeinsta"
-                  Other:
-                    type: "string"
-                    example: "https://my.awesome.homepage.com"
+            $ref: "#/definitions/User"
         409:
           description: "何らかの理由で更新に失敗した時"
           schema:
@@ -285,7 +118,9 @@ paths:
             type: "string"
             example: ""
     delete:
-      summary: "指定されたuserIdの情報を削除します。"
+      tags:
+      - "user"
+      summary: "指定されたuserIdの情報を削除する。"
       parameters:
       - name: "userId"
         in: "path"
@@ -304,12 +139,204 @@ paths:
           schema:
             type: "string"
             example: "削除失敗理由"
-
-
-
-
-
-
-
-
-
+  /users/{userId}/profile:
+    get:
+      tags:
+      - "profile"
+      summary: "指定ユーザIDのプロフィールを取得する"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "取得したいユーザのID"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "成功時"
+          schema:
+            $ref: "#/definitions/Profile"
+        404:
+          description: "指定したIDを持つユーザが見つからなかった場合"
+          schema:
+            type: "string"
+            example: "{}"
+    post:
+      tags:
+      - "profile"
+      consumes:
+          - application/x-www-form-urlencoded
+      summary: "指定されたユーザが存在しなければ作成し、そのユーザのオブジェクトを返す。"
+      parameters:
+        - name: userId
+          in: path
+          description: ユーザID
+          required: true
+          type: integer
+        - name: Profile
+          in: formData
+          description: プロフィール
+          type: string
+        - name: Birthday
+          in: formData
+          description: 誕生日
+          type: string
+        - name: From
+          in: formData
+          description: 出身地
+          type: string
+        - name: Job
+          in: formData
+          description: 仕事
+          type: string
+        - name: Twitter
+          in: formData
+          description: ツイッター
+          type: string
+        - name: Facebook
+          in: formData
+          description: フェイスブック
+          type: string
+        - name: Instagram
+          in: formData
+          description: インスタグラム
+          type: string
+        - name: Other
+          in: formData
+          description: 他のwebサイトURL
+          type: string
+      responses:
+        200:
+          description: "成功時"
+          schema:
+            $ref: "#/definitions/Profile"
+        409:
+          description: "なんらかの理由で作成に失敗した時"
+          schema:
+            type: "string"
+            example: "作成失敗理由"
+    put:
+      tags:
+      - "profile"
+      consumes:
+          - application/x-www-form-urlencoded
+      summary: "指定されたユーザが存在しなければ作成し、そのユーザのオブジェクトを返す。"
+      parameters:
+        - name: UserId
+          in: path
+          description: ユーザID
+          required: true
+          type: integer
+        - name: Profile
+          in: formData
+          description: プロフィール
+          type: string
+        - name: Birthday
+          in: formData
+          description: 誕生日
+          type: string
+        - name: From
+          in: formData
+          description: 出身地
+          type: string
+        - name: Job
+          in: formData
+          description: 仕事
+          type: string
+        - name: Twitter
+          in: formData
+          description: ツイッター
+          type: string
+        - name: Facebook
+          in: formData
+          description: フェイスブック
+          type: string
+        - name: Instagram
+          in: formData
+          description: インスタグラム
+          type: string
+        - name: Other
+          in: formData
+          description: 他のwebサイトURL
+          type: string
+      responses:
+        200:
+          description: "成功時"
+          schema:
+            $ref: "#/definitions/Profile"
+        409:
+          description: "なんらかの理由で作成に失敗した時"
+          schema:
+            type: "string"
+            example: "作成失敗理由"
+definitions:
+  User:
+    type: "object"
+    properties:
+      Id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      Created:
+        type: "string"
+        example: "2021-01-01T00:00:00+09:00"
+      Modified:
+        type: "string"
+        example: "2021-01-01T00:00:00+09:00"
+      Email: 
+        type: "string"
+        example: "test@example.com"
+      Password:
+        type: "string"
+        example: "test"
+      Name:
+        type: "string"
+        example: "test"
+      Phone:
+        type: "string"
+        example: "090-0909-0909"
+      Status:
+        type: "boolean"
+        example: true
+      Profile:
+        $ref: "#/definitions/Profile" 
+  Profile:
+    type: "object"
+    properties:
+      Id:
+        type: "integer"
+        format: "int64"
+        example: 0
+      Created:
+        type: "string"
+        example: "2021-01-01T00:00:00+09:00"
+      Modified:
+        type: "string"
+        example: "2021-01-01T00:00:00+09:00"
+      UserId: 
+        type: "integer"
+        example: 1
+      Profile:
+        type: "string"
+        example: "My Name is Mike. I am a Engineer at EXAM Company!"
+      Birthday:
+        type: "string"
+        example: "1992-01-01T00:00:00+09:00"
+      From:
+        type: "string"
+        example: "Germany"
+      Job:
+        type: "string"
+        example: "Engineer"
+      Twitter:
+        type: "string"
+        example: "@Twitter"
+      Facebook: 
+        type: "string"
+        example: "url..."
+      Instagram:
+        type: "string"
+        example: "@myawesomeinsta"
+      Other:
+        type: "string"
+        example: "https://my.awesome.homepage.com"

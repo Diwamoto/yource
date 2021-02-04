@@ -1,9 +1,13 @@
-package test_model
+package model
 
 import (
-	"main/model"
+	//標準ライブラリ
 	"testing"
 	"time"
+
+	//自作ライブラリ
+	"main/model"
+	//githubライブラリ
 )
 
 var upm = model.NewUserProfileModel("test")
@@ -19,14 +23,14 @@ func TestValidateUserProfile(t *testing.T) {
 			//①正しいプロフィール
 			model.UserProfile{
 				UserId:    1,
-				Profile:   "",
+				Profile:   "profile test",
 				Birthday:  time.Now(),
-				From:      "",
-				Job:       "",
-				Twitter:   "",
-				Facebook:  "",
-				Instagram: "",
-				Other:     "",
+				From:      "japan",
+				Job:       "engineer",
+				Twitter:   "@aaa",
+				Facebook:  "my awesome facebook",
+				Instagram: "@myinsta",
+				Other:     "my.awesome.web.com",
 			},
 			false, //エラーはでないはず
 		},
@@ -63,28 +67,62 @@ func TestCreateUserProfile(t *testing.T) {
 		want bool
 	}{
 		{
-			//①正しいプロフィール
+			//①: 正しいプロフィール
 			model.UserProfile{
 				UserId:    1,
-				Profile:   "",
-				Birthday:  time.Now(),
-				From:      "",
-				Job:       "",
-				Twitter:   "",
-				Facebook:  "",
-				Instagram: "",
-				Other:     "",
+				Profile:   "profile test",
+				Birthday:  time.Date(2020, 1, 1, 12, 0, 0, 0, time.Local),
+				From:      "japan",
+				Job:       "engineer",
+				Twitter:   "@aaa",
+				Facebook:  "my awesome facebook",
+				Instagram: "@myinsta",
+				Other:     "my.awesome.web.com",
 			},
 			false, //エラーはでないはず
+		},
+		{
+			//②: 同じユーザidのプロフィール
+			model.UserProfile{
+				UserId:    2, //既に作成してしまっている
+				Profile:   "profile test",
+				Birthday:  time.Date(2020, 1, 1, 12, 0, 0, 0, time.Local),
+				From:      "japan",
+				Job:       "engineer",
+				Twitter:   "@aaa",
+				Facebook:  "my awesome facebook",
+				Instagram: "@myinsta",
+				Other:     "my.awesome.web.com",
+			},
+			true, //エラーになるはず
 		},
 	}
 	for i, tt := range tests {
 		rs, err := upm.Create(tt.in)
 		if err != tt.want {
-			t.Errorf("%d番目のテストが失敗しました。の出力結果: %s", i+1, rs)
+			t.Errorf("%d番目のテストが失敗しました。出力結果: %s", i+1, rs)
 		}
 	}
 
+}
+
+//UserProfileModel.GetAll()のテスト
+//ユーザが取得できたらOK,できなければダメ
+func TestGetAllUserProfile(t *testing.T) {
+
+	tests := []struct {
+		want bool
+	}{
+		{
+			false, //取得できるはず
+		},
+	}
+	for _, tt := range tests {
+		_, err := um.GetAll()
+		if err != tt.want {
+			t.Errorf("GetAll()を用いて全プロフィールを取得することができませんでした。")
+		}
+	}
 }
 
 //UserProfileModel.Get()のテスト
@@ -105,6 +143,98 @@ func TestGetUserProfile(t *testing.T) {
 		_, err := upm.GetById(tt.in)
 		if err != tt.want {
 			t.Errorf("UserProfileID:%dのプロフィールを取得できませんでした。", tt.in)
+		}
+	}
+}
+
+//UserProfileModel.Find()のテスト
+//プロフィールを検索する
+//検索の失敗についての定義は議論中
+func TestFindUserProfile(t *testing.T) {
+	tests := []struct {
+		in   model.UserProfile
+		t    string //検索の種類
+		want bool
+	}{
+		{
+			//①: プロフィールの文言で検索
+			//TODO: like検索の追加
+			model.UserProfile{
+				Profile: "profile test",
+			},
+			"プロフィール",
+			false, //検索は成功するはず
+		},
+		{
+			//②: 誕生日で検索
+			model.UserProfile{
+				Birthday: time.Date(2020, 1, 1, 12, 0, 0, 0, time.Local),
+			},
+			"誕生日",
+			false, //検索は成功するはず
+		},
+		{
+			//③: 出身地で検索
+			//TODO: 出身地の多様性をどうするか
+			model.UserProfile{
+				From: "japan",
+			},
+			"出身地",
+			false, //検索は成功するはず
+		},
+		{
+			//④: 仕事で検索
+			model.UserProfile{
+				Job: "engineer",
+			},
+			"仕事",
+			false, //検索は成功するはず
+		},
+		{
+			//⑤: ツイッターで検索
+			model.UserProfile{
+				Twitter: "@aaa",
+			},
+			"ツイッター",
+			false, //検索は成功するはず
+		},
+		{
+			//⑥: facebookで検索
+			model.UserProfile{
+				Facebook: "my awesome facebook",
+			},
+			"フェイスブック",
+			false, //検索は成功するはず
+		},
+		{
+			//⑦: インスタグラムで検索
+			model.UserProfile{
+				Instagram: "@myinsta",
+			},
+			"インスタグラム",
+			false, //検索は成功するはず
+		},
+		{
+			//⑧: 他のwebサイトで検索
+			model.UserProfile{
+				Other: "my.awesome.web.com",
+			},
+			"Other",
+			false, //検索は成功するはず
+		},
+		{
+			//⑨: プロフィールの文言で検索
+			model.UserProfile{
+				Profile: "fail test",
+			},
+			"Profile",
+			true, //検索は失敗するはず
+		},
+	}
+	for _, tt := range tests {
+		_, err := upm.Find(tt.in)
+		if err != tt.want {
+			t.Errorf("「%s」での検索が失敗しました。", tt.t)
 		}
 	}
 }
@@ -148,7 +278,7 @@ func TestUpdateUserProfile(t *testing.T) {
 				Instagram: "Update",
 				Other:     "Update",
 			},
-			false, //エラーはでないはず
+			true, //ユーザidは変更できない
 		},
 	}
 	for i, tt := range tests {

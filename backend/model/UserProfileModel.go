@@ -2,6 +2,7 @@ package model
 
 import (
 	//標準ライブラリ
+
 	"strconv"
 	"time"
 
@@ -14,11 +15,11 @@ import (
 
 type UserProfile struct {
 	Entity
-	UserId    int
+	UserId    int //MEMO: 本当であればバリデーションを用いたいが、Userの子になっているUserProfileではなぜか独自バリデーションが読み込まれないのでCreate()時に判断する
 	Profile   string
-	Birthday  time.Time
-	From      string
-	Job       string
+	Birthday  time.Time `db:"birthday"`
+	From      string    //TODO: 出身地は別にテーブルを設けてidで判断する？ → フロントでselectboxで判断すればテーブルを用意する必要はなさそう
+	Job       string    //TODO: 上に同じ
 	Twitter   string
 	Facebook  string
 	Instagram string
@@ -46,18 +47,22 @@ func (UserProfileModel) TableName() string {
 func (upm UserProfileModel) Validate(up UserProfile) ([]string, bool) {
 
 	validate := validator.New()
-	err := validate.Struct(up)
+	_ = validate.Struct(up)
 	var messages []string
-	if err != nil {
-		for _, err := range err.(validator.ValidationErrors) {
-			fieldName := err.Field()
-			switch fieldName {
-			//ユーザプロフィールは基本的にnull許容
-			}
-		}
-	}
+	//MEMO: 本当であればバリデーションを用いたいが、Userの子になっているUserProfileでは
+	//なぜか独自バリデーションが読み込まれないので、Create()の中で判断するように実装する。
+	//原因として考えられるのは、バリデーションにデータベースと問い合わせる部分があり、
+	// if err != nil {
+	// 	for _, err := range err.(validator.ValidationErrors) {
+	// 		fieldName := err.Field()
+	// 		switch fieldName {
+	// 		case "UserId":
+	// 			messages = append(messages, "同じユーザIDのプロフィールは追加できません")
+	// 		}
+	// 	}
+	// }
 
-	//ユーザIDは存在するユーザのIDのみを使用できる
+	//プロフィールは存在するユーザのIDのみを使用できる
 	um := NewUserModel(upm.nc)
 	_, err2 := um.GetById(up.UserId)
 	if err2 {
@@ -80,6 +85,14 @@ func (upm UserProfileModel) Create(up UserProfile) ([]string, bool) {
 	msg, err := upm.Validate(up)
 
 	if !err {
+
+		//MEMO: UserProfileの定義を参照、UserIdの重複チェックを実装する。
+		if !upm.ValidateUniqueUserId(up.UserId) {
+			//作成できなければエラーメッセージを返す
+			msg = append(msg, "既に指定ユーザIdのプロフィールが登録されています。")
+			return msg, true
+		}
+
 		up.Created = time.Now()
 		up.Modified = time.Now()
 		//バリデーションが通れば作成し、メッセージの中に作成したデータのIDを入れて返す
@@ -93,12 +106,28 @@ func (upm UserProfileModel) Create(up UserProfile) ([]string, bool) {
 
 }
 
-//指定idのデータがあれば返す
+//指定プロフィールidの情報を返す
+func (upm UserProfileModel) GetAll() ([]UserProfile, bool) {
+
+	var userProfiles []UserProfile
+	upm.db.Find(&userProfiles)
+	for i := range userProfiles {
+		upm.db.Model(userProfiles[i])
+	}
+
+	//値が取得できたら
+	if len(userProfiles) > 0 {
+		return userProfiles, false
+	} else {
+		return []UserProfile{}, true
+	}
+
+}
+
+//指定プロフィールidの情報を返す
 func (upm UserProfileModel) GetById(id int) (UserProfile, bool) {
 
 	var up UserProfile
-
-	upm.db.AutoMigrate(&up)
 	upm.db.First(&up, id)
 
 	//値が取得できたら
@@ -110,6 +139,23 @@ func (upm UserProfileModel) GetById(id int) (UserProfile, bool) {
 
 }
 
+//検索メソッド
+//任意の条件に一致するプロフィールを取得する
+func (upm UserProfileModel) Find(up UserProfile) ([]UserProfile, bool) {
+
+	var r []UserProfile
+	//TODO: like検索の実装
+	//→ただ、基本ユーザidで呼び出す為いらないかも？（プロフィールの文言で検索する機会がなさそう）
+	upm.db.Where(&up).Find(&r)
+
+	//dbに問い合わせて存在していればプロフィールを返す。なければエラーを返す ←？？
+	if len(r) > 0 {
+		return r, false
+	} else {
+		return []UserProfile{}, true
+	}
+}
+
 //更新メソッド 情報を更新する
 func (upm UserProfileModel) Update(id int, up UserProfile) ([]string, bool) {
 	var tup UserProfile
@@ -117,7 +163,7 @@ func (upm UserProfileModel) Update(id int, up UserProfile) ([]string, bool) {
 	upm.db.First(&tup, id)
 
 	//引数の情報を移す
-	//ユーザプロフィールはnull許容なのでチェックはなし
+	//ユーザプロフィールプロフィールはnull許容なのでチェックはなし
 	tup.Profile = up.Profile
 	tup.Birthday = up.Birthday
 	tup.From = up.From
@@ -132,7 +178,7 @@ func (upm UserProfileModel) Update(id int, up UserProfile) ([]string, bool) {
 	//バリデーションをかける
 	msg, err := upm.Validate(tup)
 
-	//ユーザIDは変更できない
+	//プロフィールIDは変更できない
 	if tup.UserId != up.UserId {
 		msg = append(msg, "ユーザIDは変更することはできません。")
 		err = true
@@ -142,13 +188,13 @@ func (upm UserProfileModel) Update(id int, up UserProfile) ([]string, bool) {
 	if !err {
 		//セーブした結果がエラーであれば更新失敗
 		if result := upm.db.Save(&tup); result.Error != nil {
-			return []string{"データベースに保存することができませんでした。"}, false
+			return []string{"データベースに保存することができませんでした。"}, true
 		} else {
 			return []string{}, false
 		}
 	} else {
 		//作成できなければエラーメッセージを返す
-		return msg, false
+		return msg, true
 	}
 
 }
@@ -159,7 +205,7 @@ func (upm UserProfileModel) Delete(id int) ([]string, bool) {
 	//idで削除を実行する
 	_, err := upm.GetById(id)
 	if err { //削除するデータがなかったらダメ
-		return []string{"削除するユーザプロフィールが存在しません。"}, true
+		return []string{"削除するプロフィールプロフィールが存在しません。"}, true
 	}
 	upm.db.Delete(&UserProfile{}, id)
 	_, err2 := upm.GetById(id)
@@ -169,4 +215,14 @@ func (upm UserProfileModel) Delete(id int) ([]string, bool) {
 		return []string{"削除できませんでした。"}, true
 	}
 
+}
+
+//func (upm UserProfileModel) ValidateUniqueUserId(fl validator.FieldLevel) bool {
+func (upm UserProfileModel) ValidateUniqueUserId(id int) bool {
+	// userId := int(fl.Field().Int())
+	up := UserProfile{
+		UserId: id,
+	}
+	_, err := upm.Find(up)
+	return err
 }

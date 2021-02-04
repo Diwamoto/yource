@@ -1,4 +1,4 @@
-package test_model
+package model
 
 import (
 	"main/model"
@@ -81,9 +81,9 @@ func TestValidateUser(t *testing.T) {
 		// 	true, //エラーになるはず
 		// },
 		{
-			//⑥: メールアドレスが既にデータベースに存在しているユーザ
+			//⑥(4): メールアドレスが既にデータベースに存在しているユーザ
 			model.User{
-				Email:    "CreateTest@example.com",
+				Email:    "master@example.com",
 				Password: "4AeNkWVisJ",
 				Name:     "test name",
 				Phone:    "000-0000-0000",
@@ -91,7 +91,7 @@ func TestValidateUser(t *testing.T) {
 				Status:   true,
 				Profile:  model.UserProfile{},
 			},
-			false, //エラーはでないはず
+			true, //エラーになるはず
 		},
 	}
 	for i, tt := range tests {

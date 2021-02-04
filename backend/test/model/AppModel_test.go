@@ -1,4 +1,4 @@
-package test_model
+package model
 
 import (
 	"main/config/database"
@@ -35,6 +35,19 @@ func TestMain(m *testing.M) {
 	mtu.Created = time.Now()
 	mtu.Modified = time.Now()
 	db.Create(&mtu)
+
+	//ユーザ以外のテストに使用するテストユーザを作成その２
+	mtu2 := model.User{
+		Email:    "master2@example.com",
+		Password: "4AeNkWVisJ",
+		Name:     "master name",
+		Phone:    "028-0728-9727",
+		Status:   true,
+		Profile:  model.UserProfile{},
+	}
+	mtu2.Created = time.Now()
+	mtu2.Modified = time.Now()
+	db.Create(&mtu2)
 
 	//スペース以外のテストに使用するテストスペースを作成
 	mts := model.Space{

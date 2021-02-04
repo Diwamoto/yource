@@ -17,7 +17,7 @@ import (
 //UserEntity　Entityを埋め込まれている
 type User struct {
 	Entity
-	Email    string `validate:"required,email,unique"`
+	Email    string `validate:"required,email"`
 	Password string //フロントで弾いてhash化された物が入るイメージ、不正にデータが作られた場合はログインできない為問題ない
 	Name     string
 	Nickname string
@@ -49,9 +49,16 @@ func (UserModel) TableName() string {
 func (um UserModel) Validate(u User) ([]string, bool) {
 
 	validate := validator.New()
-	validate.RegisterValidation("unique", um.ValidateUniqueEmail)
 	err := validate.Struct(u)
 	var messages []string
+
+	//独自バリデーション
+	//メールアドレスをdbに問い合わせて存在していたらエラーを返す。
+	if !um.ValidateUniqueEmail(u.Email) {
+		//作成できなければエラーメッセージを返す
+		messages = append(messages, "入力されたメールアドレスは既に登録されています。")
+	}
+
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
 			fieldName := err.Field()
@@ -63,8 +70,6 @@ func (um UserModel) Validate(u User) ([]string, bool) {
 					messages = append(messages, "メールアドレスを入力してください。")
 				case "email":
 					messages = append(messages, "正しいメールアドレスを入力してください。")
-				case "unique":
-					messages = append(messages, "入力されたメールアドレスは既に登録されています。")
 				}
 				//emailとパスワードで登録させるためにいったん名前と電話番号のvalidationを外す
 				// case "Name":
@@ -91,6 +96,7 @@ func (um UserModel) Create(u User) ([]string, bool) {
 	msg, err := um.Validate(u)
 
 	if !err {
+
 		u.Created = time.Now()
 		u.Modified = time.Now()
 		//バリデーションが通れば作成し、メッセージの中に作成したユーザIDを入れて返す
@@ -108,15 +114,13 @@ func (um UserModel) Create(u User) ([]string, bool) {
 func (um UserModel) GetAll() ([]User, bool) {
 
 	var users []User
-	var c int //count
 	um.db.Find(&users)
 	for i := range users {
-		c++
 		um.db.Model(users[i]).Related(&users[i].Profile, "Profile")
 	}
 
 	//値が取得できたら
-	if c > 0 {
+	if len(users) > 0 {
 		return users, false
 	} else {
 		return []User{}, true
@@ -140,7 +144,7 @@ func (um UserModel) GetById(id int) (User, bool) {
 }
 
 //検索メソッド
-//ユーザの任意の条件に一致するユーザを取得する
+//任意の条件に一致するユーザを取得する
 //TODO: 検索に失敗するということの定義を考える
 //→指定条件で検索したところ、その条件にあうユーザは
 //いなかった。これはエラーなのか？結果が０なだけで
@@ -230,8 +234,7 @@ func (um UserModel) Delete(id int) ([]string, bool) {
 
 }
 
-func (um UserModel) ValidateUniqueEmail(fl validator.FieldLevel) bool {
-	email := fl.Field().String()
+func (um UserModel) ValidateUniqueEmail(email string) bool {
 	u := User{
 		Email: email,
 	}

@@ -3,13 +3,12 @@ package controller
 import (
 	//標準ライブラリ
 
-	"log"
-	"main/model"
 	"net/http"
 	"strconv"
 	"time"
 
 	//自作ライブラリ
+	"main/model"
 
 	//githubライブラリ
 	"github.com/gin-gonic/gin"
@@ -35,9 +34,9 @@ func CreateUserAction(c *gin.Context) {
 	msg, err := um.Create(u)
 	//エラーじゃなければuserの情報を返す
 	if !err {
-		userID, _ := strconv.Atoi(msg[0])
-		a, _ := um.GetById(userID)
-		a.Id = userID
+		userId, _ := strconv.Atoi(msg[0])
+		a, _ := um.GetById(userId)
+		a.Id = userId
 
 		//ユーザのメールアドレス死活監視トークンを生成する。
 
@@ -56,9 +55,9 @@ func GetUserAction(c *gin.Context) {
 	um := model.NewUserModel("")
 
 	id, _ := strconv.Atoi(c.Param("id"))
-	user, err := um.GetById(id)
+	u, err := um.GetById(id)
 	if !err {
-		c.JSON(http.StatusOK, user)
+		c.JSON(http.StatusOK, u)
 	} else {
 		c.JSON(http.StatusNotFound, []string{})
 	}
@@ -89,16 +88,16 @@ func UpdateUserAction(c *gin.Context) {
 	_, err := um.GetById(userId)
 	if !err {
 		//フォームから更新内容を取得したユーザ構造体を作成
-		var user model.User
-		user.Email = c.PostForm("Email")
-		user.Password = c.PostForm("Password")
-		user.Name = c.PostForm("Name")
-		user.Phone = c.PostForm("Phone")
+		var u model.User
+		u.Email = c.PostForm("Email")
+		u.Password = c.PostForm("Password")
+		u.Name = c.PostForm("Name")
+		u.Phone = c.PostForm("Phone")
 		Status, _ := strconv.ParseBool(c.PostForm("Status"))
-		user.Status = Status
-		msg, err2 := um.Update(userId, user)
+		u.Status = Status
+		msg, err2 := um.Update(userId, u)
 		if !err2 {
-			c.JSON(http.StatusOK, user)
+			c.JSON(http.StatusOK, u)
 		} else {
 			c.JSON(http.StatusConflict, msg)
 		}
@@ -124,7 +123,6 @@ func LoginAction(c *gin.Context) {
 
 	um := model.NewUserModel("default")
 	var user model.User
-	log.Println(c.PostForm("Email"))
 	user.Email = c.PostForm("Email")
 	user.Password = c.PostForm("Password")
 	//ログインできるのは有効なユーザだけ

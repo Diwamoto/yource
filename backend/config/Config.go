@@ -8,6 +8,9 @@ var config = map[string]string{
 
 	//新規登録時のメール死活確認のトークン有効期限(日)
 	"expireToken": "3",
+
+	//dbのデバッグの有無 (debug →全てのsqlがログで流れます)
+	"db_mode": "production",
 }
 
 //configの中から特定の値を取得

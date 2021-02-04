@@ -1,6 +1,7 @@
 package database
 
 import (
+	"main/config"
 	"os"
 
 	"github.com/jinzhu/gorm"
@@ -17,6 +18,9 @@ func GetInstance(t string) *gorm.DB {
 	if !singleton_flg {
 		singleton_flg = true
 		dataBase = ConnectDB(t)
+		if config.Get("db_mode") == "debug" {
+			dataBase = dataBase.Debug()
+		}
 	}
 
 	return dataBase

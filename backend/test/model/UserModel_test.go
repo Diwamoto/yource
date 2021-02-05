@@ -15,7 +15,7 @@ func TestValidateUser(t *testing.T) {
 		want bool
 	}{
 		{
-			//①正しいユーザ
+			//①: 正しいユーザ
 			model.User{
 				Email:    "test@example.com",
 				Password: "4AeNkWVisJ",
@@ -111,7 +111,7 @@ func TestCreateUser(t *testing.T) {
 		want bool
 	}{
 		{
-			//①正しいユーザ
+			//①: 正しいユーザ
 			model.User{
 				Email:    "CreateTest@example.com",
 				Password: "CrtTestPsw",
@@ -141,6 +141,7 @@ func TestGetAllUser(t *testing.T) {
 		want bool
 	}{
 		{
+			//①: 全て取得できる
 			false, //取得できるはず
 		},
 	}
@@ -161,12 +162,12 @@ func TestGetUserById(t *testing.T) {
 		want bool
 	}{
 		{
-			//①先ほど作成したユーザ
+			//①: 先ほど作成したユーザ
 			2,
 			false, //エラーはでないはず
 		},
 		{
-			//②存在しないidのユーザ
+			//②: 存在しないidのユーザ
 			9999999,
 			true, //エラーになるはず
 		},
@@ -247,6 +248,7 @@ func TestUpdateUser(t *testing.T) {
 		want  bool
 	}{
 		{
+			//①: 存在するユーザ
 			2, //先ほどテストで作ったユーザ
 			model.User{
 				Email:    "Upd@example.com",
@@ -258,6 +260,20 @@ func TestUpdateUser(t *testing.T) {
 				Profile:  model.UserProfile{},
 			},
 			false, //エラーはでないはず
+		},
+		{
+			//②: 存在しないユーザ
+			99999, //存在しないユーザ
+			model.User{
+				Email:    "Upd@example.com",
+				Password: "UpdTestPsw",
+				Name:     "Upd Test",
+				Phone:    "048-8476-8173",
+				Nickname: "Upd nickname",
+				Status:   true,
+				Profile:  model.UserProfile{},
+			},
+			true, //更新はできないはず
 		},
 	}
 	for i, tt := range tests {
@@ -276,10 +292,12 @@ func TestDeleteUser(t *testing.T) {
 		want bool
 	}{
 		{
+			//①: 存在するユーザ
 			2,     //テストで作ったユーザ
 			false, //エラーはでないはず
 		},
 		{
+			//②: 存在しないユーザ
 			9999999999,
 			true, //存在しないユーザは削除できない
 		},

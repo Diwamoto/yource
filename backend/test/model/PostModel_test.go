@@ -16,7 +16,7 @@ func TestValidatePost(t *testing.T) {
 		want bool
 	}{
 		{
-			//①正しい投稿
+			//①: 正しい投稿
 			model.Post{
 				ChannelId: 1,
 				UserId:    1,
@@ -77,7 +77,7 @@ func TestCreatePost(t *testing.T) {
 		want bool
 	}{
 		{
-			//①正しい投稿
+			//①: 正しい投稿
 			model.Post{
 				ChannelId: 1,
 				UserId:    1,
@@ -106,7 +106,7 @@ func TestGetPost(t *testing.T) {
 		want bool
 	}{
 		{
-			//①先ほど作成した投稿
+			//①: 先ほど作成した投稿
 			1,
 			false, //エラーはでないはず
 		},
@@ -129,6 +129,7 @@ func TestUpdatePost(t *testing.T) {
 		want  bool
 	}{
 		{
+			//①: 正常に変更できる
 			1, //先ほどテストで作った投稿
 			model.Post{
 				ChannelId: 1,
@@ -156,10 +157,12 @@ func TestDeletePost(t *testing.T) {
 		want bool
 	}{
 		{
+			//①: 存在する投稿
 			1,     //テストで作った投稿
 			false, //エラーはでないはず
 		},
 		{
+			//②: 存在しない投稿
 			9999999999,
 			true, //存在しない投稿は削除できない
 		},

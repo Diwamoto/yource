@@ -15,7 +15,7 @@ func TestValidateChannel(t *testing.T) {
 		want bool
 	}{
 		{
-			//①正しいチャンネル
+			//①: 正しいチャンネル
 			model.Channel{
 				SpaceId:     1,
 				UserId:      1,
@@ -72,7 +72,7 @@ func TestCreateChannel(t *testing.T) {
 		want bool
 	}{
 		{
-			//①正しいチャンネル
+			//①: 正しいチャンネル
 			model.Channel{
 				SpaceId:     1,
 				UserId:      1,
@@ -100,7 +100,7 @@ func TestGetChannel(t *testing.T) {
 		want bool
 	}{
 		{
-			//①先ほど作成したチャンネル
+			//①: 先ほど作成したチャンネル
 			2,
 			false, //エラーはでないはず
 		},
@@ -123,6 +123,7 @@ func TestUpdateChannel(t *testing.T) {
 		want  bool
 	}{
 		{
+			//①: 正常に変更できる
 			2, //先ほどテストで作ったチャンネル
 			model.Channel{
 				SpaceId:     1,
@@ -149,10 +150,12 @@ func TestDeleteChannel(t *testing.T) {
 		want bool
 	}{
 		{
+			//①: 存在するチャンネル
 			2,     //テストで作ったチャンネル
 			false, //エラーはでないはず
 		},
 		{
+			//②: 存在しないチャンネル
 			9999999999,
 			true, //存在しないチャンネルは削除できない
 		},

@@ -1,6 +1,6 @@
 swagger: "2.0"
 # host: "yource.space"
-host: "3991c236caeb.ngrok.io"
+host: "bcd05b016791.ngrok.io"
 info:
   description: "yourceで使用するrest apiについてのswaggerドキュメント"
   version: "1.0.0"
@@ -17,6 +17,8 @@ tags:
   description: "ユーザ"
 - name: "profile"
   description: "プロフィール"
+- name: "space"
+  description: "スペース"
 schemes:
 - "https"
 paths:
@@ -33,7 +35,7 @@ paths:
             items:
               $ref: "#/definitions/User"
         404:
-          description: "指定したIDを持つユーザが見つからなかった場合"
+          description: "ユーザが存在しなかった場合"
           schema:
             type: "string"
             example: "{}"
@@ -109,6 +111,30 @@ paths:
         required: true
         type: "integer"
         format: "int64"
+      - name: Email
+        in: formData
+        description: メールアドレス
+        type: string
+      - name: Password
+        in: formData
+        description: パスワード
+        type: string
+      - name: Name
+        in: formData
+        description: 名前
+        type: string
+      - name: Nickname
+        in: formData
+        description: ニックネーム
+        type: string
+      - name: Phone
+        in: formData
+        description: 電話番号
+        type: string
+      - name: Status
+        in: formData
+        description: ステータス
+        type: string
       responses:
         200:
           description: "更新成功時 変更後のユーザオブジェクトが表示される"
@@ -227,7 +253,7 @@ paths:
       - "profile"
       consumes:
           - application/x-www-form-urlencoded
-      summary: "指定されたユーザIDのプロフィールを変更します。"
+      summary: "指定されたユーザIDのプロフィールを変更する。"
       parameters:
         - name: userId
           in: path
@@ -276,6 +302,149 @@ paths:
           schema:
             type: "string"
             example: "作成失敗理由"
+  /spaces:
+    get:
+      tags:
+      - "space"
+      summary: "全てのスペースを取得する"
+      responses:
+        200:
+          description: "成功時"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Space"
+        404:
+          description: "スペースが存在しなかった場合"
+          schema:
+            type: "string"
+            example: "{}"
+    post:
+      tags:
+      - "space"
+      consumes:
+          - application/x-www-form-urlencoded
+      summary: "スペースが存在しなければ作成し、そのスペースのオブジェクトを作成する"
+      parameters:
+        - name: userId
+          in: formData
+          description: ユーザID
+          required: true
+          type: integer
+        - name: Name
+          in: formData
+          description: ユーザ名
+          type: string
+        - name: Description
+          in: formData
+          description: 説明
+          type: string
+        - name: SubDomain
+          in: formData
+          description: サブドメイン
+          type: string
+      responses:
+        201:
+          description: "成功時"
+          schema:
+            $ref: "#/definitions/Space"
+        409:
+          description: "なんらかの理由で作成に失敗した時"
+          schema:
+            type: "string"
+            example: "作成失敗理由"
+  /spaces/{userId}:
+    get:
+      tags:
+      - "space"
+      summary: "指定されたユーザidの情報スペースを返す"  
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "取得したいスペースのユーザID"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "成功時"
+          schema:
+            $ref: "#/definitions/Space"
+        404:
+          description: "指定したユーザのスペースがない時"
+          schema:
+            type: "string"
+            example: "{}"
+    put:
+      tags:
+      - "space"
+      summary: "スペースの情報を変更する"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "更新したいスペースのユーザID"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: Name
+        in: formData
+        description: スペース名
+        type: string
+      - name: Description
+        in: formData
+        description: 説明
+        type: string
+      - name: SubDomain
+        in: formData
+        description: サブドメイン
+        type: string
+      - name: Publish
+        in: formData
+        description: 公開:true,非公開:false
+        type: string
+      - name: Status
+        in: formData
+        description: 有効:true,無効:false
+        type: string
+      responses:
+        200:
+          description: "更新成功時 変更後のスペースオブジェクトが返却される"
+          schema:
+            $ref: "#/definitions/Space"
+        409:
+          description: "何らかの理由で更新に失敗した時"
+          schema:
+            type: "string"
+            example: "更新失敗理由"
+        404:
+          description: "指定されたIDを持つユーザが見つからなかった場合"
+          schema:
+            type: "string"
+            example: ""
+    delete:
+      tags:
+      - "space"
+      summary: "指定されたuserIdのスペースの情報を削除する。"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "削除したいスペースのユーザID"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "削除成功時"
+          schema:
+            type: "string"
+            example: "成功しました。"
+        409:
+          description: "何らかの理由で削除に失敗した時"
+          schema:
+            type: "string"
+            example: "削除失敗理由"
+
+
 definitions:
   User:
     type: "object"
@@ -347,3 +516,32 @@ definitions:
       Other:
         type: "string"
         example: "https://my.awesome.homepage.com"
+  Space:
+    type: "object"
+    properties:
+      Id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      Created:
+        type: "string"
+        example: "2021-01-01T00:00:00+09:00"
+      Modified:
+        type: "string"
+        example: "2021-01-01T00:00:00+09:00"
+      UserId:
+        type: "integer"
+        format: "int64"
+        example: 1
+      Name:
+        type: "string"
+        example: "test"
+      Description:
+        type: "string"
+        example: "このスペースは〇〇の為のものです。"
+      Subdomain:
+        type: "string"
+        example: "myspace"
+      Status:
+        type: "boolean"
+        example: true

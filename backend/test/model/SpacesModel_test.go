@@ -7,7 +7,7 @@ import (
 
 var sm = model.NewSpaceModel("test")
 
-//ValidateSpace()のテスト
+//SpaceModel.Validate()のテスト
 func TestValidateSpace(t *testing.T) {
 
 	tests := []struct {
@@ -15,14 +15,12 @@ func TestValidateSpace(t *testing.T) {
 		want bool
 	}{
 		{
-			//①正しいスペース
+			//①: 正しいスペース
 			model.Space{
 				UserId:      1,
 				Name:        "test name",
 				Discription: "test disc",
 				SubDomain:   "subdomain",
-				Status:      true,
-				Publish:     true,
 			},
 			false, //エラーはでないはず
 		},
@@ -33,8 +31,6 @@ func TestValidateSpace(t *testing.T) {
 				Name:        "test name",
 				Discription: "test disc",
 				SubDomain:   "subdomain",
-				Status:      true,
-				Publish:     true,
 			},
 			true, //エラーになるはず
 		},
@@ -45,8 +41,6 @@ func TestValidateSpace(t *testing.T) {
 				Name:        "", //スペース名が入力されていない
 				Discription: "test disc",
 				SubDomain:   "subdomain",
-				Status:      true,
-				Publish:     true,
 			},
 			true, //エラーになるはず
 		},
@@ -57,8 +51,6 @@ func TestValidateSpace(t *testing.T) {
 				Name:        "test name",
 				Discription: "test disc",
 				SubDomain:   "",
-				Status:      true,
-				Publish:     true,
 			},
 			true, //エラーになるはず
 		},
@@ -69,8 +61,6 @@ func TestValidateSpace(t *testing.T) {
 				Name:        "test name",
 				Discription: "test disc",
 				SubDomain:   "@wowoj@^~",
-				Status:      true,
-				Publish:     true,
 			},
 			true, //エラーになるはず
 		},
@@ -84,7 +74,8 @@ func TestValidateSpace(t *testing.T) {
 	}
 }
 
-//CreateSpace()のテスト
+//SpaceModel.Create()のテスト
+//スペースが作成できたらok, できなければだめ
 func TestCreateSpace(t *testing.T) {
 
 	tests := []struct {
@@ -92,16 +83,34 @@ func TestCreateSpace(t *testing.T) {
 		want bool
 	}{
 		{
-			//①正しいスペース
+			//①: 正しいスペース
 			model.Space{
 				UserId:      1,
 				Name:        "test name",
 				Discription: "test disc",
 				SubDomain:   "subdomain",
-				Status:      true,
-				Publish:     true,
 			},
 			false, //エラーはでないはず
+		},
+		{
+			//②: 名前が入力されていない
+			model.Space{
+				UserId:      1,
+				Name:        "",
+				Discription: "test disc",
+				SubDomain:   "subdomain",
+			},
+			true, //エラーになるはず
+		},
+		{
+			//③: サブドメインが入力されていない
+			model.Space{
+				UserId:      1,
+				Name:        "test name",
+				Discription: "test disc",
+				SubDomain:   "",
+			},
+			true, //エラーになるはず
 		},
 	}
 	for i, tt := range tests {
@@ -113,16 +122,36 @@ func TestCreateSpace(t *testing.T) {
 
 }
 
-//GetSpace()のテスト
+//SpaceModel.GetAll()のテスト
 //スペースが取得できたらOK,できなければダメ
-func TestGetSpace(t *testing.T) {
+func TestGetAllSpace(t *testing.T) {
+
+	tests := []struct {
+		want bool
+	}{
+		{
+			//①: 全てのスペースを取得
+			false, //エラーはでないはず
+		},
+	}
+	for _, tt := range tests {
+		_, err := sm.GetAll()
+		if err != tt.want {
+			t.Errorf("全てのスペースを取得できませんでした。")
+		}
+	}
+}
+
+//SpaceModel.GetById()のテスト
+//スペースが取得できたらOK,できなければダメ
+func TestGetSpaceById(t *testing.T) {
 
 	tests := []struct {
 		in   int //userID
 		want bool
 	}{
 		{
-			//①先ほど作成したスペース
+			//①: 先ほど作成したスペース
 			2,
 			false, //エラーはでないはず
 		},
@@ -135,7 +164,29 @@ func TestGetSpace(t *testing.T) {
 	}
 }
 
-//UpdateSpace()のテスト
+//SpaceModel.GetByUserId()のテスト
+//スペースが取得できたらOK,できなければダメ
+func TestGetSpaceByUserId(t *testing.T) {
+
+	tests := []struct {
+		in   int //userID
+		want bool
+	}{
+		{
+			//①: 先ほど作成したスペース
+			2,
+			false, //エラーはでないはず
+		},
+	}
+	for _, tt := range tests {
+		_, err := sm.GetById(tt.in)
+		if err != tt.want {
+			t.Errorf("userID:%dのスペースを取得できませんでした。", tt.in)
+		}
+	}
+}
+
+//SpaceModel.Update()のテスト
 //スペースの情報が更新できなかったらダメ
 func TestUpdateSpace(t *testing.T) {
 
@@ -145,6 +196,7 @@ func TestUpdateSpace(t *testing.T) {
 		want  bool
 	}{
 		{
+			//①: 正常に変更できる
 			2, //先ほどテストで作ったスペース
 			model.Space{
 				UserId:      1,
@@ -166,6 +218,8 @@ func TestUpdateSpace(t *testing.T) {
 
 }
 
+//SpaceModel.Delete()のテスト
+//正しいデータが削除できればオーケー、できなければダメ
 func TestDeleteSpace(t *testing.T) {
 
 	tests := []struct {
@@ -173,10 +227,12 @@ func TestDeleteSpace(t *testing.T) {
 		want bool
 	}{
 		{
+			//①: 存在するスペース
 			2,     //テストで作ったスペース
 			false, //エラーはでないはず
 		},
 		{
+			//②: 存在しないスペース
 			9999999999,
 			true, //存在しないスペースidは削除できない
 		},

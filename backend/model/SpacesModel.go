@@ -14,7 +14,7 @@ import (
 	"github.com/go-playground/validator"
 )
 
-//スペース（ブログ）構造体 スペースそれぞれが作ることのできる空間。
+//スペース（ブログ）構造体 ユーザそれぞれが作ることのできる空間。
 type Space struct {
 	Entity
 	UserId      int    `validate:"required"`
@@ -106,6 +106,23 @@ func (sm SpaceModel) Create(s Space) ([]string, bool) {
 }
 
 //指定スペースidの情報を返す
+func (sm SpaceModel) GetAll() ([]Space, bool) {
+
+	var s []Space
+
+	sm.db.AutoMigrate(&s)
+	sm.db.Find(&s)
+
+	//値が取得できたら
+	if len(s) > 0 {
+		return s, false
+	} else {
+		return []Space{}, true
+	}
+
+}
+
+//指定スペースidの情報を返す
 func (sm SpaceModel) GetById(id int) (Space, bool) {
 
 	var s Space
@@ -118,6 +135,39 @@ func (sm SpaceModel) GetById(id int) (Space, bool) {
 		return s, false
 	} else {
 		return Space{}, true
+	}
+
+}
+
+//指定スペースidの情報を返す
+func (sm SpaceModel) GetByUserId(userId int) (Space, bool) {
+
+	var s Space
+
+	sm.db.AutoMigrate(&s)
+	sm.db.Where("user_id = ?", userId).First(&s)
+
+	//値が取得できたら
+	if s.UserId == userId {
+		return s, false
+	} else {
+		return Space{}, true
+	}
+
+}
+
+//指定スペースidの情報を返す
+func (sm SpaceModel) Find(s Space) ([]Space, bool) {
+
+	var r []Space
+
+	sm.db.Where(&s).Find(&r)
+
+	//値が取得できたら
+	if len(r) > 0 {
+		return r, false
+	} else {
+		return []Space{}, true
 	}
 
 }

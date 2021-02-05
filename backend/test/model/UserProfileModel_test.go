@@ -20,7 +20,7 @@ func TestValidateUserProfile(t *testing.T) {
 		want bool
 	}{
 		{
-			//①正しいプロフィール
+			//①: 正しいプロフィール
 			model.UserProfile{
 				UserId:    1,
 				Profile:   "profile test",
@@ -114,6 +114,7 @@ func TestGetAllUserProfile(t *testing.T) {
 		want bool
 	}{
 		{
+			//①: 全てのユーザを取得
 			false, //取得できるはず
 		},
 	}
@@ -134,7 +135,7 @@ func TestGetUserProfile(t *testing.T) {
 		want bool
 	}{
 		{
-			//①先ほど作成したプロフィール
+			//①: 先ほど作成したプロフィール
 			1,
 			false, //エラーはでないはず
 		},
@@ -275,8 +276,8 @@ func TestUpdateUserProfile(t *testing.T) {
 		after model.UserProfile
 		want  bool
 	}{
-		//①:正しい変更内容
 		{
+			//①: 正しい変更内容
 			1, //先ほどテストで作ったプロフィール
 			model.UserProfile{
 				UserId:    1,
@@ -291,8 +292,8 @@ func TestUpdateUserProfile(t *testing.T) {
 			},
 			false, //エラーはでないはず
 		},
-		//②:ユーザIDを変更してしまっているユーザ
 		{
+			//②: ユーザIDを変更してしまっているユーザ
 			1, //先ほどテストで作ったプロフィール
 			model.UserProfile{
 				UserId:    9999,
@@ -325,10 +326,12 @@ func TestDeleteUserProfile(t *testing.T) {
 		want bool
 	}{
 		{
+			//①: 存在するユーザ
 			1,     //テストで作ったプロフィール
 			false, //エラーはでないはず
 		},
 		{
+			//②: 存在しないユーザ
 			9999999999,
 			true, //存在しないプロフィールは削除できない
 		},

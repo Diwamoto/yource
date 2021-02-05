@@ -59,7 +59,7 @@ func CreateUserProfileAction(c *gin.Context) {
 //GETでパラメータのユーザの情報を取得する
 func GetUserProfileAction(c *gin.Context) {
 
-	upm := model.NewUserProfileModel("")
+	upm := model.NewUserProfileModel("default")
 
 	id, _ := strconv.Atoi(c.Param("id"))
 	up, err := upm.GetById(id)
@@ -74,7 +74,7 @@ func GetUserProfileAction(c *gin.Context) {
 //GETでパラメータのユーザの情報を取得する
 func GetAllUserProfileAction(c *gin.Context) {
 
-	um := model.NewUserProfileModel("")
+	um := model.NewUserProfileModel("default")
 
 	users, err := um.GetAll()
 	if !err {
@@ -126,7 +126,7 @@ func UpdateUserProfileAction(c *gin.Context) {
 func DeleteUserProfileAction(c *gin.Context) {
 
 	upm := model.NewUserProfileModel("default")
-	upId, _ := strconv.Atoi(c.Param("Id"))
+	upId, _ := strconv.Atoi(c.Param("id"))
 	msg, err := upm.Delete(upId)
 	if !err {
 		c.JSON(http.StatusOK, msg)

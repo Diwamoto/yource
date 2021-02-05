@@ -35,12 +35,12 @@ func CreateUserAction(c *gin.Context) {
 	//エラーじゃなければuserの情報を返す
 	if !err {
 		userId, _ := strconv.Atoi(msg[0])
-		a, _ := um.GetById(userId)
-		a.Id = userId
+		user, _ := um.GetById(userId)
+		user.Id = userId
 
 		//ユーザのメールアドレス死活監視トークンを生成する。
 
-		c.JSON(http.StatusCreated, a)
+		c.JSON(http.StatusCreated, user)
 	} else {
 		//作成できなければエラーメッセージを返す。
 		c.JSON(http.StatusConflict, msg)
@@ -52,7 +52,7 @@ func CreateUserAction(c *gin.Context) {
 //GETでパラメータのユーザの情報を取得する
 func GetUserAction(c *gin.Context) {
 
-	um := model.NewUserModel("")
+	um := model.NewUserModel("default")
 
 	id, _ := strconv.Atoi(c.Param("id"))
 	u, err := um.GetById(id)
@@ -67,7 +67,7 @@ func GetUserAction(c *gin.Context) {
 //GETでパラメータのユーザの情報を取得する
 func GetAllUserAction(c *gin.Context) {
 
-	um := model.NewUserModel("")
+	um := model.NewUserModel("default")
 
 	users, err := um.GetAll()
 	if !err {
@@ -97,7 +97,8 @@ func UpdateUserAction(c *gin.Context) {
 		u.Status = Status
 		msg, err2 := um.Update(userId, u)
 		if !err2 {
-			c.JSON(http.StatusOK, u)
+			r, _ := um.GetById(userId)
+			c.JSON(http.StatusOK, r)
 		} else {
 			c.JSON(http.StatusConflict, msg)
 		}

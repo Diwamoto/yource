@@ -43,6 +43,17 @@ func GetRouter() *gin.Engine {
 		v1.POST("/users/:id/profile", controller.CreateUserProfileAction)
 		v1.PUT("/users/:id/profile", controller.UpdateUserProfileAction)
 
+		//スペースルーティング
+		//get → スペース取得
+		//post → スペース作成
+		//put → スペース変更
+		//delete → スペース削除
+		v1.GET("/spaces", controller.GetAllSpaceAction)
+		v1.POST("/spaces", controller.CreateSpaceAction)
+		v1.GET("/spaces/:id", controller.GetSpaceAction)
+		v1.PUT("/spaces/:id", controller.UpdateSpaceAction)
+		v1.DELETE("/spaces/:id", controller.DeleteSpaceAction)
+
 		//ログイン
 		v1.POST("/login", controller.LoginAction)
 

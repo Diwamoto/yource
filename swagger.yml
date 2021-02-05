@@ -1,6 +1,6 @@
 swagger: "2.0"
 # host: "yource.space"
-host: "38e3fa1f2616.ngrok.io"
+host: "3991c236caeb.ngrok.io"
 info:
   description: "yourceで使用するrest apiについてのswaggerドキュメント"
   version: "1.0.0"
@@ -229,7 +229,7 @@ paths:
           - application/x-www-form-urlencoded
       summary: "指定されたユーザIDのプロフィールを変更します。"
       parameters:
-        - name: UserId
+        - name: userId
           in: path
           description: ユーザID
           required: true

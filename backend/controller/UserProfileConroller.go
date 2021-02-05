@@ -2,6 +2,7 @@ package controller
 
 import (
 	//標準ライブラリ
+
 	"net/http"
 	"strconv"
 	"time"
@@ -89,12 +90,14 @@ func UpdateUserProfileAction(c *gin.Context) {
 
 	upm := model.NewUserProfileModel("default")
 
-	userId, _ := strconv.Atoi(c.Param("Id"))
+	userId, _ := strconv.Atoi(c.Param("id"))
+
 	//ユーザを取得し、取得できたら更新をかける
 	_, err := upm.GetByUserId(userId)
 	if !err {
 		//フォームから更新内容を取得したユーザ構造体を作成
 		var up model.UserProfile
+		up.UserId = userId
 
 		//誕生日を時間型に変換
 		birth, _ := time.Parse("2006/01/02 15:04:05", c.PostForm("Birthday"))

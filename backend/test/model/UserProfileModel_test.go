@@ -125,7 +125,7 @@ func TestGetAllUserProfile(t *testing.T) {
 	}
 }
 
-//UserProfileModel.Get()のテスト
+//UserProfileModel.GetById()のテスト
 //プロフィールが取得できたらOK,できなければダメ
 func TestGetUserProfile(t *testing.T) {
 
@@ -137,6 +137,33 @@ func TestGetUserProfile(t *testing.T) {
 			//①先ほど作成したプロフィール
 			1,
 			false, //エラーはでないはず
+		},
+	}
+	for _, tt := range tests {
+		_, err := upm.GetById(tt.in)
+		if err != tt.want {
+			t.Errorf("UserProfileID:%dのプロフィールを取得できませんでした。", tt.in)
+		}
+	}
+}
+
+//UserProfileModel.GetByUserId()のテスト
+//プロフィールが取得できたらOK,できなければダメ
+func TestGetUserProfileByUserId(t *testing.T) {
+
+	tests := []struct {
+		in   int //userId
+		want bool
+	}{
+		{
+			//①: テストで作成したユーザIDのプロフィール
+			1,
+			false, //エラーはでないはず
+		},
+		{
+			//②: 存在しないユーザIDのプロフィール
+			9999,
+			true, //エラーになるはず
 		},
 	}
 	for _, tt := range tests {

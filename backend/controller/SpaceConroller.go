@@ -21,7 +21,7 @@ func CreateSpaceAction(c *gin.Context) {
 	sm := model.NewSpaceModel("default")
 
 	//useridをintに変換
-	userId, _ := strconv.Atoi(c.PostForm("userId"))
+	userId, _ := strconv.Atoi(c.PostForm("id"))
 
 	s := model.Space{
 		UserId:      userId,

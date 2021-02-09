@@ -1,6 +1,6 @@
 swagger: "2.0"
 # host: "yource.space"
-host: "76239a2601b3.ngrok.io"
+host: "724817ebda38.ngrok.io"
 info:
   description: "yourceで使用するrest apiについてのswaggerドキュメント"
   version: "1.0.0"
@@ -19,6 +19,10 @@ tags:
   description: "プロフィール"
 - name: "space"
   description: "スペース"
+- name: "channel"
+  description: "チャンネル"
+- name: "post"
+  description: "投稿"
 schemes:
 - "https"
 paths:
@@ -592,6 +596,151 @@ paths:
           schema:
             type: "string"
             example: "作成失敗理由"
+  /posts:
+    get:
+      tags:
+      - "post"
+      summary: "全ての投稿を取得する"
+      responses:
+        200:
+          description: "成功時"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Post"
+        404:
+          description: "投稿が存在しなかった場合"
+          schema:
+            type: "string"
+            example: "{}"
+  /posts/{postId}:
+    get:
+      tags:
+      - "post"
+      summary: "指定された投稿IDの情報を返す"  
+      parameters:
+      - name: "postId"
+        in: "path"
+        description: "取得したい投稿のID"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "成功時"
+          schema:
+            $ref: "#/definitions/Post"
+        404:
+          description: "指定したIDの投稿がない時"
+          schema:
+            type: "string"
+            example: "{}"
+    put:
+      tags:
+      - "post"
+      summary: "投稿の情報を変更する"
+      parameters:
+      - name: "postId"
+        in: "path"
+        description: "更新したい投稿のid"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: Content
+        in: formData
+        description: 内容
+        type: string
+      responses:
+        200:
+          description: "更新成功時 変更後の投稿オブジェクトが返却される"
+          schema:
+            $ref: "#/definitions/Post"
+        409:
+          description: "何らかの理由で更新に失敗した時"
+          schema:
+            type: "string"
+            example: "更新失敗理由"
+        404:
+          description: "指定されたIDを持つユーザが見つからなかった場合"
+          schema:
+            type: "string"
+            example: ""
+    delete:
+      tags:
+      - "post"
+      summary: "指定されたidの投稿を削除する"
+      parameters:
+      - name: "postId"
+        in: "path"
+        description: "削除したい投稿のID"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "削除成功時"
+          schema:
+            type: "string"
+            example: "成功しました。"
+        409:
+          description: "何らかの理由で削除に失敗した時"
+          schema:
+            type: "string"
+            example: "削除失敗理由"
+  /channels/{channelId}/posts:
+    get:
+      tags:
+      - "channel"
+      summary: "指定チャンネルの投稿を全て取得する"  
+      parameters:
+      - name: "spaceId"
+        in: "path"
+        description: "投稿一覧を取得したいチャンネルのid"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "成功時"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Channel"
+        404:
+          description: "指定したIDのスペースがない時"
+          schema:
+            type: "string"
+            example: "{}"
+    post:
+      tags:
+        - "channel"
+      consumes:
+        - application/x-www-form-urlencoded
+      summary: "指定チャンネルに投稿を作成する"
+      parameters:
+        - name: channelId
+          in: path
+          description: チャンネルID
+          required: true
+          type: integer
+        - name: UserId
+          in: formData
+          description: ユーザID
+          type: string
+        - name: Content
+          in: formData
+          description: 内容
+          type: string
+      responses:
+        200:
+          description: "成功時"
+          schema:
+            $ref: "#/definitions/Post"
+        409:
+          description: "なんらかの理由で作成に失敗した時"
+          schema:
+            type: "string"
+            example: "作成失敗理由"
 definitions:
   User:
     type: "object"
@@ -719,3 +868,30 @@ definitions:
       Description:
         type: "string"
         example: "このチャンネルは〇〇の為のものです。"
+  Post:
+    type: "object"
+    properties:
+      Id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      Created:
+        type: "string"
+        example: "2021-01-01T00:00:00+09:00"
+      Modified:
+        type: "string"
+        example: "2021-01-01T00:00:00+09:00"
+      ChannelId:
+        type: "integer"
+        format: "int64"
+        example: 1
+      UserId:
+        type: "integer"
+        format: "int64"
+        example: 1
+      Content:
+        type: "string"
+        example: "Hello, World!"
+      Date:
+        type: "string"
+        example: "2021-01-01T00:00:00+09:00"

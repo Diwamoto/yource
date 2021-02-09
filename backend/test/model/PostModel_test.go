@@ -22,7 +22,6 @@ func TestValidatePost(t *testing.T) {
 				UserId:    1,
 				Content:   "test content",
 				Date:      time.Now(),
-				Status:    true,
 			},
 			false, //エラーはでないはず
 		},
@@ -33,7 +32,6 @@ func TestValidatePost(t *testing.T) {
 				UserId:    1,
 				Content:   "test content",
 				Date:      time.Now(),
-				Status:    true,
 			},
 			true, //エラーになるはず
 		},
@@ -44,7 +42,6 @@ func TestValidatePost(t *testing.T) {
 				UserId:    9999,
 				Content:   "test content",
 				Date:      time.Now(),
-				Status:    true,
 			},
 			true, //エラーになるはず
 		},
@@ -55,7 +52,6 @@ func TestValidatePost(t *testing.T) {
 				UserId:    1,
 				Content:   "",
 				Date:      time.Now(),
-				Status:    true,
 			},
 			true, //エラーになるはず
 		},
@@ -83,7 +79,6 @@ func TestCreatePost(t *testing.T) {
 				UserId:    1,
 				Content:   "test content",
 				Date:      time.Now(),
-				Status:    true,
 			},
 			false, //エラーはでないはず
 		},
@@ -136,7 +131,6 @@ func TestUpdatePost(t *testing.T) {
 				UserId:    1,
 				Content:   "Upd content",
 				Date:      time.Now(), //timeは変えられない
-				Status:    true,
 			},
 			false, //エラーはでないはず
 		},

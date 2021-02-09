@@ -15,11 +15,10 @@ import (
 //投稿 投稿はチャンネルと紐付き、どのユーザが投稿したかの情報を持つ。
 type Post struct {
 	Entity
-	ChannelId int       `validate:"required"`
-	UserId    int       `validate:"required"`
+	ChannelId int       `validate:"required"` //送信チャンネルID
+	UserId    int       `validate:"required"` //送信者ID
 	Content   string    `validate:"required"`
 	Date      time.Time `validate:"required"`
-	Status    bool
 }
 
 //呼び出し用投稿モデル
@@ -70,7 +69,7 @@ func (pm PostModel) Validate(p Post) ([]string, bool) {
 		messages = append(messages, "存在しないチャンネルの投稿は作成できません。")
 	}
 
-	//存在しないチャンネルの投稿は作成できない
+	//存在しないユーザは投稿できない
 	um := NewUserModel(pm.nc)
 	_, err3 := um.GetById(p.UserId)
 	if err3 {
@@ -106,7 +105,60 @@ func (pm PostModel) Create(p Post) ([]string, bool) {
 
 }
 
+//全てのチャンネルを取得する
+func (pm PostModel) GetAll() ([]Post, bool) {
+
+	var p []Post
+
+	pm.db.AutoMigrate(&p)
+	pm.db.Find(&p)
+
+	//値が取得できたら
+	if len(p) > 0 {
+		return p, false
+	} else {
+		return []Post{}, true
+	}
+
+}
+
+//チャンネルの投稿を全て取得する
+func (pm PostModel) GetByChannelId(channelId int) ([]Post, bool) {
+
+	var p []Post
+
+	pm.db.AutoMigrate(&p)
+	pm.db.Where("channel_id = ?", channelId).Find(&p)
+
+	//値が取得できたら
+	if len(p) > 0 {
+		return p, false
+	} else {
+		return []Post{}, true
+	}
+
+}
+
+//指定ユーザidの情報を返す
+//チャンネル問わず返す。チャンネルを指定して返したい時はfindで指定する
+func (pm PostModel) GetByUserId(userId int) ([]Post, bool) {
+
+	var p []Post
+
+	pm.db.AutoMigrate(&p)
+	pm.db.Where("user_id = ?", userId).Find(&p)
+
+	//値が取得できたら
+	if len(p) > 0 {
+		return p, false
+	} else {
+		return []Post{}, true
+	}
+
+}
+
 //指定投稿idの情報を返す
+//多分ほぼ使用しない
 func (pm PostModel) GetById(id int) (Post, bool) {
 
 	var p Post
@@ -119,6 +171,23 @@ func (pm PostModel) GetById(id int) (Post, bool) {
 		return p, false
 	} else {
 		return Post{}, true
+	}
+
+}
+
+//検索メソッド
+//後ほど拡充する
+func (pm PostModel) Find(p Post) ([]Post, bool) {
+
+	var r []Post
+
+	pm.db.Where(&p).Find(&r)
+
+	//値が取得できたら
+	if len(r) > 0 {
+		return r, false
+	} else {
+		return []Post{}, true
 	}
 
 }

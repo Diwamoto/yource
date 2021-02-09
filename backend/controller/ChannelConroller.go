@@ -1,8 +1,8 @@
 package controller
 
 import (
-	//標準ライブラリ
 
+	//標準ライブラリ
 	"net/http"
 	"strconv"
 	"time"
@@ -33,12 +33,10 @@ func CreateChannelAction(c *gin.Context) {
 	s.Modified = time.Now()
 
 	msg, err := cm.Create(s)
-	//エラーじゃなければuserの情報を返す
+	//エラーじゃなければチャンネルの情報を返す
 	if !err {
 		channelId, _ := strconv.Atoi(msg[0])
 		channel, _ := cm.GetById(channelId)
-
-		//ユーザのメールアドレス死活監視トークンを生成する。
 
 		c.JSON(http.StatusCreated, channel)
 	} else {
@@ -78,6 +76,21 @@ func GetChannelBySpaceIdAction(c *gin.Context) {
 	}
 }
 
+//チャンネルの情報を返すアクション
+//GETで指定idのチャンネルを返す
+func GetChannelByIdAction(c *gin.Context) {
+
+	cm := model.NewChannelModel("default")
+
+	channelId, _ := strconv.Atoi(c.Param("id"))
+	channel, err := cm.GetById(channelId)
+	if !err {
+		c.JSON(http.StatusOK, channel)
+	} else {
+		c.JSON(http.StatusNotFound, []string{})
+	}
+}
+
 //全てのチャンネルの情報を返すアクション
 //GETで全てのチャンネルの情報を取得する
 func GetAllChannelAction(c *gin.Context) {
@@ -99,7 +112,7 @@ func UpdateChannelAction(c *gin.Context) {
 	cm := model.NewChannelModel("default")
 
 	id, _ := strconv.Atoi(c.Param("id"))
-	//を取得し、取得できたら更新をかける
+	//パラメータからチャンネルを取得し、取得できたら更新をかける
 	_, err := cm.GetById(id)
 	if !err {
 		//フォームから更新内容を取得したチャンネル構造体を作成

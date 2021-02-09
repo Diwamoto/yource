@@ -48,6 +48,15 @@ func (cm ChannelModel) Validate(c Channel) ([]string, bool) {
 	validate := validator.New()
 	err := validate.Struct(c)
 	var messages []string
+
+	//独自バリデーション
+	//存在するスペースIDのみを使用できる
+	sm := NewSpaceModel(cm.nc)
+	_, err2 := sm.GetById(c.SpaceId)
+	if err2 {
+		messages = append(messages, "存在しないスペースIDのチャンネルは作成できません。")
+	}
+
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
 			fieldName := err.Field()
@@ -60,12 +69,6 @@ func (cm ChannelModel) Validate(c Channel) ([]string, bool) {
 				messages = append(messages, "説明を入力してください")
 			}
 		}
-	}
-	//存在するスペースIDのみを使用できる
-	sm := NewSpaceModel(cm.nc)
-	_, err2 := sm.GetById(c.SpaceId)
-	if err2 {
-		messages = append(messages, "存在しないスペースIDのチャンネルは作成できません。")
 	}
 
 	if len(messages) > 0 {
@@ -147,6 +150,25 @@ func (sm ChannelModel) GetBySpaceId(spaceId int) ([]Channel, bool) {
 
 }
 
+//任意の条件でチャンネルを検索する
+func (cm ChannelModel) Find(c Channel) ([]Channel, bool) {
+
+	var r []Channel
+
+	cm.db.Where(&c).Find(&r)
+
+	//値が取得できたら
+	if len(r) > 0 {
+
+		//MEMO: 投稿は今後確実に多くなるのでリレーションは実装しない。
+		//必要があれば後ほどチャンネルidを使って取得する。
+		return r, false
+	} else {
+		return []Channel{}, true
+	}
+
+}
+
 //更新メソッド
 //チャンネルの情報を更新する
 func (cm ChannelModel) Update(id int, c Channel) ([]string, bool) {
@@ -155,14 +177,15 @@ func (cm ChannelModel) Update(id int, c Channel) ([]string, bool) {
 	cm.db.AutoMigrate(&tc)
 	cm.db.First(&tc, id)
 
+	//スペースIDが変更されていたらだめ
+	if tc.SpaceId != c.SpaceId {
+		return []string{"スペースIDは変更することが出来ません。"}, true
+	}
+
 	//引数のチャンネルの情報を移す
 	//ここでは変更の検知のみ
-	if c.Name != "" {
-		tc.Name = c.Name
-	}
-	if c.Description != "" {
-		tc.Description = c.Description
-	}
+	tc.Name = c.Name
+	tc.Description = c.Description
 
 	//更新日を現在にする
 	tc.Modified = time.Now()

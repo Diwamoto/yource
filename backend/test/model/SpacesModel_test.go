@@ -19,7 +19,7 @@ func TestValidateSpace(t *testing.T) {
 			model.Space{
 				UserId:      1,
 				Name:        "test name",
-				Description: "test disc",
+				Description: "test desc",
 				SubDomain:   "subdomain",
 			},
 			false, //エラーはでないはず
@@ -29,7 +29,7 @@ func TestValidateSpace(t *testing.T) {
 			model.Space{
 				UserId:      0, //ユーザIDが入力されていない
 				Name:        "test name",
-				Description: "test disc",
+				Description: "test desc",
 				SubDomain:   "subdomain",
 			},
 			true, //エラーになるはず
@@ -39,7 +39,7 @@ func TestValidateSpace(t *testing.T) {
 			model.Space{
 				UserId:      1,
 				Name:        "", //スペース名が入力されていない
-				Description: "test disc",
+				Description: "test desc",
 				SubDomain:   "subdomain",
 			},
 			true, //エラーになるはず
@@ -49,7 +49,7 @@ func TestValidateSpace(t *testing.T) {
 			model.Space{
 				UserId:      1,
 				Name:        "test name",
-				Description: "test disc",
+				Description: "test desc",
 				SubDomain:   "",
 			},
 			true, //エラーになるはず
@@ -59,7 +59,7 @@ func TestValidateSpace(t *testing.T) {
 			model.Space{
 				UserId:      1,
 				Name:        "test name",
-				Description: "test disc",
+				Description: "test desc",
 				SubDomain:   "@wowoj@^~",
 			},
 			true, //エラーになるはず
@@ -87,7 +87,7 @@ func TestCreateSpace(t *testing.T) {
 			model.Space{
 				UserId:      1,
 				Name:        "test name",
-				Description: "test disc",
+				Description: "test desc",
 				SubDomain:   "subdomain",
 			},
 			false, //エラーはでないはず
@@ -97,7 +97,7 @@ func TestCreateSpace(t *testing.T) {
 			model.Space{
 				UserId:      1,
 				Name:        "",
-				Description: "test disc",
+				Description: "test desc",
 				SubDomain:   "subdomain",
 			},
 			true, //エラーになるはず
@@ -107,7 +107,7 @@ func TestCreateSpace(t *testing.T) {
 			model.Space{
 				UserId:      1,
 				Name:        "test name",
-				Description: "test disc",
+				Description: "test desc",
 				SubDomain:   "",
 			},
 			true, //エラーになるはず
@@ -164,6 +164,57 @@ func TestGetSpaceById(t *testing.T) {
 	}
 }
 
+//SpaceModel.Find()のテスト
+//スペースが取得できたらOK,できなければダメ
+func TestFindSpace(t *testing.T) {
+
+	tests := []struct {
+		in   model.Space //検索するスペース
+		t    string      //検索の種類
+		want bool
+	}{
+		{
+			//①: 正しいスペース
+			model.Space{
+				UserId:      1,
+				Name:        "test name",
+				Description: "test desc",
+				SubDomain:   "subdomain",
+			},
+			"名前",
+			false, //エラーはでないはず
+		},
+		{
+			//①: 正しいスペース
+			model.Space{
+				UserId:      1,
+				Name:        "test name",
+				Description: "test desc",
+				SubDomain:   "subdomain",
+			},
+			"説明",
+			false, //エラーはでないはず
+		},
+		{
+			//①: 正しいスペース
+			model.Space{
+				UserId:      1,
+				Name:        "test name",
+				Description: "test desc",
+				SubDomain:   "subdomain",
+			},
+			"サブドメイン",
+			false, //エラーはでないはず
+		},
+	}
+	for _, tt := range tests {
+		_, err := sm.Find(tt.in)
+		if err != tt.want {
+			t.Errorf("%sでスペースを検索できませんでした。", tt.t)
+		}
+	}
+}
+
 //SpaceModel.GetByUserId()のテスト
 //スペースが取得できたらOK,できなければダメ
 func TestGetSpaceByUserId(t *testing.T) {
@@ -201,7 +252,7 @@ func TestUpdateSpace(t *testing.T) {
 			model.Space{
 				UserId:      1,
 				Name:        "Upd Name",
-				Description: "Upd disc",
+				Description: "Upd desc",
 				SubDomain:   "upd",
 				Status:      false,
 				Publish:     false,

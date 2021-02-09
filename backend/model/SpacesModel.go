@@ -20,7 +20,7 @@ type Space struct {
 	UserId      int    `validate:"required"`
 	Name        string `validate:"required"`
 	Description string
-	SubDomain   string `validate:"required"`
+	SubDomain   string `validate:"required"` //サブドメインは独自バリデーションでユニークにする
 	Status      bool
 	Publish     bool      //boolなので初期値はfalse(非公開)→バリデーション不要
 	Channels    []Channel //hasMany
@@ -48,6 +48,13 @@ func (sm SpaceModel) Validate(s Space) ([]string, bool) {
 	validate := validator.New()
 	err := validate.Struct(s)
 	var messages []string
+
+	//独自バリデーション
+	//サブドメインをdbに問い合わせて存在していたらエラーを返す。
+	if !sm.ValidateUniqueSubDomain(s.SubDomain) {
+		messages = append(messages, "入力されたサブドメインは既に登録されています。")
+	}
+
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
 			fieldName := err.Field()
@@ -165,7 +172,7 @@ func (sm SpaceModel) GetByUserId(userId int) (Space, bool) {
 
 }
 
-//指定スペースidの情報を返す
+//スペースを任意の条件で検索する
 func (sm SpaceModel) Find(s Space) ([]Space, bool) {
 
 	var r []Space
@@ -239,4 +246,12 @@ func (sm SpaceModel) Delete(id int) ([]string, bool) {
 		return []string{"削除できませんでした。"}, true
 	}
 
+}
+
+func (sm SpaceModel) ValidateUniqueSubDomain(dom string) bool {
+	s := Space{
+		SubDomain: dom,
+	}
+	_, err := sm.Find(s)
+	return err
 }

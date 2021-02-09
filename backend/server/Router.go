@@ -54,6 +54,19 @@ func GetRouter() *gin.Engine {
 		v1.PUT("/spaces/:id", controller.UpdateSpaceAction)
 		v1.DELETE("/spaces/:id", controller.DeleteSpaceAction)
 
+		//チャンネルルーティング
+		//get → チャンネル取得
+		//post → チャンネル追加(スペースからしかできない)
+		//put → チャンネル変更
+		//delete → チャンネル削除
+		v1.GET("/channels", controller.GetAllChannelAction)
+		v1.GET("/channels/:id", controller.GetChannelAction)
+		v1.PUT("/channels/:id", controller.UpdateChannelAction)
+		v1.DELETE("/channels/:id", controller.DeleteChannelAction)
+
+		v1.GET("/spaces/:id/channels", controller.GetChannelBySpaceIdAction) //指定スペースのチャンネル全てを取得
+		v1.POST("/spaces/:id/channels", controller.CreateChannelAction)      //指定スペースのチャンネルを作成
+
 		//ログイン
 		v1.POST("/login", controller.LoginAction)
 

@@ -53,7 +53,7 @@ func TestMain(m *testing.M) {
 	mts := model.Space{
 		UserId:      1,
 		Name:        "master name",
-		Discription: "master disc",
+		Description: "master disc",
 		SubDomain:   "master",
 		Status:      true,
 		Publish:     true,
@@ -65,9 +65,8 @@ func TestMain(m *testing.M) {
 	//チャンネル以外のテストに使用するテストチャンネルを作成
 	mtc := model.Channel{
 		SpaceId:     1,
-		UserId:      1,
 		Name:        "master name",
-		Discription: "master disc",
+		Description: "master disc",
 	}
 	mtc.Created = time.Now()
 	mtc.Modified = time.Now()

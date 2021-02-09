@@ -1,6 +1,6 @@
 swagger: "2.0"
 # host: "yource.space"
-host: "bcd05b016791.ngrok.io"
+host: "76239a2601b3.ngrok.io"
 info:
   description: "yourceで使用するrest apiについてのswaggerドキュメント"
   version: "1.0.0"
@@ -443,8 +443,155 @@ paths:
           schema:
             type: "string"
             example: "削除失敗理由"
-
-
+  /channels:
+    get:
+      tags:
+      - "channel"
+      summary: "全てのチャンネルを取得する"
+      responses:
+        200:
+          description: "成功時"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Channel"
+        404:
+          description: "チャンネルが存在しなかった場合"
+          schema:
+            type: "string"
+            example: "{}"
+  /channels/{channelId}:
+    get:
+      tags:
+      - "channel"
+      summary: "指定されたチャンネルidのチャンネルの情報を返す"  
+      parameters:
+      - name: "channelId"
+        in: "path"
+        description: "取得したいチャンネルのID"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "成功時"
+          schema:
+            $ref: "#/definitions/Channel"
+        404:
+          description: "指定したIDのチャンネルがない時"
+          schema:
+            type: "string"
+            example: "{}"
+    put:
+      tags:
+      - "channel"
+      summary: "チャンネルの情報を変更する"
+      parameters:
+      - name: "channelId"
+        in: "path"
+        description: "更新したいチャンネルのid"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: Name
+        in: formData
+        description: チャンネル名
+        type: string
+      - name: Description
+        in: formData
+        description: 説明
+        type: string
+      responses:
+        200:
+          description: "更新成功時 変更後のチャンネルオブジェクトが返却される"
+          schema:
+            $ref: "#/definitions/Channel"
+        409:
+          description: "何らかの理由で更新に失敗した時"
+          schema:
+            type: "string"
+            example: "更新失敗理由"
+        404:
+          description: "指定されたIDを持つユーザが見つからなかった場合"
+          schema:
+            type: "string"
+            example: ""
+    delete:
+      tags:
+      - "channel"
+      summary: "指定されたidのチャンネルを削除する"
+      parameters:
+      - name: "channelId"
+        in: "path"
+        description: "削除したいチャンネルのID"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "削除成功時"
+          schema:
+            type: "string"
+            example: "成功しました。"
+        409:
+          description: "何らかの理由で削除に失敗した時"
+          schema:
+            type: "string"
+            example: "削除失敗理由"
+  /spaces/{spaceId}/channels:
+    get:
+      tags:
+      - "space"
+      summary: "指定スペースのチャンネルを全て取得する"  
+      parameters:
+      - name: "spaceId"
+        in: "path"
+        description: "チャンネル一覧を取得したいスペースのid"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "成功時"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Channel"
+        404:
+          description: "指定したIDのスペースがない時"
+          schema:
+            type: "string"
+            example: "{}"
+    post:
+      tags:
+        - "space"
+      consumes:
+        - application/x-www-form-urlencoded
+      summary: "指定スペースのチャンネルを作成します"
+      parameters:
+        - name: spaceId
+          in: path
+          description: スペースID
+          required: true
+          type: integer
+        - name: Name
+          in: formData
+          description: 名前
+          type: string
+        - name: Description
+          in: formData
+          description: 説明
+          type: string
+      responses:
+        200:
+          description: "成功時"
+          schema:
+            $ref: "#/definitions/Channel"
+        409:
+          description: "なんらかの理由で作成に失敗した時"
+          schema:
+            type: "string"
+            example: "作成失敗理由"
 definitions:
   User:
     type: "object"
@@ -545,3 +692,30 @@ definitions:
       Status:
         type: "boolean"
         example: true
+      Channels:
+        type: "array"
+        items:
+          $ref: "#/definitions/Channel" 
+  Channel:
+    type: "object"
+    properties:
+      Id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      Created:
+        type: "string"
+        example: "2021-01-01T00:00:00+09:00"
+      Modified:
+        type: "string"
+        example: "2021-01-01T00:00:00+09:00"
+      SpaceId:
+        type: "integer"
+        format: "int64"
+        example: 1
+      Name:
+        type: "string"
+        example: "test"
+      Description:
+        type: "string"
+        example: "このチャンネルは〇〇の為のものです。"

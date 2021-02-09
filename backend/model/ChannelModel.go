@@ -2,6 +2,7 @@ package model
 
 import (
 	//標準ライブラリ
+
 	"strconv"
 	"time"
 
@@ -15,10 +16,10 @@ import (
 //チャンネルモデル 一つのスペースは複数のチャンネルを持つ
 type Channel struct {
 	Entity
-	SpaceId     int    `validate:"required"`
-	UserId      int    `validate:"required"`
+	SpaceId int `validate:"required"`
+	//UserIdはスペースが持っているので保持する必要なし。
 	Name        string `validate:"required"`
-	Discription string
+	Description string
 }
 
 //呼び出し用チャンネルモデル
@@ -27,6 +28,7 @@ type ChannelModel struct {
 	AppModel
 }
 
+//チャンネルモデルを取得する
 func NewChannelModel(t string) *ChannelModel {
 	var cm ChannelModel
 	cm.db = database.GetInstance(t)
@@ -52,11 +54,9 @@ func (cm ChannelModel) Validate(c Channel) ([]string, bool) {
 			switch fieldName {
 			case "SpaceId":
 				messages = append(messages, "スペースIDを入力してください")
-			case "UserId":
-				messages = append(messages, "ユーザIDを入力してください")
 			case "Name":
 				messages = append(messages, "名前を入力してください")
-			case "Discription":
+			case "Description":
 				messages = append(messages, "説明を入力してください")
 			}
 		}
@@ -66,13 +66,6 @@ func (cm ChannelModel) Validate(c Channel) ([]string, bool) {
 	_, err2 := sm.GetById(c.SpaceId)
 	if err2 {
 		messages = append(messages, "存在しないスペースIDのチャンネルは作成できません。")
-	}
-
-	//存在するユーザIDのみを使用できる
-	um := NewUserModel(cm.nc)
-	_, err3 := um.GetById(c.UserId)
-	if err3 {
-		messages = append(messages, "存在しないユーザIDのチャンネルは作成できません。")
 	}
 
 	if len(messages) > 0 {
@@ -104,6 +97,23 @@ func (cm ChannelModel) Create(c Channel) ([]string, bool) {
 
 }
 
+//全てのチャンネルを取得する
+func (cm ChannelModel) GetAll() ([]Channel, bool) {
+
+	var c []Channel
+
+	cm.db.AutoMigrate(&c)
+	cm.db.Find(&c)
+
+	//値が取得できたら
+	if len(c) > 0 {
+		return c, false
+	} else {
+		return []Channel{}, true
+	}
+
+}
+
 //指定チャンネルidの情報を返す
 func (cm ChannelModel) GetById(id int) (Channel, bool) {
 
@@ -115,6 +125,24 @@ func (cm ChannelModel) GetById(id int) (Channel, bool) {
 		return c, false
 	} else {
 		return Channel{}, true
+	}
+
+}
+
+//チャンネルをスペースIDで検索する
+//スペースに対してチャンネルは複数存在する
+func (sm ChannelModel) GetBySpaceId(spaceId int) ([]Channel, bool) {
+
+	var c []Channel
+
+	sm.db.AutoMigrate(&c)
+	sm.db.Where("space_id = ?", spaceId).Find(&c)
+
+	//値が取得できたら
+	if len(c) > 0 {
+		return c, false
+	} else {
+		return []Channel{}, true
 	}
 
 }
@@ -131,6 +159,9 @@ func (cm ChannelModel) Update(id int, c Channel) ([]string, bool) {
 	//ここでは変更の検知のみ
 	if c.Name != "" {
 		tc.Name = c.Name
+	}
+	if c.Description != "" {
+		tc.Description = c.Description
 	}
 
 	//更新日を現在にする

@@ -19,10 +19,11 @@ type Space struct {
 	Entity
 	UserId      int    `validate:"required"`
 	Name        string `validate:"required"`
-	Discription string
+	Description string
 	SubDomain   string `validate:"required"`
 	Status      bool
-	Publish     bool //boolなので初期値はfalse(非公開)→バリデーション不要
+	Publish     bool      //boolなので初期値はfalse(非公開)→バリデーション不要
+	Channels    []Channel //hasMany
 }
 type SpaceModel struct {
 	AppModel
@@ -115,6 +116,10 @@ func (sm SpaceModel) GetAll() ([]Space, bool) {
 
 	//値が取得できたら
 	if len(s) > 0 {
+		cm := NewChannelModel(sm.nc)
+		for i, ts := range s {
+			s[i].Channels, _ = cm.GetBySpaceId(ts.Id)
+		}
 		return s, false
 	} else {
 		return []Space{}, true
@@ -132,6 +137,8 @@ func (sm SpaceModel) GetById(id int) (Space, bool) {
 
 	//値が取得できたら
 	if s.Id == id {
+		cm := NewChannelModel(sm.nc)
+		s.Channels, _ = cm.GetBySpaceId(s.Id)
 		return s, false
 	} else {
 		return Space{}, true
@@ -139,7 +146,7 @@ func (sm SpaceModel) GetById(id int) (Space, bool) {
 
 }
 
-//指定スペースidの情報を返す
+//ユーザIDでスペースを検索する
 func (sm SpaceModel) GetByUserId(userId int) (Space, bool) {
 
 	var s Space
@@ -149,6 +156,8 @@ func (sm SpaceModel) GetByUserId(userId int) (Space, bool) {
 
 	//値が取得できたら
 	if s.UserId == userId {
+		cm := NewChannelModel(sm.nc)
+		s.Channels, _ = cm.GetBySpaceId(s.Id)
 		return s, false
 	} else {
 		return Space{}, true
@@ -165,6 +174,10 @@ func (sm SpaceModel) Find(s Space) ([]Space, bool) {
 
 	//値が取得できたら
 	if len(r) > 0 {
+		cm := NewChannelModel(sm.nc)
+		for i, ts := range r {
+			r[i].Channels, _ = cm.GetBySpaceId(ts.Id)
+		}
 		return r, false
 	} else {
 		return []Space{}, true
@@ -184,7 +197,7 @@ func (sm SpaceModel) Update(id int, s Space) ([]string, bool) {
 	//ここでは変更の検知のみ
 	//ユーザIDは変更することができない
 	ts.Name = s.Name
-	ts.Discription = s.Discription
+	ts.Description = s.Description
 	ts.SubDomain = s.SubDomain
 	ts.Status = s.Status
 	ts.Publish = s.Publish

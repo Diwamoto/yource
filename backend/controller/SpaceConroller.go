@@ -26,7 +26,7 @@ func CreateSpaceAction(c *gin.Context) {
 	s := model.Space{
 		UserId:      userId,
 		Name:        c.PostForm("Name"),
-		Discription: c.PostForm("Description"),
+		Description: c.PostForm("Description"),
 		SubDomain:   c.PostForm("SubDomain"),
 		Status:      true,
 		Publish:     false, //最初は非公開
@@ -93,7 +93,7 @@ func UpdateSpaceAction(c *gin.Context) {
 		var s model.Space
 		s.UserId = userId
 		s.Name = c.PostForm("Name")
-		s.Discription = c.PostForm("Description")
+		s.Description = c.PostForm("Description")
 		s.SubDomain = c.PostForm("SubDomain")
 		Status, _ := strconv.ParseBool(c.PostForm("Status"))
 		s.Status = Status

@@ -19,7 +19,7 @@ func TestValidateSpace(t *testing.T) {
 			model.Space{
 				UserId:      1,
 				Name:        "test name",
-				Discription: "test disc",
+				Description: "test disc",
 				SubDomain:   "subdomain",
 			},
 			false, //エラーはでないはず
@@ -29,7 +29,7 @@ func TestValidateSpace(t *testing.T) {
 			model.Space{
 				UserId:      0, //ユーザIDが入力されていない
 				Name:        "test name",
-				Discription: "test disc",
+				Description: "test disc",
 				SubDomain:   "subdomain",
 			},
 			true, //エラーになるはず
@@ -39,7 +39,7 @@ func TestValidateSpace(t *testing.T) {
 			model.Space{
 				UserId:      1,
 				Name:        "", //スペース名が入力されていない
-				Discription: "test disc",
+				Description: "test disc",
 				SubDomain:   "subdomain",
 			},
 			true, //エラーになるはず
@@ -49,7 +49,7 @@ func TestValidateSpace(t *testing.T) {
 			model.Space{
 				UserId:      1,
 				Name:        "test name",
-				Discription: "test disc",
+				Description: "test disc",
 				SubDomain:   "",
 			},
 			true, //エラーになるはず
@@ -59,7 +59,7 @@ func TestValidateSpace(t *testing.T) {
 			model.Space{
 				UserId:      1,
 				Name:        "test name",
-				Discription: "test disc",
+				Description: "test disc",
 				SubDomain:   "@wowoj@^~",
 			},
 			true, //エラーになるはず
@@ -87,7 +87,7 @@ func TestCreateSpace(t *testing.T) {
 			model.Space{
 				UserId:      1,
 				Name:        "test name",
-				Discription: "test disc",
+				Description: "test disc",
 				SubDomain:   "subdomain",
 			},
 			false, //エラーはでないはず
@@ -97,7 +97,7 @@ func TestCreateSpace(t *testing.T) {
 			model.Space{
 				UserId:      1,
 				Name:        "",
-				Discription: "test disc",
+				Description: "test disc",
 				SubDomain:   "subdomain",
 			},
 			true, //エラーになるはず
@@ -107,7 +107,7 @@ func TestCreateSpace(t *testing.T) {
 			model.Space{
 				UserId:      1,
 				Name:        "test name",
-				Discription: "test disc",
+				Description: "test disc",
 				SubDomain:   "",
 			},
 			true, //エラーになるはず
@@ -201,7 +201,7 @@ func TestUpdateSpace(t *testing.T) {
 			model.Space{
 				UserId:      1,
 				Name:        "Upd Name",
-				Discription: "Upd disc",
+				Description: "Upd disc",
 				SubDomain:   "upd",
 				Status:      false,
 				Publish:     false,

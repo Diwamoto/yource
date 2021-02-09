@@ -18,9 +18,8 @@ func TestValidateChannel(t *testing.T) {
 			//①: 正しいチャンネル
 			model.Channel{
 				SpaceId:     1,
-				UserId:      1,
 				Name:        "test name",
-				Discription: "test disc",
+				Description: "test disc",
 			},
 			false, //エラーはでないはず
 		},
@@ -28,29 +27,17 @@ func TestValidateChannel(t *testing.T) {
 			//②: 存在しないスペースのチャンネル
 			model.Channel{
 				SpaceId:     9999,
-				UserId:      1,
 				Name:        "test name",
-				Discription: "test disc",
+				Description: "test disc",
 			},
 			true, //エラーになるはず
 		},
 		{
-			//③: 存在しないユーザが作成したチャンネル
-			model.Channel{
-				SpaceId:     1,
-				UserId:      9999,
-				Name:        "test name",
-				Discription: "test disc",
-			},
-			true, //エラーになるはず
-		},
-		{
-			//④: 名前が入力されていないチャンネル
+			//③: 名前が入力されていないチャンネル
 			model.Channel{
 				SpaceId:     0,
-				UserId:      0,
 				Name:        "",
-				Discription: "test disc",
+				Description: "test disc",
 			},
 			true, //エラーになるはず
 		},
@@ -75,9 +62,8 @@ func TestCreateChannel(t *testing.T) {
 			//①: 正しいチャンネル
 			model.Channel{
 				SpaceId:     1,
-				UserId:      1,
 				Name:        "test name",
-				Discription: "test disc",
+				Description: "test disc",
 			},
 			false, //エラーはでないはず
 		},
@@ -127,9 +113,8 @@ func TestUpdateChannel(t *testing.T) {
 			2, //先ほどテストで作ったチャンネル
 			model.Channel{
 				SpaceId:     1,
-				UserId:      1,
 				Name:        "upd name",
-				Discription: "upd disc",
+				Description: "upd disc",
 			},
 			false, //エラーはでないはず
 		},

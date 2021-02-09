@@ -21,6 +21,12 @@ CREATE TABLE `channels` (
 DROP TABLE IF EXISTS `posts`;
 CREATE TABLE `posts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `created` datetime DEFAULT NULL,
+  `modified` datetime DEFAULT NULL,
+  `channel_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `content` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -32,7 +38,6 @@ CREATE TABLE `spaces` (
   `modified` datetime DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `discription` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `sub_domain` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `status` tinyint(1) DEFAULT NULL,
   `publish` tinyint(1) DEFAULT NULL,
@@ -74,4 +79,4 @@ CREATE TABLE `user_profiles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
--- 2021-02-09 04:01:55
+-- 2021-02-09 07:30:07

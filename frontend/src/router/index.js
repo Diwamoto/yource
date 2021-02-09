@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
+import NotFoundComponent from '@/components/NotFoundComponent.vue'
 Vue.use(VueRouter)
 
 const routes = [
@@ -23,7 +23,9 @@ const routes = [
     path: '/mypage',
     name: 'Mypage',
     component: () => import('../views/Mypage.vue')
-  }
+  },
+  //ブラウザバック対策
+  { path: '*', component: NotFoundComponent }
 ]
 
 const router = new VueRouter({

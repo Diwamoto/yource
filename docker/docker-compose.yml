@@ -28,17 +28,18 @@ services:
     command: bash -c "go mod tidy && gin -p 9091"
     volumes:
       - ../backend:/go/src/github.com/Diwamoto/yource
-  frontend:
-    container_name: vue
-    tty: true
-    build:
-      context: ./
-      dockerfile: ./vue/Dockerfile
-    command: bash -c "npm install && npm run serve"
-    ports:
-      - '9092:9092'
-    volumes:
-      - ../frontend:/app
+  # ビルドが遅いので使わない
+  # frontend:
+  #   container_name: vue
+  #   tty: true
+  #   build:
+  #     context: ./
+  #     dockerfile: ./vue/Dockerfile
+  #   command: bash -c "npm install && npm run serve"
+  #   ports:
+  #     - '9092:9092'
+  #   volumes:
+  #     - ../frontend:/app
   nginx:
     container_name: nginx
     build:
@@ -52,6 +53,7 @@ services:
     volumes:
       - ./nginx/log:/var/log/nginx
       - ../frontend/dist:/usr/share/nginx/html
+  #セッション保管用
   redis:
     container_name: redis
     image: redis:latest

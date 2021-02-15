@@ -4,6 +4,7 @@ backend/tmp/*
 backend/.env
 .DS_Store
 docker/db/mysql_data/*
+docker/db/redis_data/*
 docker/nginx/log/*
 frontend/.env
 frontend/node_modules

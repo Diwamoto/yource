@@ -52,6 +52,13 @@ services:
     volumes:
       - ./nginx/log:/var/log/nginx
       - ../frontend/dist:/usr/share/nginx/html
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - "./db/redis_data:/data"
   adminer:
     container_name: adminer
     image: adminer:latest

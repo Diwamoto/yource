@@ -7,9 +7,8 @@ import (
 
 var cm = model.NewChannelModel("test")
 
-//ValidateChannel()のテスト
+//ChannelModel.Validate()のテスト
 func TestValidateChannel(t *testing.T) {
-
 	tests := []struct {
 		in   model.Channel
 		want bool
@@ -19,7 +18,7 @@ func TestValidateChannel(t *testing.T) {
 			model.Channel{
 				SpaceId:     1,
 				Name:        "test name",
-				Description: "test disc",
+				Description: "test desc",
 			},
 			false, //エラーはでないはず
 		},
@@ -28,7 +27,7 @@ func TestValidateChannel(t *testing.T) {
 			model.Channel{
 				SpaceId:     9999,
 				Name:        "test name",
-				Description: "test disc",
+				Description: "test desc",
 			},
 			true, //エラーになるはず
 		},
@@ -37,7 +36,7 @@ func TestValidateChannel(t *testing.T) {
 			model.Channel{
 				SpaceId:     0,
 				Name:        "",
-				Description: "test disc",
+				Description: "test desc",
 			},
 			true, //エラーになるはず
 		},
@@ -51,7 +50,7 @@ func TestValidateChannel(t *testing.T) {
 	}
 }
 
-//CreateChannel()のテスト
+//ChannelModel.Create()のテスト
 func TestCreateChannel(t *testing.T) {
 
 	tests := []struct {
@@ -63,7 +62,7 @@ func TestCreateChannel(t *testing.T) {
 			model.Channel{
 				SpaceId:     1,
 				Name:        "test name",
-				Description: "test disc",
+				Description: "test desc",
 			},
 			false, //エラーはでないはず
 		},
@@ -77,24 +76,83 @@ func TestCreateChannel(t *testing.T) {
 
 }
 
-//GetChannel()のテスト
-//チャンネルが取得できたらOK,できなければダメ
-func TestGetChannel(t *testing.T) {
+//ChannelModel.GetByAll()のテスト
+//レコードの数が想定通りならオーケー、違うならダメ
+func TestGetAllChannel(t *testing.T) {
 
 	tests := []struct {
-		in   int //userID
-		want bool
+		want int //テストテーブルではチャンネルは2個存在する
 	}{
 		{
-			//①: 先ほど作成したチャンネル
-			2,
-			false, //エラーはでないはず
+			//①: 全探索
+			2, //探索した結果は2個なはず
 		},
 	}
 	for _, tt := range tests {
-		_, err := cm.GetById(tt.in)
+		channels, err := cm.GetAll()
+		if err || len(channels) != tt.want {
+			t.Errorf("GetAll()でチャンネルを取得できませんでした。GetAll()の結果の個数: %d", len(channels))
+		}
+	}
+}
+
+//ChannelModel.GetById()のテスト
+//チャンネルが取得できたらOK,できなければダメ
+func TestGetChannelById(t *testing.T) {
+
+	tests := []struct {
+		in   int //channelId
+		want bool
+	}{
+		{
+			//①: 存在するチャンネル
+			1,
+			false, //取得できるはず
+		},
+		{
+			//②: 存在しないチャンネル
+			9999,
+			true, //取得出来ないはず
+		},
+	}
+	for i, tt := range tests {
+		ret, err := cm.GetById(tt.in)
 		if err != tt.want {
-			t.Errorf("userID:%dのチャンネルを取得できませんでした。", tt.in)
+			t.Errorf("%d番目のテストが失敗しました。GetById()の返り値:%#v", i+1, ret)
+		}
+	}
+}
+
+//ChannelModel.Find()のテスト
+//チャンネルが取得できたらOK,できなければダメ
+func TestFindChannel(t *testing.T) {
+
+	tests := []struct {
+		in   model.Channel
+		t    string //検索する項目
+		want bool
+	}{
+		{
+			//①: 名前で検索
+			model.Channel{
+				Name: "test name",
+			},
+			"名前",
+			false, //取得できるはず
+		},
+		{
+			//②: 説明で検索
+			model.Channel{
+				Description: "test desc",
+			},
+			"説明",
+			false, //取得できるはず
+		},
+	}
+	for i, tt := range tests {
+		ret, err := cm.Find(tt.in)
+		if err != tt.want {
+			t.Errorf("%d番目のテストが失敗しました。Find()の返り値:%#v", i+1, ret)
 		}
 	}
 }
@@ -114,9 +172,49 @@ func TestUpdateChannel(t *testing.T) {
 			model.Channel{
 				SpaceId:     1,
 				Name:        "upd name",
-				Description: "upd disc",
+				Description: "upd desc",
 			},
 			false, //エラーはでないはず
+		},
+		{
+			//②: スペースIDは変更できない
+			2, //先ほどテストで作ったチャンネル
+			model.Channel{
+				SpaceId:     2,
+				Name:        "upd name",
+				Description: "upd desc",
+			},
+			true, //エラーになるはず
+		},
+		{
+			//③: 存在しないチャンネル
+			3, //存在しない
+			model.Channel{
+				SpaceId:     1,
+				Name:        "upd name",
+				Description: "upd desc",
+			},
+			true, //エラーになるはず
+		},
+		{
+			//④: 名前は空にできない
+			2, //先ほどテストで作ったチャンネル
+			model.Channel{
+				SpaceId:     1,
+				Name:        "",
+				Description: "upd desc",
+			},
+			true, //エラーになるはず
+		},
+		{
+			//⑤: 説明文は空欄にできる
+			2, //先ほどテストで作ったチャンネル
+			model.Channel{
+				SpaceId:     1,
+				Name:        "upd name",
+				Description: "",
+			},
+			false, //エラーにならないはず
 		},
 	}
 	for i, tt := range tests {
@@ -128,6 +226,7 @@ func TestUpdateChannel(t *testing.T) {
 
 }
 
+//ChannelModel.Delete()のテスト
 func TestDeleteChannel(t *testing.T) {
 
 	tests := []struct {

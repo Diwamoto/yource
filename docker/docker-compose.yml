@@ -25,9 +25,10 @@ services:
     ports:
       - '9091:9091'
       # - '2345:2345'
-    command: bash -c "go mod tidy && gin -p 9091"
+    command: bash -c "go mod tidy && gin -p 9091 --certFile /tmp/keys/server.crt --keyFile /tmp/keys/server.key"
     volumes:
       - ../backend:/go/src/github.com/Diwamoto/yource
+      - ./ssl/keys:/tmp/keys
   # ビルドが遅いので使わない
   # frontend:
   #   container_name: vue
@@ -53,6 +54,7 @@ services:
     volumes:
       - ./nginx/log:/var/log/nginx
       - ../frontend/dist:/usr/share/nginx/html
+      - ./ssl/keys:/tmp/keys
   #セッション保管用
   redis:
     container_name: redis

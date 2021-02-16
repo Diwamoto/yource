@@ -12,14 +12,17 @@ A service that allows you to create a blog like slack.
 ## フロント開発
 
 フロントにはvue.jsを使用し、SPAとして動かします。
+最初はdocker内にサーバを立てて運用していましたが、自動ビルドのファイルウォッチが遅いためやめました。
+`npm install`したのち`npm run serve`で起動します。
 
-`http://localhost:8082` で起動します。
+
+`http://localhost:9092` で起動します。
 
 ## バックエンド開発
 
 バックエンドにはginを使用し、dbアクセスのAPIサーバーとして動かします。
 
-`http://localhost:8081` で起動します。
+`https://localhost:9091` で起動します。
 
 # CI
 

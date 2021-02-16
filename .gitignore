@@ -6,6 +6,7 @@ backend/.env
 docker/db/mysql_data/*
 docker/db/redis_data/*
 docker/nginx/log/*
+docker/ssl/keys/*
 frontend/.env
 frontend/node_modules
 frontend/dist

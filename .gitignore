@@ -6,9 +6,12 @@ backend/config/keys/*
 !backend/config/keys/.gitkeep
 .DS_Store
 docker/db/mysql_data/*
+docker/db/logs
 docker/db/redis_data/*
 docker/nginx/log/*
 docker/ssl/keys/*
 frontend/.env
 frontend/node_modules
 frontend/dist
+frontend/keys/*
+!frontend/keys/.gitkeep

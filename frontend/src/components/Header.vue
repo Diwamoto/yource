@@ -17,7 +17,7 @@
 
       <!-- menu -->
       <v-col md="1" offset="7" v-bind:class="[me, me_scroll]">
-        <router-link to="/about">
+        <router-link to="/about" style="color:black">
           概要
         </router-link>
       </v-col>
@@ -88,8 +88,8 @@ export default {
 
 <style>
 .header{
-  position: fixed; /* 要素の位置を固定する */
-  top: 0; /* 基準の位置を画面の一番上に指定する */
+  position: fixed;
+  top: 0;
   width: 100%;
   z-index: 5;
   background-color: white;

@@ -1,7 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import NotFoundComponent from '@/components/NotFoundComponent.vue'
+import MypageMain from '@/components/mypage/Main.vue'
+import MypageCreate from '@/components/mypage/Create.vue'
 Vue.use(VueRouter)
+
 
 const routes = [
   {
@@ -20,9 +23,18 @@ const routes = [
     component: () => import('../views/Login.vue')
   },
   {
-    path: '/mypage',
-    name: 'Mypage',
-    component: () => import('../views/Mypage.vue')
+    path: '/space/:id',
+    component: () => import('../views/Space.vue'),
+    children: [
+      {
+        path: 'new',
+        component: MypageCreate,
+      },
+      {
+        path: '',
+        component: MypageMain,
+      },
+    ],  
   },
   //ブラウザバック対策
   { path: '*', component: NotFoundComponent }

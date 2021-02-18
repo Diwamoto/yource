@@ -3,7 +3,9 @@ package controller
 import (
 	//標準ライブラリ
 
+	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -11,7 +13,10 @@ import (
 	"main/model"
 
 	//githubライブラリ
+	"github.com/form3tech-oss/jwt-go"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 //ユーザー作成アクション
@@ -20,9 +25,11 @@ func CreateUserAction(c *gin.Context) {
 
 	um := model.NewUserModel("default")
 
+	password, _ := bcrypt.GenerateFromPassword([]byte(c.PostForm("Password")), bcrypt.DefaultCost)
+
 	u := model.User{
 		Email:    c.PostForm("Email"),
-		Password: c.PostForm("Password"),
+		Password: string(password),
 		Name:     c.PostForm("Name"),
 		Phone:    c.PostForm("Phone"),
 		Status:   false, //メールアドレス認証ができるまでステータスは有効にならない
@@ -125,13 +132,44 @@ func LoginAction(c *gin.Context) {
 	um := model.NewUserModel("default")
 	var user model.User
 	user.Email = c.PostForm("Email")
-	user.Password = c.PostForm("Password")
-	//ログインできるのは有効なユーザだけ
 	user.Status = true
 	users, err := um.Find(user)
-	//正しく検索できており、かつ取得できたユーザが一名であればログイン成功
+
+	//ユーザを取得でき、且ハッシュ化されたパスワードが等しければログイン成功
 	if !err && len(users) == 1 {
-		c.JSON(http.StatusOK, "") //クッキーのトークンを送るべき
+		user := users[0]
+		err1 := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(c.PostForm("Password")))
+		if err1 == nil {
+
+			//ログインに成功したらjwtを発行しクッキーとredisに保存
+
+			//jwtの作成
+			// headerのセット
+			token := jwt.New(jwt.SigningMethodHS256)
+
+			// claimsのセット
+			claims := token.Claims.(jwt.MapClaims)
+			claims["admin"] = true
+			claims["sub"] = user.Id
+			claims["name"] = "taro"
+			claims["iat"] = time.Now()
+			claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+
+			// 電子署名
+			tokenString, _ := token.SignedString([]byte(os.Getenv("SIGNKEY")))
+
+			//セッションに保存
+			session := sessions.Default(c)
+			session.Set(tokenString, user)
+			session.Save()
+
+			c.SetCookie("token", tokenString, 3600, "/", "localhost", true, true)
+			c.SetCookie("userId", fmt.Sprint(user.Id), 3600, "/", "localhost", true, true)
+
+			c.JSON(http.StatusOK, gin.H{"token": tokenString, "id": fmt.Sprint(user.Id)})
+		} else {
+			c.JSON(http.StatusUnauthorized, "メールアドレスもしくはパスワードが間違っています。")
+		}
 	} else {
 		c.JSON(http.StatusUnauthorized, "メールアドレスもしくはパスワードが間違っています。")
 	}

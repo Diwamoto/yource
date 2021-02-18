@@ -1,3 +1,4 @@
+const fs = require('fs')
 module.exports = {
   "transpileDependencies": [
     "vuetify"
@@ -12,6 +13,11 @@ module.exports = {
   devServer: {
     port: 9092,
     disableHostCheck: true,
+    https: {
+      key: fs.readFileSync('./keys/server.key'),
+      cert: fs.readFileSync('./keys/server.crt'),
+    },
+    public: 'https://localhost:9092/',
     watchOptions: {
       poll: true
     }

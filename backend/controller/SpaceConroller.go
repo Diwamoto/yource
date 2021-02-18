@@ -14,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//ユーザー作成アクション
+//スペース作成アクション
 //POSTされた要素でデータを作成する
 func CreateSpaceAction(c *gin.Context) {
 
@@ -35,12 +35,10 @@ func CreateSpaceAction(c *gin.Context) {
 	s.Modified = time.Now()
 
 	msg, err := sm.Create(s)
-	//エラーじゃなければuserの情報を返す
+	//エラーじゃなければスペースの情報を返す
 	if !err {
 		spaceId, _ := strconv.Atoi(msg[0])
 		space, _ := sm.GetById(spaceId)
-
-		//ユーザのメールアドレス死活監視トークンを生成する。
 
 		c.JSON(http.StatusCreated, space)
 	} else {
@@ -50,14 +48,29 @@ func CreateSpaceAction(c *gin.Context) {
 	}
 }
 
-//ユーザの情報を返すアクション
-//GETでパラメータのユーザの情報を取得する
-func GetSpaceAction(c *gin.Context) {
+//スペースの情報を返すアクション
+//GETでパラメータのスペースの情報を取得する
+func GetSpaceByIdAction(c *gin.Context) {
 
 	sm := model.NewSpaceModel("default")
 
 	id, _ := strconv.Atoi(c.Param("id"))
-	u, err := sm.GetById(id)
+	space, err := sm.GetById(id)
+	if !err {
+		c.JSON(http.StatusOK, space)
+	} else {
+		c.JSON(http.StatusNotFound, []string{})
+	}
+}
+
+//スペースの情報を返すアクション
+//GETでパラメータのスペースの情報を取得する
+func GetSpaceByUserIdAction(c *gin.Context) {
+
+	sm := model.NewSpaceModel("default")
+
+	id, _ := strconv.Atoi(c.Param("id"))
+	u, err := sm.GetByUserId(id)
 	if !err {
 		c.JSON(http.StatusOK, u)
 	} else {
@@ -65,8 +78,8 @@ func GetSpaceAction(c *gin.Context) {
 	}
 }
 
-//全てのユーザの情報を返すアクション
-//GETでパラメータのユーザの情報を取得する
+//全てのスペースの情報を返すアクション
+//GETでパラメータのスペースの情報を取得する
 func GetAllSpaceAction(c *gin.Context) {
 
 	sm := model.NewSpaceModel("default")
@@ -79,17 +92,17 @@ func GetAllSpaceAction(c *gin.Context) {
 	}
 }
 
-//ユーザの情報を更新するアクション
-//PUTでフォームの情報からユーザの情報を更新する
+//スペースの情報を更新するアクション
+//PUTでフォームの情報からスペースの情報を更新する
 func UpdateSpaceAction(c *gin.Context) {
 
 	sm := model.NewSpaceModel("default")
 
 	userId, _ := strconv.Atoi(c.Param("id"))
-	//ユーザを取得し、取得できたら更新をかける
+	//スペースを取得し、取得できたら更新をかける
 	_, err := sm.GetByUserId(userId)
 	if !err {
-		//フォームから更新内容を取得したユーザ構造体を作成
+		//フォームから更新内容を取得したスペース構造体を作成
 		var s model.Space
 		s.UserId = userId
 		s.Name = c.PostForm("Name")
@@ -111,7 +124,7 @@ func UpdateSpaceAction(c *gin.Context) {
 	}
 }
 
-//ユーザの削除アクション
+//スペースの削除アクション
 func DeleteSpaceAction(c *gin.Context) {
 
 	sm := model.NewSpaceModel("default")

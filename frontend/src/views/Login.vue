@@ -17,7 +17,6 @@
               :rules="[email_required, email]"
               placeholder="user@example.com"
               outlined
-              v-on:change="resetValidate"
             >
             </v-text-field>
             <v-text-field
@@ -29,7 +28,6 @@
               :rules="[pass_required]"
               placeholder="Password"
               outlined
-              v-on:change="resetValidate"
               @click:append="show = !show"
             >
             </v-text-field>
@@ -48,7 +46,6 @@
               :rules="[email_required, email]"
               placeholder="user@example.com"
               outlined
-              v-on:change="resetValidate"
             >
             </v-text-field>
             <v-text-field
@@ -60,7 +57,6 @@
               :rules="[pass_required]"
               placeholder="Password"
               outlined
-              v-on:change="resetValidate"
               @click:append="show = !show"
             >
             </v-text-field>
@@ -82,7 +78,9 @@ export default {
       return {
         model: 'login',
         Failed: false,
+        url: process.env.VUE_APP_API_URL,
         Conflict: false,
+        userId: null,
         show: false,
         error: false,
         response: '',
@@ -96,45 +94,89 @@ export default {
     },
     methods: {
       login_submit (){
-        this.$refs.form.validate()
-        let params = new URLSearchParams()
-        params.append('Email', this.Email)
-        params.append('Password', this.Password)
-        //ログイン処理してユーザが存在すればログイン。いなければエラー
-        axios.post('http://yource.localhost/users/login',params
-        ).then(() => {
-            //ログイン成功
-            window.location.href = '/mypage';
+        //バリデートに成功したらログイン処理を実行する
+        if(this.$refs.form.validate()){
+          const params = new URLSearchParams();
+          params.append('Email', this.Email);
+          params.append('Password', this.Password);
+          //クッキーを同時送信する
+          //ログイン処理してユーザが存在すればログイン。いなければエラー
+          axios.post('https://' + this.url  + '/api/v1/login',params,{
+            withCredentials: true
           }
-        ).catch(err => {
-          if(err.response) {
-            //ログイン失敗
-            this.Failed = true
-            this.response = err.response.data
-          }
-        });
-        
+          ).then(response => {
+              //ログイン成功
+
+              this.userId = response.data.id
+
+              //ログインしたのち、トークンを使ってスペースを検索する。
+              //存在しなければ作成ページ、存在すればそのスペースに飛ばす
+              axios.get('https://' + this.url + '/api/v1/users/' + this.userId + '/space',{
+                headers: {
+                  "Authorization" : "Bearer " + response.data.token
+                },
+                withCredentials: true
+              })
+              .then(response => {
+                //自分のスペースに遷移
+                console.log(response)
+                //window.location.href = '/space'
+              })
+              .catch(err => {
+                console.log(err)
+              })
+            }
+          ).catch(err => {
+            if(err.response) {
+              //ログイン失敗
+
+              this.Failed = true
+              //レスポンスコードで処理を分ける
+              switch (err.response.status){
+                //認証失敗
+                case 401:
+                  this.response = err.response.data
+                  break
+                //サーバが応答してない
+                case 404:
+                  this.response = "サーバーが一時的にダウンしています。管理者に連絡してください。"
+              }
+            }
+          });
+        }
       },
       signup_submit (){
-        this.$refs.form.validate()
-        let params = new URLSearchParams()
-        params.append('Email', this.Email)
-        params.append('Password', this.Password)
-        //ユーザを作成する。エラーが
-        axios.post('http://yource.localhost/users',params
-        ).then(() => {
-            //登録成功
-            window.location.href = '/mypage';
+        //バリデートに成功したら
+        if(this.$refs.form.validate()){
+          let params = new URLSearchParams()
+          params.append('Email', this.Email)
+          params.append('Password', this.Password)
+          //ユーザを作成する。エラーがでたら失敗
+          axios.post('https://' + this.url + '/api/v1/signup',params,{
+            headers: {
+              "Authorization" : "Bearer " + this.$cookies.get("token")
+            },
+            withCredentials: true
           }
-        ).catch(err => {
-          if(err.response) {
-            switch (err.response.status){
-              case 409:
-                this.Conflict = true
-                this.response = err.response.data[0]
+          ).then(() => {
+              //登録成功
+              //新規登録したユーザはまずスペースを作成する
+              window.location.href = '/space/new';
             }
-          }
-        });
+          ).catch(err => {
+            if(err.response) {
+              switch (err.response.status){
+                case 404:
+                  this.Conflict = true
+                  this.response = "サーバーが一時的にダウンしています。管理者に連絡してください。"
+                  break
+                case 409:
+                  this.Conflict = true
+                  this.response = err.response.data[0]
+              }
+            }
+          });
+        }
       },
     }
 }

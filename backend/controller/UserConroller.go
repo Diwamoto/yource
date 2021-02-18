@@ -127,6 +127,7 @@ func DeleteUserAction(c *gin.Context) {
 	}
 }
 
+//ログインアクション
 func LoginAction(c *gin.Context) {
 
 	um := model.NewUserModel("default")

@@ -2,13 +2,15 @@ version: '2'
 services:
   db:
     container_name: db
-    image: mysql:5.7
+    build:
+      context: .
+      dockerfile: ./db/mysql/Dockerfile 
     environment:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: "projects"
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb-use-native-aio=0
     ports:
       - "3306:3306"
     volumes:

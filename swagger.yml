@@ -323,15 +323,37 @@ paths:
           schema:
             type: "string"
             example: "{}"
+  /users/{userId}/space:
+    get:
+      tags:
+      - "user"
+      summary: "指定されたユーザidの情報スペースを返す"  
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "取得したいスペースのユーザID"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "成功時"
+          schema:
+            $ref: "#/definitions/Space"
+        404:
+          description: "指定したユーザのスペースがない時"
+          schema:
+            type: "string"
+            example: "{}"
     post:
       tags:
-      - "space"
+      - "user"
       consumes:
           - application/x-www-form-urlencoded
       summary: "スペースが存在しなければ作成し、そのスペースのオブジェクトを作成する"
       parameters:
         - name: userId
-          in: formData
+          in: path
           description: ユーザID
           required: true
           type: integer
@@ -357,28 +379,6 @@ paths:
           schema:
             type: "string"
             example: "作成失敗理由"
-  /users/{userId}/space:
-    get:
-      tags:
-      - "user"
-      summary: "指定されたユーザidの情報スペースを返す"  
-      parameters:
-      - name: "userId"
-        in: "path"
-        description: "取得したいスペースのユーザID"
-        required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        200:
-          description: "成功時"
-          schema:
-            $ref: "#/definitions/Space"
-        404:
-          description: "指定したユーザのスペースがない時"
-          schema:
-            type: "string"
-            example: "{}"
     put:
       tags:
       - "user"

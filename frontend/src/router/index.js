@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import NotFoundComponent from '@/components/NotFoundComponent.vue'
-import MypageMain from '@/components/mypage/Main.vue'
-import MypageCreate from '@/components/mypage/Create.vue'
+import Main from '@/components/mypage/Main.vue'
+
 Vue.use(VueRouter)
 
 
@@ -23,18 +23,18 @@ const routes = [
     component: () => import('../views/Login.vue')
   },
   {
-    path: '/space/:id',
-    component: () => import('../views/Space.vue'),
-    children: [
-      {
-        path: 'new',
-        component: MypageCreate,
-      },
-      {
-        path: '',
-        component: MypageMain,
-      },
-    ],  
+    path: '/space/:id', component: () => import('../views/Space.vue'),
+      children: [
+        // /user/:id がマッチした時に
+        // UserHome は User の <router-view> 内部で描画されます
+        { path: '', component: Main },
+
+        // 他のサブルートも同様に...
+      ]
+  },
+  {
+    path: '/new',
+    component: () => import('../views/Create.vue'),
   },
   //ブラウザバック対策
   { path: '*', component: NotFoundComponent }

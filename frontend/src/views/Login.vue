@@ -93,6 +93,8 @@ export default {
       }
     },
     methods: {
+
+      //ログインフォーム
       login_submit (){
         //バリデートに成功したらログイン処理を実行する
         if(this.$refs.form.validate()){
@@ -118,12 +120,21 @@ export default {
                 withCredentials: true
               })
               .then(response => {
-                //自分のスペースに遷移
-                console.log(response)
-                //window.location.href = '/space'
+                //ステータスコードでスペースの有無を判定し存在すればそのページに、
+                //存在しなければ作成ページへ遷移
+                switch (response.status){
+                  case 200: //存在しているのでそのページに遷移
+                    this.$router.push( { path: `/space/${this.userId}` }).catch(()=>{});
+                }
               })
               .catch(err => {
-                console.log(err)
+                //40x系はcatch()に入るのでこちらで処理
+                console.log("aaa")
+                switch (err.response.status){
+                  case 404: //未作成
+                    this.$router.push( { path: "new" }).catch((err)=>{ console.log(err)});
+                    break;
+                }
               })
             }
           ).catch(err => {
@@ -145,6 +156,8 @@ export default {
           });
         }
       },
+
+      //新規登録フォーム
       signup_submit (){
         //バリデートに成功したら
         if(this.$refs.form.validate()){
@@ -157,8 +170,7 @@ export default {
               "Authorization" : "Bearer " + this.$cookies.get("token")
             },
             withCredentials: true
-          }
-          ).then(() => {
+          }).then(() => {
               //登録成功
               //新規登録したユーザはまずスペースを作成する
               window.location.href = '/space/new';
@@ -189,8 +201,8 @@ export default {
 }
 .login-box{
   text-align: center;
-  margin: 6% 35% 35%;
-  height: 45%;
+  margin: 6% 35% 0 35%;
+  height: 60%;
   background-color: white;
 }
 .login-logo-image{

@@ -1,30 +1,24 @@
 <template>
-  <div class="mypage">
-    <Systembar></Systembar>
+  <v-app id="inspire">
     
-    <MypageNavbar></MypageNavbar>
+    <Systembar></Systembar>
 
-    <MypageHeader></MypageHeader>
+    <Navbar></Navbar>
 
     <router-view></router-view>
-
-  </div>
+  </v-app>
 </template>
 
 <script>
-import MypageNavbar from '@/components/mypage/Navbar.vue'
-import MypageHeader from '@/components/mypage/Header.vue'
 import Systembar from '@/components/mypage/Systembar.vue'
+import Navbar from '@/components/mypage/Navbar.vue'
 export default {
-  name:"Space",
   components: {
-    MypageNavbar,
-    MypageHeader,
     Systembar,
+    Navbar
   },
+  name : "Space",
+  data: () => ({
+  }),
 }
 </script>
-
-<style>
-
-</style>

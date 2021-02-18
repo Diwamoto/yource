@@ -357,10 +357,10 @@ paths:
           schema:
             type: "string"
             example: "作成失敗理由"
-  /spaces/{userId}:
+  /users/{userId}/space:
     get:
       tags:
-      - "space"
+      - "user"
       summary: "指定されたユーザidの情報スペースを返す"  
       parameters:
       - name: "userId"
@@ -381,7 +381,7 @@ paths:
             example: "{}"
     put:
       tags:
-      - "space"
+      - "user"
       summary: "スペースの情報を変更する"
       parameters:
       - name: "userId"
@@ -427,7 +427,7 @@ paths:
             example: ""
     delete:
       tags:
-      - "space"
+      - "user"
       summary: "指定されたuserIdのスペースの情報を削除する。"
       parameters:
       - name: "userId"

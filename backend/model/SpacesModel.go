@@ -252,6 +252,6 @@ func (sm SpaceModel) ValidateUniqueSubDomain(dom string) bool {
 	s := Space{
 		SubDomain: dom,
 	}
-	_, err := sm.Find(s)
-	return err
+	fs, _ := sm.Find(s)
+	return !(len(fs) > 0)
 }

@@ -164,8 +164,9 @@ func LoginAction(c *gin.Context) {
 			session.Set(tokenString, user)
 			session.Save()
 
-			c.SetCookie("token", tokenString, 3600, "/", "localhost", true, true)
-			c.SetCookie("userId", fmt.Sprint(user.Id), 3600, "/", "localhost", true, true)
+			//クッキーに保存する処理はレスポンスではなくvue-cookieで明示的に実行する
+			// c.SetCookie("token", tokenString, 3600, "/", "localhost", true, true)
+			// c.SetCookie("userId", fmt.Sprint(user.Id), 3600, "/", "localhost", true, true)
 
 			c.JSON(http.StatusOK, gin.H{"token": tokenString, "id": fmt.Sprint(user.Id)})
 		} else {

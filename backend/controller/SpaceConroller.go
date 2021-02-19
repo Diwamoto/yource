@@ -16,12 +16,13 @@ import (
 
 //スペース作成アクション
 //POSTされた要素でデータを作成する
+// users/:id/spaceで受け取る
 func CreateSpaceAction(c *gin.Context) {
 
 	sm := model.NewSpaceModel("default")
 
 	//useridをintに変換
-	userId, _ := strconv.Atoi(c.PostForm("id"))
+	userId, _ := strconv.Atoi(c.Param("id"))
 
 	s := model.Space{
 		UserId:      userId,

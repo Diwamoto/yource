@@ -92,6 +92,14 @@ export default {
         email: Email => (!!Email && /.+@.+\..+/.test(Email)) || "正しいメールアドレスを入力してください"
       }
     },
+    mounted: function () {
+      if (this.$cookies.get("msg") != "") {
+        this.Failed = true
+        
+        this.response = this.$cookies.get("msg")
+        this.$cookies.remove("msg")
+      }
+    },
     methods: {
 
       //ログインフォーム
@@ -108,6 +116,9 @@ export default {
           }
           ).then(response => {
               //ログイン成功
+
+              this.$cookies.set("id", response.data.id, 3600, "/", "localhost", true, "None")
+              this.$cookies.set("token", response.data.token, 3600, "/", "localhost", true, "None")
 
               this.userId = response.data.id
 
@@ -129,7 +140,6 @@ export default {
               })
               .catch(err => {
                 //40x系はcatch()に入るのでこちらで処理
-                console.log("aaa")
                 switch (err.response.status){
                   case 404: //未作成
                     this.$router.push( { path: "new" }).catch((err)=>{ console.log(err)});
@@ -173,7 +183,7 @@ export default {
           }).then(() => {
               //登録成功
               //新規登録したユーザはまずスペースを作成する
-              window.location.href = '/space/new';
+              this.$router.push( { path: `/new` }).catch(()=>{});
             }
           ).catch(err => {
             if(err.response) {

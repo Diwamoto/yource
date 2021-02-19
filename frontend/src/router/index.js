@@ -9,7 +9,7 @@ const routes = [
   {
     path: '/',
     name: 'Top',
-    component: () => import('../views/Home.vue')
+    component: () => import('../views/Top.vue')
   },
   {
     path: '/about',
@@ -22,7 +22,7 @@ const routes = [
     component: () => import('../views/Login.vue')
   },
   {
-    path: '/space', component: () => import('../views/Space.vue'),
+    path: '/home', component: () => import('../views/Home.vue'),
     meta: { requiresAuth: true },
   },
   {

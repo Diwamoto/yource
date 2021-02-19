@@ -71,14 +71,12 @@
 </template>
 
 <script>
-import axios from 'axios'
 export default {
     name:"Login",
     data: function () {
       return {
         model: 'login',
         Failed: false,
-        url: process.env.VUE_APP_API_URL,
         Conflict: false,
         userId: null,
         show: false,
@@ -111,7 +109,7 @@ export default {
           params.append('Password', this.Password);
           //クッキーを同時送信する
           //ログイン処理してユーザが存在すればログイン。いなければエラー
-          axios.post('https://' + this.url  + '/api/v1/login',params,{
+          this.$http.post('https://' + this.$api  + '/api/v1/login',params,{
             withCredentials: true
           }
           ).then(response => {
@@ -124,7 +122,7 @@ export default {
 
               //ログインしたのち、トークンを使ってスペースを検索する。
               //存在しなければ作成ページ、存在すればそのスペースに飛ばす
-              axios.get('https://' + this.url + '/api/v1/users/' + this.userId + '/space',{
+              this.$http.get('https://' + this.$api + '/api/v1/users/' + this.userId + '/space',{
                 headers: {
                   "Authorization" : "Bearer " + response.data.token
                 },
@@ -135,7 +133,7 @@ export default {
                 //存在しなければ作成ページへ遷移
                 switch (response.status){
                   case 200: //存在しているのでそのページに遷移
-                    this.$router.push( { path: "space" }).catch(()=>{});
+                    this.$router.push( { path: "home" }).catch(()=>{});
                 }
               })
               .catch(err => {
@@ -175,7 +173,7 @@ export default {
           params.append('Email', this.Email)
           params.append('Password', this.Password)
           //ユーザを作成する。エラーがでたら失敗
-          axios.post('https://' + this.url + '/api/v1/signup',params,{
+          this.$http.post('https://' + this.$api + '/api/v1/signup',params,{
             headers: {
               "Authorization" : "Bearer " + this.$cookies.get("token")
             },
@@ -246,13 +244,5 @@ export default {
 .input_password input{
   ime-mode:disabled;
   margin-top: 5%;
-}
-.divider{
-  width: 90%;
-  height: 0px;
-  margin-left: 5%;
-  border-width: 1px 0 0 0;
-	border-style: solid;
-	border-color: #f0f0f0;
 }
 </style>

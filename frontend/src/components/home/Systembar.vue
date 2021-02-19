@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 export default {
   name: "Systembar",
   data: () => {
@@ -24,7 +23,6 @@ export default {
       minute: 0,
       prefix: "",//午前 or 午後
       week: ['(日)', '(月)', '(火)', '(水)', '(木)',  '(金)', '(土)'] ,
-      url: process.env.VUE_APP_API_URL,
       spaceName:  "",
       userId: ""
     }
@@ -49,7 +47,7 @@ export default {
 
     //スペースを取得してくる
     this.userId = this.$cookies.get("id")
-    axios.get('https://' + this.url + '/api/v1/users/' + this.userId + '/space',{
+    this.$http.get('https://' + this.$api + '/api/v1/users/' + this.userId + '/space',{
       headers: {
         "Authorization" : "Bearer " + this.$cookies.get("token")
       },

@@ -4,15 +4,9 @@
     <v-main class="space-title">
 
         <h1>あなたのコミュニティもしくはチームの名前を教えてください</h1>
-        <router-link to="/space/1">aaa</router-link>
-        <p>この名前がサブドメインになります。</p>
+        <p>素敵な名前をつけましょう！</p>
         
         <v-form>
-          <v-row >
-            <v-col md5 class="align-center aligin">
-              <h4>https://yource.space/space/</h4>
-            </v-col>
-            <v-col md3>
               <v-text-field
                 v-model="message"
                 append-outer-text="sss"
@@ -29,9 +23,6 @@
                 @click:prepend="changeIcon"
                 @click:clear="clearMessage"
               ></v-text-field>
-            </v-col>
-            
-          </v-row>
           
         </v-form>
     </v-main>
@@ -40,12 +31,10 @@
 </template>
 
 <script>
-import axios from 'axios'
 export default {
   name:"Create",
   data: function(){
     return {
-      url: process.env.VUE_APP_API_URL,
       userId: "",
       show: false,
       message: '',
@@ -79,7 +68,7 @@ export default {
       const params = new URLSearchParams();
       params.append("Name", this.message)
       params.append("SubDomain", this.message)
-      axios.post('https://' + this.url + '/api/v1/users/' + this.userId + '/space',params,{
+      this.$http.post('https://' + this.$api + '/api/v1/users/' + this.userId + '/space',params,{
         headers: {
           "Authorization" : "Bearer " + this.$cookies.get("token")
         },
@@ -87,7 +76,7 @@ export default {
       }).then(() => {
         //スペースの作成終了
         //作成したスペースへ移動する
-        this.$router.push( { path: `/space/${this.userId}` }).catch(()=>{});
+        this.$router.push( { path: "home" }).catch(()=>{});
       }).catch(err => {
         if(err.response) {
           switch (err.response.status){
@@ -119,7 +108,7 @@ export default {
 
 <style>
 .space-title{
-  width: 700px;
+  width: 900px;
   margin: 15% auto;
 }
 </style>

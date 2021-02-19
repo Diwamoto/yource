@@ -135,7 +135,7 @@ export default {
                 //存在しなければ作成ページへ遷移
                 switch (response.status){
                   case 200: //存在しているのでそのページに遷移
-                    this.$router.push( { path: `/space/${this.userId}` }).catch(()=>{});
+                    this.$router.push( { path: "space" }).catch(()=>{});
                 }
               })
               .catch(err => {

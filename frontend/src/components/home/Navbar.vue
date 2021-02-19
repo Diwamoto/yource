@@ -2,12 +2,12 @@
   <div class="navbar">
     <v-navigation-drawer
       v-model="drawer"
-      color="indigo darken-4"
+      color="blue darken-3"
       dark
       app
     >
       <v-sheet
-        color="indigo darken-4"
+        color="blue darken-3"
         class="pa-4"
       >
 

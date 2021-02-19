@@ -1,6 +1,6 @@
 <template>
   <div class="system">
-    <v-system-bar color="primary" dark app>
+    <v-system-bar color="blue darken-1" dark app>
       <v-spacer></v-spacer>
       <span>yource - {{ spaceName }}</span>
       <v-spacer></v-spacer>

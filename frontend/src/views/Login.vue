@@ -94,7 +94,14 @@ export default {
         email: Email => (!!Email && /.+@.+\..+/.test(Email)) || "正しいメールアドレスを入力してください"
       }
     },
-    mounted: function () {
+    created(){ 
+      //ログイン画面に遷移時にトークンが残っており有効期限が消えていなければそのままログインさせる
+      if (this.$cookies.get("token") != "") {
+        this.$router.push( { path: "home" }).catch(()=>{});
+      }
+    },
+    mounted() {
+      //フラッシュメッセージ
       if (this.$cookies.get("msg") != "") {
         this.Failed = true
         

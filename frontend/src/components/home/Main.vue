@@ -4,7 +4,7 @@
       <div class="menu">
         <div class="menu-items-wrap">
           <div class="menu-items-channel">
-            <h3>#main</h3>
+            <h3>#{{ channel.Name }}</h3>
           </div>
           
           <div class="menu-items-icons">
@@ -27,13 +27,13 @@
         
               <v-card height="300">
                 <v-card-title class="headline">
-                  <span>#Main</span>
+                  <span>#{{ channel.Name }}</span>
                   <v-spacer></v-spacer>
                   <v-btn text icon v-on:click="dialog = false"><v-icon>mdi-close</v-icon></v-btn>
                 </v-card-title>
                 <v-divider></v-divider>
                 <v-card-text>
-                  <span>メインチャンネルです。基本の質問等はすべてここに投げてください。</span>
+                  <span>{{ channel.Description }}</span>
                 </v-card-text>
               </v-card>
             </v-dialog>
@@ -51,10 +51,16 @@
 <script>
 export default {
   name: "Main",
+  props: {
+    channel: Array
+  },
   data: () => ({
     spaceName: "",
     dialog: false,
   }),
+  created() {
+    
+  }
 }
 </script>
 

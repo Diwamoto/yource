@@ -5,7 +5,7 @@
 
     <Navbar :space-name="space.Name" :channels="channels"></Navbar>
 
-    <Main></Main>
+    <Main :channel="channel"></Main>
 
   </v-app>
 </template>
@@ -26,6 +26,7 @@ export default {
       userId: null,
       space: [],
       channels: [],
+      channel: [] 
     }
   },
   created() {
@@ -54,10 +55,13 @@ export default {
             switch (response.status){
               case 200: //名前を挿入
                 this.space = response.data
+                this.channels = this.space.Channels
+                this.channel = this.channels[0]
               }
             })
           .catch(()=> {
             //ここに来るのは本来発生し得ないが、何らかのタイミングでスペースが消えてしまった場合は
+            //↑再ログイン時にhomeに強制的に飛ばすため発生する
             //作成ページに飛ばす
             this.$router.push( { path: "create" }).catch((err)=>{ console.log(err)});
           })

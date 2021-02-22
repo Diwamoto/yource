@@ -24,7 +24,7 @@ func GetRouter() *gin.Engine {
 	router := gin.Default()
 
 	// //セッション管理用にredisを設定
-	store, _ := redis.NewStore(10, "tcp", "redis:6379", "", []byte("2aFJcp9QAKzr5Jp3LwEwAgAXmwt"))
+	store, _ := redis.NewStore(10, "tcp", "redis:6379", "", []byte(os.Getenv("REDIS_KEY")))
 	//セッションの有効期限一日後を設定
 	store.Options(sessions.Options{
 		MaxAge: time.Now().Add(time.Hour * 24).Second(),
@@ -60,6 +60,10 @@ func GetRouter() *gin.Engine {
 		//ログインしている状態の場合のみ以下のルーティングを使用可能
 		v1.Use(IsLogin())
 		{
+
+			// JWTを元にredisに保存されているuserの情報を取得してくる
+			v1.GET("/retrive", controller.RetriveUserByJWTAction)
+
 			//ユーザルーティング
 			v1.GET("/users", controller.GetAllUserAction)
 			v1.POST("/users", controller.CreateUserAction)

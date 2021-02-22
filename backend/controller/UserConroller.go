@@ -3,10 +3,12 @@ package controller
 import (
 	//標準ライブラリ
 
-	"fmt"
+	"crypto/sha256"
+	"encoding/hex"
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	//自作ライブラリ
@@ -18,6 +20,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
+
+//TODO: 変数の具体名化
+//TODO: 返り値をなるべくgin.Hで書く
 
 //ユーザー作成アクション
 //POSTされた要素でデータを作成する
@@ -145,30 +150,26 @@ func LoginAction(c *gin.Context) {
 			//ログインに成功したらjwtを発行しクッキーとredisに保存
 
 			//jwtの作成
-			// headerのセット
-			token := jwt.New(jwt.SigningMethodHS256)
+			//headerのセット
+			token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+				"token": hash(user.Name),
+				"iat":   time.Now(),
+				"exp":   time.Now().Add(time.Hour * 24).Unix(),
+			})
 
-			// claimsのセット
-			claims := token.Claims.(jwt.MapClaims)
-			claims["admin"] = true
-			claims["sub"] = user.Id
-			claims["name"] = "taro"
-			claims["iat"] = time.Now()
-			claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
-
-			// 電子署名
+			//電子署名
 			tokenString, _ := token.SignedString([]byte(os.Getenv("SIGNKEY")))
 
 			//セッションに保存
 			session := sessions.Default(c)
-			session.Set(tokenString, user)
+			session.Set(tokenString, user.Id)
 			session.Save()
 
 			//クッキーに保存する処理はレスポンスではなくvue-cookieで明示的に実行する
 			// c.SetCookie("token", tokenString, 3600, "/", "localhost", true, true)
 			// c.SetCookie("userId", fmt.Sprint(user.Id), 3600, "/", "localhost", true, true)
 
-			c.JSON(http.StatusOK, gin.H{"token": tokenString, "id": fmt.Sprint(user.Id)})
+			c.JSON(http.StatusOK, gin.H{"token": tokenString})
 		} else {
 			c.JSON(http.StatusUnauthorized, "メールアドレスもしくはパスワードが間違っています。")
 		}
@@ -176,4 +177,40 @@ func LoginAction(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, "メールアドレスもしくはパスワードが間違っています。")
 	}
 
+}
+
+//ヘッダのjwtからユーザ情報を取得するアクション
+func RetriveUserByJWTAction(c *gin.Context) {
+
+	tokenString := c.Request.Header.Get("Authorization")
+	//"Bearer"が含まれていたら削除する。仮に含まれていなかったら通さない
+	if strings.Contains(tokenString, "Bearer") {
+		tokenString = strings.TrimLeft(strings.Replace(tokenString, "Bearer", "", -1), " ")
+	} else {
+		c.JSON(http.StatusUnauthorized, "不正なログインを検知しました。")
+	}
+
+	session := sessions.Default(c)
+	userId := session.Get(tokenString)
+
+	//MEMO: jwtからparseする処理がうまく動かないので、いったんセッションはそのままトークンから呼び出す。
+	// claims := jwt.MapClaims{}
+	// jt, err := jwt.ParseWithClaims(tokenstring, claims, func(token *jwt.Token) (interface{}, error) {
+	// 	return []byte(os.Getenv("SIGNKEY")), nil
+	// })
+	if userId != nil {
+
+		c.JSON(http.StatusOK, gin.H{"userId": userId})
+
+	} else {
+		c.JSON(http.StatusUnauthorized, "ログインしていません")
+	}
+
+}
+
+func hash(s string) string {
+	h := sha256.Sum256([]byte(s))
+	hash := hex.EncodeToString(h[:])
+
+	return hash
 }

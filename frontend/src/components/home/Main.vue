@@ -52,7 +52,7 @@
 export default {
   name: "Main",
   props: {
-    channel: Array
+    channel: [Object, Array]
   },
   data: () => ({
     spaceName: "",

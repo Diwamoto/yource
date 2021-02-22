@@ -3,7 +3,7 @@
     
     <Systembar :space-name="space.Name"></Systembar>
 
-    <Navbar :space-name="space.Name" :channels="channels"></Navbar>
+    <Navbar :space="space" :channels="channels" :user-id="userId" :switch-channel="switchChannel"></Navbar>
 
     <Main :channel="channel"></Main>
 
@@ -26,7 +26,8 @@ export default {
       userId: null,
       space: [],
       channels: [],
-      channel: [] 
+      channel: [],
+      post: []
     }
   },
   created() {
@@ -56,7 +57,7 @@ export default {
               case 200: //名前を挿入
                 this.space = response.data
                 this.channels = this.space.Channels
-                this.channel = this.channels[0]
+                this.switchChannel(this.channels[0])
               }
             })
           .catch(()=> {
@@ -75,5 +76,28 @@ export default {
       this.$router.push( { path: "login" }).catch((err)=>{ console.log(err)});
     })
   },
+  methods: {
+    renderChannel(){
+      this.$http.get('https://' + this.$api + '/api/v1/channels/' + this.channel.Id + '/posts',{
+        headers: {
+          "Authorization" : "Bearer " + this.$cookies.get("token")
+        },
+        withCredentials: true
+      })
+      .then(response => {
+
+        switch (response.status){
+          case 200: //名前を挿入
+            this.posts = response.data
+          }
+        })
+      .catch(()=> {
+      })
+    },
+    switchChannel(c){
+      this.channel = c
+      this.renderChannel()
+    }
+  }
 }
 </script>

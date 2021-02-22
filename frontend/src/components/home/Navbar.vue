@@ -11,14 +11,14 @@
         class="pa-4"
       >
 
-        <div><h2>{{ spaceName }}</h2></div>
+        <div><h2>{{ space.Name }}</h2></div>
       </v-sheet>
 
       <v-divider></v-divider>
 
       <v-list dense v-for="channel in channels" :key="channel.Name">
         <v-list-item
-          link
+          @click="selectChannel(channel.Name)"
         >
           <v-list-item-content>
             <v-list-item-title><h3>#{{ channel.Name }}</h3></v-list-item-title>
@@ -56,6 +56,7 @@
                 </v-col>
                 <v-col cols="12">
                   <v-text-field
+                    v-model="channelName"
                     placeholder="zatsudan"
                     required
                     outlined
@@ -66,6 +67,7 @@
                 </v-col>
                 <v-col cols="12">
                   <v-text-field
+                    v-model="channelDescription"
                     label="説明"
                     placeholder="このチャンネルは〇〇の為の物です。"
                     outlined
@@ -95,17 +97,47 @@
 export default {
   name: "Navbar",
   props: {
-    spaceName: String,
-    channels: Array
+    space: [Array,Object],
+    channels: Array,
+    userId: Number,
+    switchChannel: {
+      type: Function,
+      required: true
+    }
   },
   data: function () {
     return {
       drawer: null,
       dialog: false,
+      channelName: "",
+      channelDescription: "",
     }
   },
   methods: {
     addChannel(){
+      //チャンネル追加アクション
+      const params = new URLSearchParams();
+      params.append('Name', this.channelName);
+      params.append('Description', this.channelDescription);
+      this.$http.post('https://' + this.$api + '/api/v1/spaces/' + this.space.Id + '/channels',params, {
+        headers: {
+          "Authorization" : "Bearer " + this.$cookies.get("token")
+        },
+        withCredentials: true
+      })
+      .then(response => {
+        this.channels.push(response.data)
+        this.dialog = false
+      })
+      .catch(()=> {
+      })
+    },
+    selectChannel(name){//指定された名前のチャンネルを選択する
+      this.channels.forEach(ch => {
+        if (name == ch.Name) {
+          this.switchChannel(ch)
+        }
+      });
     }
   }
 }

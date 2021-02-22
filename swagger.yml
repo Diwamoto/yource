@@ -746,7 +746,7 @@ paths:
         - tokenAuth: []
       summary: "指定チャンネルの投稿を全て取得する"  
       parameters:
-      - name: "spaceId"
+      - name: "channelId"
         in: "path"
         description: "投稿一覧を取得したいチャンネルのid"
         required: true

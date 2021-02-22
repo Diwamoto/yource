@@ -17,6 +17,7 @@
               :rules="[email_required, email]"
               placeholder="user@example.com"
               outlined
+              @keydown.enter="login_submit"
             >
             </v-text-field>
             <v-text-field
@@ -29,6 +30,7 @@
               placeholder="Password"
               outlined
               @click:append="show = !show"
+              @keydown.enter="login_submit"
             >
             </v-text-field>
             <h4 v-if="Failed" class="login-failed-message">{{ response }}</h4>
@@ -46,6 +48,7 @@
               :rules="[email_required, email]"
               placeholder="user@example.com"
               outlined
+              @keydown.enter="signup_submit"
             >
             </v-text-field>
             <v-text-field
@@ -58,6 +61,7 @@
               placeholder="Password"
               outlined
               @click:append="show = !show"
+              @keydown.enter="signup_submit"
             >
             </v-text-field>
             <h4 v-if="Conflict" class="login-failed-message">{{ response }}</h4>
@@ -115,8 +119,8 @@ export default {
           ).then(response => {
               //ログイン成功
 
-              this.$cookies.set("id", response.data.id, 3600, "/", "localhost", true, "None")
-              this.$cookies.set("token", response.data.token, 3600, "/", "localhost", true, "None")
+              //ユーザIDはjwtを使ってサーバから呼び出す
+              this.$cookies.set("token", response.data.token, 3600, "/", "localhost", true, "Lax")
 
               this.userId = response.data.id
 

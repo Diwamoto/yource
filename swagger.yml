@@ -1,6 +1,6 @@
 swagger: "2.0"
 # host: "yource.space"
-host: "724817ebda38.ngrok.io"
+host: "localhost:9091"
 info:
   description: "yourceで使用するrest apiについてのswaggerドキュメント"
   version: "1.0.0"
@@ -12,6 +12,11 @@ info:
     name: "MIT"
     url: "https://licenses.opensource.jp/MIT/MIT.html"
 basePath: "/api/v1"
+securityDefinitions:
+  tokenAuth:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
 tags:
 - name: "user"
   description: "ユーザ"
@@ -30,6 +35,8 @@ paths:
     get:
       tags:
       - "user"
+      security:
+        - tokenAuth: []
       summary: "ユーザの情報を全て取得する"  
       responses:
         200:
@@ -46,6 +53,8 @@ paths:
     post:
       tags:
       - "user"
+      security:
+        - tokenAuth: []
       consumes:
           - application/x-www-form-urlencoded
       summary: "指定されたユーザが存在しなければ作成し、そのユーザのオブジェクトを返す。"
@@ -86,6 +95,8 @@ paths:
     get:
       tags:
       - "user"
+      security:
+        - tokenAuth: []
       summary: "指定されたuserIdの情報を返す"  
       parameters:
       - name: "userId"
@@ -107,6 +118,8 @@ paths:
     put:
       tags:
       - "user"
+      security:
+        - tokenAuth: []
       summary: "指定されたuserIdの情報を更新して返す。"
       parameters:
       - name: "userId"
@@ -157,6 +170,8 @@ paths:
     delete:
       tags:
       - "user"
+      security:
+        - tokenAuth: []
       summary: "指定されたuserIdの情報を削除する。"
       parameters:
       - name: "userId"
@@ -180,6 +195,8 @@ paths:
     get:
       tags:
       - "profile"
+      security:
+        - tokenAuth: []
       summary: "指定ユーザIDのプロフィールを取得する"
       parameters:
       - name: "userId"
@@ -201,6 +218,8 @@ paths:
     post:
       tags:
       - "profile"
+      security:
+        - tokenAuth: []
       consumes:
           - application/x-www-form-urlencoded
       summary: "指定されたユーザが存在しなければ作成し、そのユーザのオブジェクトを返す。"
@@ -255,6 +274,8 @@ paths:
     put:
       tags:
       - "profile"
+      security:
+        - tokenAuth: []
       consumes:
           - application/x-www-form-urlencoded
       summary: "指定されたユーザIDのプロフィールを変更する。"
@@ -310,6 +331,8 @@ paths:
     get:
       tags:
       - "space"
+      security:
+        - tokenAuth: []
       summary: "全てのスペースを取得する"
       responses:
         200:
@@ -327,6 +350,8 @@ paths:
     get:
       tags:
       - "user"
+      security:
+        - tokenAuth: []
       summary: "指定されたユーザidの情報スペースを返す"  
       parameters:
       - name: "userId"
@@ -348,6 +373,8 @@ paths:
     post:
       tags:
       - "user"
+      security:
+        - tokenAuth: []
       consumes:
           - application/x-www-form-urlencoded
       summary: "スペースが存在しなければ作成し、そのスペースのオブジェクトを作成する"
@@ -382,6 +409,8 @@ paths:
     put:
       tags:
       - "user"
+      security:
+        - tokenAuth: []
       summary: "スペースの情報を変更する"
       parameters:
       - name: "userId"
@@ -428,6 +457,8 @@ paths:
     delete:
       tags:
       - "user"
+      security:
+        - tokenAuth: []
       summary: "指定されたuserIdのスペースの情報を削除する。"
       parameters:
       - name: "userId"
@@ -451,6 +482,8 @@ paths:
     get:
       tags:
       - "channel"
+      security:
+        - tokenAuth: []
       summary: "全てのチャンネルを取得する"
       responses:
         200:
@@ -468,6 +501,8 @@ paths:
     get:
       tags:
       - "channel"
+      security:
+        - tokenAuth: []
       summary: "指定されたチャンネルidのチャンネルの情報を返す"  
       parameters:
       - name: "channelId"
@@ -489,6 +524,8 @@ paths:
     put:
       tags:
       - "channel"
+      security:
+        - tokenAuth: []
       summary: "チャンネルの情報を変更する"
       parameters:
       - name: "channelId"
@@ -523,6 +560,8 @@ paths:
     delete:
       tags:
       - "channel"
+      security:
+        - tokenAuth: []
       summary: "指定されたidのチャンネルを削除する"
       parameters:
       - name: "channelId"
@@ -546,6 +585,8 @@ paths:
     get:
       tags:
       - "space"
+      security:
+        - tokenAuth: []
       summary: "指定スペースのチャンネルを全て取得する"  
       parameters:
       - name: "spaceId"
@@ -569,6 +610,8 @@ paths:
     post:
       tags:
         - "space"
+      security:
+        - tokenAuth: []
       consumes:
         - application/x-www-form-urlencoded
       summary: "指定スペースのチャンネルを作成します"
@@ -600,6 +643,8 @@ paths:
     get:
       tags:
       - "post"
+      security:
+        - tokenAuth: []
       summary: "全ての投稿を取得する"
       responses:
         200:
@@ -617,6 +662,8 @@ paths:
     get:
       tags:
       - "post"
+      security:
+        - tokenAuth: []
       summary: "指定された投稿IDの情報を返す"  
       parameters:
       - name: "postId"
@@ -638,6 +685,8 @@ paths:
     put:
       tags:
       - "post"
+      security:
+        - tokenAuth: []
       summary: "投稿の情報を変更する"
       parameters:
       - name: "postId"
@@ -668,6 +717,8 @@ paths:
     delete:
       tags:
       - "post"
+      security:
+        - tokenAuth: []
       summary: "指定されたidの投稿を削除する"
       parameters:
       - name: "postId"
@@ -691,6 +742,8 @@ paths:
     get:
       tags:
       - "channel"
+      security:
+        - tokenAuth: []
       summary: "指定チャンネルの投稿を全て取得する"  
       parameters:
       - name: "spaceId"
@@ -714,6 +767,8 @@ paths:
     post:
       tags:
         - "channel"
+      security:
+        - tokenAuth: []
       consumes:
         - application/x-www-form-urlencoded
       summary: "指定チャンネルに投稿を作成する"

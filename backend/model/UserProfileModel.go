@@ -17,6 +17,7 @@ type UserProfile struct {
 	Entity
 	UserId    int //MEMO: 本当であればバリデーションを用いたいが、Userの子になっているUserProfileではなぜか独自バリデーションが読み込まれないのでCreate()時に判断する
 	Profile   string
+	Icon      string //CDN先のurlが入る想定
 	Birthday  time.Time
 	From      string //TODO: 出身地は別にテーブルを設けてidで判断する？ → フロントでselectboxで判断すればテーブルを用意する必要はなさそう
 	Job       string //TODO: 上に同じ
@@ -190,6 +191,7 @@ func (upm UserProfileModel) Update(userId int, up UserProfile) ([]string, bool) 
 	//引数の情報を移す
 	//ユーザプロフィールプロフィールはnull許容なのでチェックはなし
 	tup.Profile = up.Profile
+	tup.Icon = up.Icon
 	tup.Birthday = up.Birthday
 	tup.From = up.From
 	tup.Job = up.Job

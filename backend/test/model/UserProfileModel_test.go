@@ -24,6 +24,7 @@ func TestValidateUserProfile(t *testing.T) {
 			model.UserProfile{
 				UserId:    1,
 				Profile:   "profile test",
+				Icon:      "test url",
 				Birthday:  time.Now(),
 				From:      "japan",
 				Job:       "engineer",
@@ -39,6 +40,7 @@ func TestValidateUserProfile(t *testing.T) {
 			model.UserProfile{
 				UserId:    9999,
 				Profile:   "",
+				Icon:      "",
 				Birthday:  time.Now(),
 				From:      "",
 				Job:       "",
@@ -71,6 +73,7 @@ func TestCreateUserProfile(t *testing.T) {
 			model.UserProfile{
 				UserId:    1,
 				Profile:   "profile test",
+				Icon:      "test url",
 				Birthday:  time.Date(2020, 1, 1, 12, 0, 0, 0, time.Local),
 				From:      "japan",
 				Job:       "engineer",
@@ -86,6 +89,7 @@ func TestCreateUserProfile(t *testing.T) {
 			model.UserProfile{
 				UserId:    2, //既に作成してしまっている
 				Profile:   "profile test",
+				Icon:      "test url",
 				Birthday:  time.Date(2020, 1, 1, 12, 0, 0, 0, time.Local),
 				From:      "japan",
 				Job:       "engineer",
@@ -194,7 +198,15 @@ func TestFindUserProfile(t *testing.T) {
 			false, //検索は成功するはず
 		},
 		{
-			//②: 誕生日で検索
+			//②: Iconで検索
+			model.UserProfile{
+				Icon: "test url",
+			},
+			"アイコン",
+			false, //検索は成功するはず
+		},
+		{
+			//③: 誕生日で検索
 			model.UserProfile{
 				Birthday: time.Date(2020, 1, 1, 12, 0, 0, 0, time.Local),
 			},
@@ -202,7 +214,7 @@ func TestFindUserProfile(t *testing.T) {
 			false, //検索は成功するはず
 		},
 		{
-			//③: 出身地で検索
+			//④: 出身地で検索
 			//TODO: 出身地の多様性をどうするか
 			model.UserProfile{
 				From: "japan",
@@ -211,7 +223,7 @@ func TestFindUserProfile(t *testing.T) {
 			false, //検索は成功するはず
 		},
 		{
-			//④: 仕事で検索
+			//⑤: 仕事で検索
 			model.UserProfile{
 				Job: "engineer",
 			},
@@ -219,7 +231,7 @@ func TestFindUserProfile(t *testing.T) {
 			false, //検索は成功するはず
 		},
 		{
-			//⑤: ツイッターで検索
+			//⑥: ツイッターで検索
 			model.UserProfile{
 				Twitter: "@aaa",
 			},
@@ -227,7 +239,7 @@ func TestFindUserProfile(t *testing.T) {
 			false, //検索は成功するはず
 		},
 		{
-			//⑥: facebookで検索
+			//⑦: facebookで検索
 			model.UserProfile{
 				Facebook: "my awesome facebook",
 			},
@@ -235,7 +247,7 @@ func TestFindUserProfile(t *testing.T) {
 			false, //検索は成功するはず
 		},
 		{
-			//⑦: インスタグラムで検索
+			//⑧: インスタグラムで検索
 			model.UserProfile{
 				Instagram: "@myinsta",
 			},
@@ -243,7 +255,7 @@ func TestFindUserProfile(t *testing.T) {
 			false, //検索は成功するはず
 		},
 		{
-			//⑧: 他のwebサイトで検索
+			//⑨: 他のwebサイトで検索
 			model.UserProfile{
 				Other: "my.awesome.web.com",
 			},
@@ -251,7 +263,7 @@ func TestFindUserProfile(t *testing.T) {
 			false, //検索は成功するはず
 		},
 		{
-			//⑨: プロフィールの文言で検索
+			//⑩: プロフィールの文言で検索
 			model.UserProfile{
 				Profile: "fail test",
 			},
@@ -282,6 +294,7 @@ func TestUpdateUserProfile(t *testing.T) {
 			model.UserProfile{
 				UserId:    1,
 				Profile:   "Update",
+				Icon:      "Update",
 				Birthday:  time.Now(),
 				From:      "Update",
 				Job:       "Update",
@@ -298,6 +311,7 @@ func TestUpdateUserProfile(t *testing.T) {
 			model.UserProfile{
 				UserId:    9999,
 				Profile:   "Update",
+				Icon:      "Update",
 				Birthday:  time.Now(),
 				From:      "Update",
 				Job:       "Update",

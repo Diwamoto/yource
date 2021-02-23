@@ -1,4 +1,4 @@
--- Adminer 4.7.8 MySQL dump
+-- Adminer 4.8.0 MySQL 5.7.33-log dump
 
 SET NAMES utf8;
 SET time_zone = '+00:00';
@@ -64,19 +64,20 @@ CREATE TABLE `users` (
 DROP TABLE IF EXISTS `user_profiles`;
 CREATE TABLE `user_profiles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) DEFAULT NULL,
-  `profile` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `birthday` datetime DEFAULT NULL,
-  `from` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `job` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `twitter` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `facebook` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `instagram` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `other` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created` datetime DEFAULT NULL,
-  `modified` datetime DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL COMMENT 'ユーザID',
+  `profile` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '自己紹介文',
+  `birthday` datetime DEFAULT NULL COMMENT '誕生日',
+  `icon` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'アイコンのCDNurlが入る想定。',
+  `from` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '出身',
+  `job` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '職業',
+  `twitter` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'ツイッター',
+  `facebook` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'フェイスブック',
+  `instagram` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'インスタグラム',
+  `other` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'その他url',
+  `created` datetime DEFAULT NULL COMMENT '作成日',
+  `modified` datetime DEFAULT NULL COMMENT '更新日',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
--- 2021-02-09 07:30:07
+-- 2021-02-23 17:16:03

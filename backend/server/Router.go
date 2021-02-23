@@ -27,7 +27,7 @@ func GetRouter() *gin.Engine {
 	store, _ := redis.NewStore(10, "tcp", "redis:6379", "", []byte(os.Getenv("REDIS_KEY")))
 	//セッションの有効期限一日後を設定
 	store.Options(sessions.Options{
-		MaxAge: time.Now().Add(time.Hour * 24).Second(),
+		MaxAge: 60 * 60 * 24,
 	})
 	router.Use(sessions.Sessions("session", store))
 

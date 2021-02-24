@@ -5,8 +5,7 @@
 
       <Posts :channel="channel" :posts="posts" ref="Posts"></Posts>
 
-      <PostForm :channel="channel" :user-id="userId" :get-posts="getPostsForChild"></PostForm>
-      
+      <PostForm :channel="channel" :user-id="userId" :get-posts="getPostsForChild" ref="Form"></PostForm>
       
     </v-main>
   </div>
@@ -37,6 +36,9 @@ export default {
       dialog: false,
       postNotFound: false,
     }
+  },
+  updated() {
+    this.$refs.Form.updateLabel()
   },
   methods: {
     scrollBottom(){

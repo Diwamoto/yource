@@ -128,6 +128,7 @@ export default {
       .then(response => {
         this.channels.push(response.data)
         this.dialog = false
+        this.selectChannel(response.data.Name)
       })
       .catch(()=> {
       })

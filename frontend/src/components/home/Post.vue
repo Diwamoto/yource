@@ -1,11 +1,11 @@
 <template>
     <div class="posts-wrapper" ref="posts">
-        <div class="welcome">
+        <div class="welcome" v-bind:style="marginTop">
             <h2>#{{ channel.Name }} へようこそ！</h2>
             <h5>説明: {{ channel.Description }}</h5>
         </div>
         <div v-if="posts.length > 0" class="posts">
-            <div class="post" v-for="post in posts" :key="post.id">
+            <div class="posts-item" v-for="post in posts" :key="post.id">
                 <v-row>
                     <v-col cols="12">
                         <v-avatar
@@ -15,9 +15,9 @@
                         dark
                         class="rounded"
                         ><span style="color:white">{{ getAvatarPrefix(post.User.Name) }}</span></v-avatar>
-                    <span class="post-user-name">{{ post.User.Name }}</span><small class="post-date">{{ formatPostDate(post.Date) }}</small>
+                    <span class="posts-item-user-name">{{ post.User.Name }}</span><small class="posts-item-date">{{ formatPostDate(post.Date) }}</small>
                     </v-col>
-                    <v-col cols="12" class="content">
+                    <v-col cols="12" class="posts-item-content">
                         {{ post.Content }}
                     </v-col>
                 </v-row>
@@ -35,7 +35,9 @@ export default {
     },
     data() {
         return {
-
+            marginTop: {
+                "margin-top" : "650px"
+            }
         }
     },
     mounted(){
@@ -48,6 +50,9 @@ export default {
     
         //最下部までスクロールする
         this.scrollBottom()
+
+        //マージンを動的に設定する。
+        this.dynamicMargin()
     },
     methods: {
         
@@ -60,6 +65,7 @@ export default {
             //文字列からmoment形式に変換
             var postDate = this.$moment(new Date(rawPostDate))
             var nowDate = this.$moment()
+            //日付を今日と比較する。
             if (nowDate.diff(postDate,"days") == 0){
                 return "今日" + postDate.format("HH:mm")
             } else {
@@ -70,6 +76,20 @@ export default {
         //もし英語であれば大文字にする。
         getAvatarPrefix(Name){
             return Name.slice( 0, 2 ).toUpperCase()
+        },
+
+        //マージンを動的に設定する。
+        //投稿一つのサイズが50px(アバターに依存する)なので、一つ投稿があるごとにmarginを50px減らす。
+        //投稿を表示する欄のサイズが11個表示するのがちょうどいいので11個以上あれば0にして、それ以外は個数*50px減らす。
+        //投稿がなければ元の数値に戻す。
+        dynamicMargin(){
+            if (this.posts.length > 11) {
+                this.marginTop["margin-top"] = "0px"
+            }else if (this.posts.length > 0) {
+                this.marginTop["margin-top"] = (600 - 50 * this.posts.length) + "px"
+            }else if (this.posts.length == 0) {
+                this.marginTop["margin-top"] = "650px"
+            }
         }
     }
 
@@ -77,5 +97,35 @@ export default {
 </script>
 
 <style>
-
+.posts-wrapper{
+  position: fixed;
+  height: 77.6%;
+  width: 86.6%;
+  margin-top: 68px;
+  padding-top: 10px;
+  overflow:auto;
+}
+.posts-item{
+  margin-left: 15px;
+  height: 80px;
+  width: 80%;
+}
+.welcome{
+  margin-left: 30px;
+  width: 86.6%;
+}
+.posts-item-user-name{
+  margin-left: 9px;
+  font-weight:bold;
+}
+.posts-item-date{
+  margin-left: 10px
+}
+.v-avatar{
+  margin-top: 30px;
+}
+.posts-item-content{
+  margin-top: -3.7%;
+  margin-left: 58px;
+}
 </style>

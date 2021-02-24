@@ -45,7 +45,7 @@ export default {
     updated() {
         
         //フォームに文字が入力されていれば送信ヒントメッセージを追加
-        if (this.newPost.length > 0) {
+        if (this.newPost != "") {
             this.hint = "cmd + enterでも送信することができます。"
         } else {
             this.hint = ""
@@ -70,7 +70,7 @@ export default {
                 }).then(() => {
                     //投稿が作成できたら投稿一覧をリセットし、入力欄を削除する。
                     this.getPosts()
-                    this.newPost = ''
+                    this.newPost = ""
                 }).catch(err => {
                     if(err.response) {
                         switch (err.response.status){
@@ -87,7 +87,8 @@ export default {
             }
         },
         clearMessage () {
-            this.newPost = ''
+            this.newPost = ""
+            this.hint = ""
         },
         //入力フォームのラベルを更新する
         updateLabel(){
@@ -98,5 +99,17 @@ export default {
 </script>
 
 <style>
-
+.input-form{
+  position: fixed;
+  margin-top: 43%;
+  width: 87%;
+  padding-top: 10px;
+  padding-left: 10px;
+  border-width: 1px 0 0 0;
+	border-style: solid;
+	border-color: #909090;
+}
+.input-box{
+  width: 98%;
+}
 </style>

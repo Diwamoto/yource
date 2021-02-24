@@ -64,7 +64,7 @@ export default {
     submit () {
       //スペースを作成
       this.userId = this.$cookies.get("id")
-      const params = new URLSearchParams();
+      var params = new URLSearchParams();
       params.append("Name", this.message)
       params.append("SubDomain", this.message)
       this.$http.post('https://' + this.$api + '/api/v1/users/' + this.userId + '/space',params,{
@@ -72,8 +72,38 @@ export default {
           "Authorization" : "Bearer " + this.$cookies.get("token")
         },
         withCredentials: true
-      }).then(() => {
+      }).then((response) => {
         //スペースの作成終了
+        var space = response.data
+
+        //デフォルトで#mainと#randomを追加する
+        params = new URLSearchParams();
+        params.append('Name', 'main');
+        params.append('Description', 'メインチャンネルです。');
+        this.$http.post('https://' + this.$api + '/api/v1/spaces/' + space.Id + '/channels',params, {
+          headers: {
+            "Authorization" : "Bearer " + this.$cookies.get("token")
+          },
+          withCredentials: true
+        })
+        .then(() => {
+        })
+        .catch(()=> {
+        })
+        params = new URLSearchParams();
+        params.append('Name', 'random');
+        params.append('Description', '仕事以外の話はこちらでした方がいいでしょう。');
+        this.$http.post('https://' + this.$api + '/api/v1/spaces/' + space.Id + '/channels',params, {
+          headers: {
+            "Authorization" : "Bearer " + this.$cookies.get("token")
+          },
+          withCredentials: true
+        })
+        .then(() => {
+        })
+        .catch(()=> {
+        })
+
         //作成したスペースへ移動する
         this.$router.push( { path: "home" }).catch(()=>{});
       }).catch(err => {

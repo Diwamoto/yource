@@ -62,7 +62,7 @@ export default {
   methods: {
     renderComma: function(){
       //間のコンマを描画しない
-      this.time = '　' + this.prefix + this.zeroPadding(this.hour, 2) + ' ' + this.zeroPadding(this.minute, 2)
+      this.time = '　' + this.prefix + this.hour + ' ' + this.zeroPadding(this.minute, 2)
       this.date = this.month + "月" + this.zeroPadding(this.day, 2) + "日" + this.week[this.day % 7]
     },
     updateTime: function() { 
@@ -82,7 +82,7 @@ export default {
       this.minute = now.getMinutes()
 
       //表示用変数に代入
-      this.time = '　' + this.prefix + this.zeroPadding(this.hour, 2) + ':' + this.zeroPadding(this.minute, 2)
+      this.time = '　' + this.prefix + this.hour + ':' + this.zeroPadding(this.minute, 2)
       this.date = this.month + "月" + this.zeroPadding(this.day, 2) + "日" + this.week[this.day % 7]
     },
     zeroPadding: function(num, len) {

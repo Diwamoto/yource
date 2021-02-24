@@ -17,6 +17,7 @@ type Post struct {
 	Entity
 	ChannelId int       `validate:"required"` //送信チャンネルID
 	UserId    int       `validate:"required"` //送信者ID
+	User      User      `validate:"required"` //送信者がbelongstoで入る
 	Content   string    `validate:"required"`
 	Date      time.Time `validate:"required"`
 }
@@ -108,14 +109,14 @@ func (pm PostModel) Create(p Post) ([]string, bool) {
 //全てのチャンネルを取得する
 func (pm PostModel) GetAll() ([]Post, bool) {
 
-	var p []Post
+	var posts []Post
 
-	pm.db.AutoMigrate(&p)
-	pm.db.Find(&p)
+	pm.db.AutoMigrate(&Post{})
+	pm.db.Preload("User").Find(&posts)
 
 	//値が取得できたら
-	if len(p) > 0 {
-		return p, false
+	if len(posts) > 0 {
+		return posts, false
 	} else {
 		return []Post{}, true
 	}
@@ -128,7 +129,7 @@ func (pm PostModel) GetByChannelId(channelId int) ([]Post, bool) {
 	var p []Post
 
 	pm.db.AutoMigrate(&p)
-	pm.db.Where("channel_id = ?", channelId).Find(&p)
+	pm.db.Preload("User").Where("channel_id = ?", channelId).Find(&p)
 
 	//値が取得できたら
 	if len(p) > 0 {
@@ -146,7 +147,7 @@ func (pm PostModel) GetByUserId(userId int) ([]Post, bool) {
 	var p []Post
 
 	pm.db.AutoMigrate(&p)
-	pm.db.Where("user_id = ?", userId).Find(&p)
+	pm.db.Preload("User").Where("user_id = ?", userId).Find(&p)
 
 	//値が取得できたら
 	if len(p) > 0 {
@@ -164,7 +165,7 @@ func (pm PostModel) GetById(id int) (Post, bool) {
 	var p Post
 
 	pm.db.AutoMigrate(&p)
-	pm.db.First(&p, id)
+	pm.db.Preload("User").First(&p, id)
 
 	//値が取得できたら
 	if p.Id == id {
@@ -181,7 +182,7 @@ func (pm PostModel) Find(p Post) ([]Post, bool) {
 
 	var r []Post
 
-	pm.db.Where(&p).Find(&r)
+	pm.db.Preload("User").Where(&p).Find(&r)
 
 	//値が取得できたら
 	if len(r) > 0 {

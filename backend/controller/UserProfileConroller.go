@@ -27,6 +27,7 @@ func CreateUserProfileAction(c *gin.Context) {
 	up := model.UserProfile{
 		UserId:    userId,
 		Profile:   c.PostForm("Profile"),
+		Icon:      c.PostForm("Icon"),
 		Birthday:  birth,
 		From:      c.PostForm("From"),
 		Job:       c.PostForm("Job"),
@@ -102,6 +103,7 @@ func UpdateUserProfileAction(c *gin.Context) {
 		//誕生日を時間型に変換
 		birth, _ := time.Parse("2006/01/02 15:04:05", c.PostForm("Birthday"))
 		up.Profile = c.PostForm("Profile")
+		up.Icon = c.PostForm("Icon")
 		up.Birthday = birth
 		up.From = c.PostForm("From")
 		up.Job = c.PostForm("Job")

@@ -78,7 +78,7 @@ func TestCreatePost(t *testing.T) {
 				ChannelId: 1,
 				UserId:    1,
 				Content:   "test content",
-				Date:      time.Now(),
+				Date:      time.Date(2018, 3, 11, 12, 0, 0, 0, time.Local),
 			},
 			false, //エラーはでないはず
 		},
@@ -92,9 +92,9 @@ func TestCreatePost(t *testing.T) {
 
 }
 
-//GetPost()のテスト
+//PostModel.GetById()のテスト
 //投稿が取得できたらOK,できなければダメ
-func TestGetPost(t *testing.T) {
+func TestGetPostById(t *testing.T) {
 
 	tests := []struct {
 		in   int //userID
@@ -104,6 +104,158 @@ func TestGetPost(t *testing.T) {
 			//①: 先ほど作成した投稿
 			1,
 			false, //エラーはでないはず
+		},
+		{
+			//②: 存在しない投稿
+			9999,
+			true, //エラーになるはず
+		},
+	}
+	for _, tt := range tests {
+		_, err := pm.GetById(tt.in)
+		if err != tt.want {
+			t.Errorf("userID:%dの投稿を取得できませんでした。", tt.in)
+		}
+	}
+}
+
+//PostModel.GetByChannelId()のテスト
+//投稿が取得できたらOK,できなければダメ
+func TestGetPostsByChannelId(t *testing.T) {
+
+	tests := []struct {
+		in   int //userID
+		want bool
+	}{
+		{
+			//①: テストで作成したチャンネルの投稿
+			1,
+			false, //エラーはでないはず
+		},
+		{
+			//①: 存在しないチャンネルの投稿
+			9999,
+			true, //エラーになるはず
+		},
+	}
+	for _, tt := range tests {
+		_, err := pm.GetByChannelId(tt.in)
+		if err != tt.want {
+			t.Errorf("userID:%dの投稿を取得できませんでした。", tt.in)
+		}
+	}
+}
+
+//PostModel.Find()のテスト
+//投稿が取得できたらOK,できなければダメ
+func TestFindPosts(t *testing.T) {
+
+	tests := []struct {
+		in   model.Post
+		want bool
+	}{
+		{
+			//①: チャンネルIDで検索
+			model.Post{
+				ChannelId: 1,
+			},
+			false, //エラーはでないはず
+		},
+		{
+			//②: ユーザIDで検索
+			model.Post{
+				UserId: 1,
+			},
+			false, //エラーはでないはず
+		},
+		{
+			//③: 内容で検索
+			model.Post{
+				Content: "test content",
+			},
+			false, //エラーはでないはず
+		},
+		{
+			//④: 投稿日で検索
+			model.Post{
+				Date: time.Date(2018, 3, 11, 12, 0, 0, 0, time.Local),
+			},
+			false, //エラーはでないはず
+		},
+		{
+			//⑤: 存在しないチャンネルIDで検索
+			model.Post{
+				ChannelId: 9999,
+			},
+			true, //エラーになるはず
+		},
+		{
+			//⑥: 存在しないユーザIDで検索
+			model.Post{
+				UserId: 9999,
+			},
+			true, //エラーになるはず
+		},
+		{
+			//⑦: 存在しない内容で検索
+			model.Post{
+				Content: "内容",
+			},
+			true, //エラーになるはず
+		},
+		{
+			//⑧: dbに存在しない投稿日で検索
+			model.Post{
+				Date: time.Date(2021, 3, 11, 12, 0, 0, 0, time.Local),
+			},
+			true, //エラーになるはず
+		},
+	}
+	for i, tt := range tests {
+		posts, err := pm.Find(tt.in)
+		if err != tt.want {
+			t.Errorf("%d番目のテストが失敗しました。Find()の結果:%#v", i, posts)
+		}
+	}
+}
+
+//PostModel.GetAll()のテスト
+//投稿が取得できたらOK,できなければダメ
+func TestGetAllPosts(t *testing.T) {
+
+	tests := []struct {
+		want bool
+	}{
+		{
+			//①: 投稿を全取得
+			false, //テストで作成しているため、エラーはでないはず
+		},
+	}
+	for _, tt := range tests {
+		_, err := pm.GetAll()
+		if err != tt.want {
+			t.Errorf("投稿を取得できませんでした。")
+		}
+	}
+}
+
+//PostModel.GetByUserId()のテスト
+//投稿が取得できたらOK,できなければダメ
+func TestGetPostByUserId(t *testing.T) {
+
+	tests := []struct {
+		in   int //userID
+		want bool
+	}{
+		{
+			//①: 先ほど作成した投稿
+			1,
+			false, //エラーはでないはず
+		},
+		{
+			//②: 存在しないユーザIDで検索
+			9999,
+			true, //エラーになるはず
 		},
 	}
 	for _, tt := range tests {

@@ -4,7 +4,7 @@ go:
 
 services:
   - mysql
-  
+
 dist: xenial
 
 env:
@@ -15,7 +15,7 @@ before_install:
 
 script: 
   - go mod tidy
-  - mysql -u travis -e 'CREATE DATABASE test_yource;'
+  - mysql -u travis -e 'CREATE DATABASE test_yource DEFAULT CHARACTER SET utf8mb4;'
   - cp .travis/.env ./env
   - go test ./... -v -count=1
 

@@ -2,7 +2,14 @@
   <div class="system">
     <v-system-bar color="blue darken-1" dark app>
       <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
       <span>{{ spaceName }} - yource</span>
+      <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
       <v-spacer></v-spacer>
       <span>{{ date }}</span>
       <span>{{ time }}</span>

@@ -5,7 +5,7 @@
 
     <Navbar :space="space" :channels="channels" :user-id="userId" :switch-channel="switchChannel"></Navbar>
 
-    <Main :channel="channel"></Main>
+    <Main :channel="channel" :posts="posts" :user-id="userId" ref="Main" :get-posts="getPosts"></Main>
 
   </v-app>
 </template>
@@ -27,10 +27,10 @@ export default {
       space: [],
       channels: [],
       channel: [],
-      post: []
+      posts: []
     }
   },
-  created() {
+  mounted() {
     //ユーザIDを取得してくる
     this.$http.get('https://' + this.$api + '/api/v1/retrive',{
       headers: {
@@ -64,12 +64,12 @@ export default {
             //ここに来るのは本来発生し得ないが、何らかのタイミングでスペースが消えてしまった場合は
             //↑再ログイン時にhomeに強制的に飛ばすため発生する
             //作成ページに飛ばす
-            this.$router.push( { path: "create" }).catch((err)=>{ console.log(err)});
+            //this.$router.push( { path: "new" }).catch((err)=>{ console.log(err)});
           })
         
         }
       })
-    .catch(()=> {
+    .catch(() =>  {
       //ユーザ情報が取得できなかったら再ログインさせる
       this.$cookies.remove("token")
       this.$cookies.set("msg", "続けるにはログインが必要です。", 3600, "/", "localhost", true, "None")
@@ -77,7 +77,10 @@ export default {
     })
   },
   methods: {
-    renderChannel(){
+    //投稿を取得する
+    getPosts(){
+      //一度投稿を初期化
+      this.posts = []
       this.$http.get('https://' + this.$api + '/api/v1/channels/' + this.channel.Id + '/posts',{
         headers: {
           "Authorization" : "Bearer " + this.$cookies.get("token")
@@ -87,16 +90,18 @@ export default {
       .then(response => {
 
         switch (response.status){
-          case 200: //名前を挿入
+          case 200:
             this.posts = response.data
           }
         })
       .catch(()=> {
       })
     },
+    //チャンネルを変更する
     switchChannel(c){
       this.channel = c
-      this.renderChannel()
+      this.getPosts()
+      this.$refs.Main.scrollBottom()
     }
   }
 }

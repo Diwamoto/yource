@@ -16,7 +16,7 @@
 
       <v-divider></v-divider>
 
-      <v-list dense v-for="channel in channels" :key="channel.Name">
+      <v-list class="channels" dense v-for="channel in channels" :key="channel.Name">
         <v-list-item
           @click="selectChannel(channel.Name)"
         >
@@ -144,5 +144,7 @@ export default {
 </script>
 
 <style>
-
+.channels{
+  overflow:auto;
+}
 </style>

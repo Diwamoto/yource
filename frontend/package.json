@@ -15,8 +15,10 @@
     "core-js": "~3.8.3",
     "firebase": "^8.2.6",
     "firebase-tools": "^9.3.0",
+    "moment": "^2.29.1",
     "vue": "~2.6.12",
     "vue-cookies": "^1.7.4",
+    "vue-moment": "^4.1.0",
     "vue-router": "^3.5.1",
     "vuetify": "~2.4.3"
   },

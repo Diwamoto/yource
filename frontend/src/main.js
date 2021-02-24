@@ -7,6 +7,7 @@ import axios from 'axios'
 
 Vue.config.productionTip = false
 Vue.use(require('vue-cookies'))
+Vue.use(require('vue-moment'));
 Vue.use(VueRouter)
 
 new Vue({

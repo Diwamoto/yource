@@ -9,7 +9,6 @@
         <v-form>
               <v-text-field
                 v-model="message"
-                append-outer-text="sss"
                 append-outer-icon="mdi-send"
                 outlined
                 clear-icon="mdi-close"

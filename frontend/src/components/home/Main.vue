@@ -1,93 +1,97 @@
 <template>
   <div class="main">
     <v-main app>
-      <div class="menu">
-        <div class="menu-items-wrap">
-          <div class="menu-items-channel">
-            <h3>#{{ channel.Name }}</h3>
-          </div>
-          
-          <div class="menu-items-icons">
-            <v-dialog
-              v-model="dialog"
-              width="500"
-              height="400"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  text
-                  icon
-                  v-bind="attrs"
-                  v-on="on"
-                  style="margin-right:10%"
-                >
-                  <v-icon large>mdi-information-outline</v-icon>
-                </v-btn>
-              </template>
-        
-              <v-card height="300">
-                <v-card-title class="headline">
-                  <span>#{{ channel.Name }}</span>
-                  <v-spacer></v-spacer>
-                  <v-btn text icon v-on:click="dialog = false"><v-icon>mdi-close</v-icon></v-btn>
-                </v-card-title>
-                <v-divider></v-divider>
-                <v-card-text>
-                  <span>{{ channel.Description }}</span>
-                </v-card-text>
-              </v-card>
-            </v-dialog>
-            <router-link to="/user/profile"><v-icon large >mdi-cog</v-icon></router-link>
-          </div>
-        </div>  
-      </div>
-      <div class="posts">
+      <Menu :channel="channel"></Menu>
 
-      </div>
+      <Posts :channel="channel" :posts="posts" ref="Posts"></Posts>
+
+      <PostForm :channel="channel" :user-id="userId" :get-posts="getPostsForChild"></PostForm>
+      
+      
     </v-main>
   </div>
 </template>
 
 <script>
+import Menu from '@/components/home/Menu.vue'
+import Posts from '@/components/home/Post.vue'
+import PostForm from '@/components/home/Form.vue'
 export default {
   name: "Main",
-  props: {
-    channel: [Object, Array]
+  components: {
+    Menu,
+    Posts,
+    PostForm
   },
-  data: () => ({
-    spaceName: "",
-    dialog: false,
-  }),
-  created() {
-    
+  props: {
+    channel: [Object, Array],
+    posts: [Object, Array],
+    userId: Number,
+    getPosts: {
+      type: Function,
+      required: true,
+    }
+  },
+  data() {
+    return {
+      dialog: false,
+      postNotFound: false,
+    }
+  },
+  methods: {
+    scrollBottom(){
+      this.$refs.Posts.scrollBottom()
+    },
+    getPostsForChild(){
+      this.getPosts()
+    }
   }
 }
 </script>
 
 <style>
-.menu{
+.posts-wrapper{
   position: fixed;
-  height: 68px;
-  width: 100%;
-  border-width: 0 0 1px 0;
+  height: 77.6%;
+  width: 86.6%;
+  margin-top: 68px;
+  padding-top: 10px;
+  overflow:auto;
+}
+.post{
+  margin-left: 15px;
+  height: 80px;
+  width: 80%;
+}
+.welcome{
+  margin-left: 30px;
+  width: 86.6%;
+}
+.input-form{
+  position: fixed;
+  margin-top: 43%;
+  width: 87%;
+  padding-top: 10px;
+  padding-left: 10px;
+  border-width: 1px 0 0 0;
 	border-style: solid;
-	border-color: #d0d0d0;
+	border-color: #909090;
 }
-.menu-items-wrap{
-  margin-left: 1.5%;
-  padding-top: 1%;
+.input-box{
+  width: 98%;
 }
-.menu-items-channel{
-  float: left;
+.v-avatar{
+  margin-top: 30px;
 }
-.menu-items-icons{
-  margin-top: -5px;
-  margin-left: 75%;
+.content{
+  margin-top: -3.7%;
+  margin-left: 58px;
 }
-.menu-items-icons a {
-  text-decoration: none;
+.post-user-name{
+  margin-left: 9px;
+  font-weight:bold;
 }
-.v-card__text{
-  margin-top:10px;
+.post-date{
+  margin-left: 10px
 }
 </style>

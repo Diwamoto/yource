@@ -11,7 +11,9 @@ env:
   - GO111MODULE=on ENV_PATH=/home/travis/gopath/src/github.com/Diwamoto/yource/backend/.travis/.env
 
 before_install:
-  - cd backend
+  - cd /
+  - go install github.com/mattn/goveralls@latest
+  - cd /home/travis/gopath/src/github.com/Diwamoto/yource/backend/
 
 script: 
   - go mod tidy

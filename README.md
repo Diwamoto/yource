@@ -1,5 +1,6 @@
 # yource
 [![Build Status](https://travis-ci.com/Diwamoto/yource.svg?branch=main)](https://travis-ci.com/Diwamoto/yource)
+[![Coverage Status](https://coveralls.io/repos/github/Diwamoto/yource/badge.svg?branch=)](https://coveralls.io/github/Diwamoto/yource?branch=)
 
 A service that allows you to create a blog like slack.
 

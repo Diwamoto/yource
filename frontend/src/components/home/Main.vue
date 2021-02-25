@@ -5,22 +5,26 @@
 
       <Posts :channel="channel" :posts="posts" ref="Posts"></Posts>
 
-      <PostForm :channel="channel" :user-id="userId" :get-posts="getPostsForChild" ref="Form"></PostForm>
-      
+      <PostForm
+        :channel="channel"
+        :user-id="userId"
+        :get-posts="getPostsForChild"
+        ref="Form"
+      ></PostForm>
     </v-main>
   </div>
 </template>
 
 <script>
-import Menu from '@/components/home/Menu.vue'
-import Posts from '@/components/home/Post.vue'
-import PostForm from '@/components/home/Form.vue'
+import Menu from "@/components/home/Menu.vue";
+import Posts from "@/components/home/Post.vue";
+import PostForm from "@/components/home/Form.vue";
 export default {
   name: "Main",
   components: {
     Menu,
     Posts,
-    PostForm
+    PostForm,
   },
   props: {
     channel: [Object, Array],
@@ -29,28 +33,27 @@ export default {
     getPosts: {
       type: Function,
       required: true,
-    }
+    },
   },
   data() {
     return {
       dialog: false,
       postNotFound: false,
-    }
+    };
   },
   updated() {
-    this.$refs.Form.updateLabel()
+    this.$refs.Form.updateLabel();
   },
   methods: {
-    scrollBottom(){
-      this.$refs.Posts.scrollBottom()
+    scrollBottom() {
+      this.$refs.Posts.scrollBottom();
     },
-    getPostsForChild(){
-      this.getPosts()
-    }
-  }
-}
+    getPostsForChild() {
+      this.getPosts();
+    },
+  },
+};
 </script>
 
 <style>
-
 </style>

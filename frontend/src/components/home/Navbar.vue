@@ -1,59 +1,48 @@
 <template>
   <div class="navbar">
-    <v-navigation-drawer
-      v-model="drawer"
-      color="blue darken-3"
-      dark
-      app
-    >
-      <v-sheet
-        color="blue darken-3"
-        class="pa-4"
-      >
-
-        <div><h2>{{ space.Name }}</h2></div>
+    <v-navigation-drawer v-model="drawer" color="blue darken-3" dark app>
+      <v-sheet color="blue darken-3" class="pa-4">
+        <div>
+          <h2>{{ space.Name }}</h2>
+        </div>
       </v-sheet>
-
-      <v-divider></v-divider>
-
-      <v-list class="channels" dense v-for="channel in channels" :key="channel.Name">
+      <v-list class="channels">
         <v-list-item
+          v-for="channel in channels"
+          :key="channel.Name"
           @click="selectChannel(channel.Name)"
         >
           <v-list-item-content>
-            <v-list-item-title><h3>#{{ channel.Name }}</h3></v-list-item-title>
+            <v-list-item-title
+              ><h3>#{{ channel.Name }}</h3></v-list-item-title
+            >
           </v-list-item-content>
         </v-list-item>
       </v-list>
 
       <!-- チャンネル追加アクション -->
-      <v-dialog
-        v-model="dialog"
-        max-width="600px"
-      >
+      <v-dialog v-model="dialog" max-width="600px">
         <template v-slot:activator="{ on, attrs }">
           <v-list-item-content v-bind="attrs" v-on="on">
-            <v-list-item-title><h5 style="margin-left: 12px; color:white"><v-icon dense>mdi-plus</v-icon>チャンネルを追加する</h5></v-list-item-title>
+            <v-list-item-title
+              ><h5 style="margin-left: 12px; color: white">
+                <v-icon dense>mdi-plus</v-icon>チャンネルを追加する
+              </h5></v-list-item-title
+            >
           </v-list-item-content>
         </template>
         <v-card>
           <v-card-title>
             <span class="headline">チャンネルを追加する</span>
             <v-spacer></v-spacer>
-            <v-btn
-              text
-              @click="dialog = false"
-            >
+            <v-btn text @click="dialog = false">
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-card-title>
-          <v-divider></v-divider>
           <v-card-text>
             <v-container>
               <v-row>
-                <v-col dense cols="12">
-                  チャンネル名
-                </v-col>
+                <v-col dense cols="12"> チャンネル名 </v-col>
                 <v-col cols="12">
                   <v-text-field
                     v-model="channelName"
@@ -62,9 +51,7 @@
                     outlined
                   ></v-text-field>
                 </v-col>
-                <v-col dense cols="12">
-                  説明
-                </v-col>
+                <v-col dense cols="12"> 説明 </v-col>
                 <v-col cols="12">
                   <v-text-field
                     v-model="channelDescription"
@@ -78,11 +65,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn
-              color="blue darken-1"
-              text
-              @click="addChannel"
-            >
+            <v-btn color="blue darken-1" text @click="addChannel">
               <v-icon>mdi-plus</v-icon>追加する
             </v-btn>
           </v-card-actions>
@@ -97,13 +80,13 @@
 export default {
   name: "Navbar",
   props: {
-    space: [Array,Object],
+    space: [Array, Object],
     channels: Array,
     userId: Number,
     switchChannel: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
   data: function () {
     return {
@@ -111,41 +94,63 @@ export default {
       dialog: false,
       channelName: "",
       channelDescription: "",
-    }
+    };
   },
   methods: {
-    addChannel(){
+    addChannel() {
       //チャンネル追加アクション
       const params = new URLSearchParams();
-      params.append('Name', this.channelName);
-      params.append('Description', this.channelDescription);
-      this.$http.post('https://' + this.$api + '/api/v1/spaces/' + this.space.Id + '/channels',params, {
-        headers: {
-          "Authorization" : "Bearer " + this.$cookies.get("token")
-        },
-        withCredentials: true
-      })
-      .then(response => {
-        this.channels.push(response.data)
-        this.dialog = false
-        this.selectChannel(response.data.Name)
-      })
-      .catch(()=> {
-      })
+      params.append("Name", this.channelName);
+      params.append("Description", this.channelDescription);
+      this.$http
+        .post(
+          "https://" +
+            this.$api +
+            "/api/v1/spaces/" +
+            this.space.Id +
+            "/channels",
+          params,
+          {
+            headers: {
+              Authorization: "Bearer " + this.$cookies.get("token"),
+            },
+            withCredentials: true,
+          }
+        )
+        .then((response) => {
+          this.channels.push(response.data);
+          (this.channelName = ""),
+            (this.channelDescription = ""),
+            (this.dialog = false);
+          this.selectChannel(response.data.Name);
+        })
+        .catch(() => {});
     },
-    selectChannel(name){//指定された名前のチャンネルを選択する
-      this.channels.forEach(ch => {
+    selectChannel(name) {
+      //指定された名前のチャンネルを選択する
+      this.channels.forEach((ch) => {
         if (name == ch.Name) {
-          this.switchChannel(ch)
+          this.switchChannel(ch);
         }
       });
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style>
-.channels{
-  overflow:auto;
+.pa-4 {
+  position: fixed;
+  border-width: 0 0 10px 0;
+  border-style: solid;
+  border-color: #f0f0f0;
+}
+.channels {
+  overflow: auto;
+  margin-top: 68px;
+  z-index: 100;
+}
+.v-navigation-drawer__content::-webkit-scrollbar {
+  display: none;
 }
 </style>

@@ -105,6 +105,9 @@ export default {
   padding-top: 10px;
   overflow:auto;
 }
+.posts-wrapper::-webkit-scrollbar { 
+  display:none;
+}
 .posts-item{
   margin-left: 15px;
   height: 80px;

@@ -7,6 +7,16 @@ import (
 
 var cm = model.NewChannelModel("test")
 
+//ChannelModel.TableName()のテスト
+func TestTableNameForChannelModel(t *testing.T) {
+	want := "channels"
+	tableName := cm.TableName()
+	if tableName != want {
+		t.Errorf("ChannelModel.TableName()の値が異常です。TableName()の出力結果: %s", tableName)
+	}
+
+}
+
 //ChannelModel.Validate()のテスト
 func TestValidateChannel(t *testing.T) {
 	tests := []struct {
@@ -65,6 +75,24 @@ func TestCreateChannel(t *testing.T) {
 				Description: "test desc",
 			},
 			false, //エラーはでないはず
+		},
+		{
+			//②: 存在しないスペースIDのチャンネル
+			model.Channel{
+				SpaceId:     9999,
+				Name:        "test name",
+				Description: "test desc",
+			},
+			true, //エラーになるはず
+		},
+		{
+			//③: 同名のチャンネル
+			model.Channel{
+				SpaceId:     1,
+				Name:        "test name",
+				Description: "test desc",
+			},
+			true, //エラーになるはず
 		},
 	}
 	for i, tt := range tests {
@@ -148,6 +176,14 @@ func TestFindChannel(t *testing.T) {
 			"説明",
 			false, //取得できるはず
 		},
+		{
+			//③: 存在しないスペースIDでの検索
+			model.Channel{
+				SpaceId: 9999,
+			},
+			"スペースID",
+			true, //取得できないはず
+		},
 	}
 	for i, tt := range tests {
 		ret, err := cm.Find(tt.in)
@@ -215,6 +251,16 @@ func TestUpdateChannel(t *testing.T) {
 				Description: "",
 			},
 			false, //エラーにならないはず
+		},
+		{
+			//⑥: 既に存在するチャンネル名に変更はできない
+			2, //先ほどテストで作ったチャンネル
+			model.Channel{
+				SpaceId:     1,
+				Name:        "master name",
+				Description: "master desc",
+			},
+			true, //エラーになるはず
 		},
 	}
 	for i, tt := range tests {

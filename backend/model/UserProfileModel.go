@@ -38,7 +38,7 @@ func NewUserProfileModel(t string) *UserProfileModel {
 	return &upm
 }
 
-func (UserProfileModel) TableName() string {
+func (upm UserProfileModel) TableName() string {
 	return "user_profiles"
 }
 
@@ -49,10 +49,7 @@ func (upm UserProfileModel) Validate(up UserProfile) ([]string, bool) {
 
 	validate := validator.New()
 	_ = validate.Struct(up)
-	var messages []string
-	//MEMO: 本当であればバリデーションを用いたいが、Userの子になっているUserProfileでは
-	//なぜか独自バリデーションが読み込まれないので、Create()の中で判断するように実装する。
-	//原因として考えられるのは、バリデーションにデータベースと問い合わせる部分があり、
+	// var messages []string
 	// if err != nil {
 	// 	for _, err := range err.(validator.ValidationErrors) {
 	// 		fieldName := err.Field()
@@ -69,13 +66,14 @@ func (upm UserProfileModel) Validate(up UserProfile) ([]string, bool) {
 	_, err2 := um.GetById(up.UserId)
 	if err2 {
 		return []string{"存在しないユーザIDのプロフィールは作成できません。"}, true
-	}
-
-	if len(messages) > 0 {
-		return messages, true
 	} else {
 		return []string{}, false
 	}
+	// if len(messages) > 0 {
+	// 	return messages, true
+	// } else {
+	// 	return []string{}, false
+	// }
 
 }
 
@@ -89,7 +87,7 @@ func (upm UserProfileModel) Create(up UserProfile) ([]string, bool) {
 	if !err {
 
 		//MEMO: UserProfileの定義を参照、UserIdの重複チェックを実装する。
-		if !upm.ValidateUniqueUserId(up.UserId) {
+		if !upm.validateUniqueUserId(up.UserId) {
 			//作成できなければエラーメッセージを返す
 			msg = append(msg, "既に指定ユーザIdのプロフィールが登録されています。")
 			return msg, true
@@ -202,21 +200,23 @@ func (upm UserProfileModel) Update(userId int, up UserProfile) ([]string, bool) 
 	//更新日を現在にする
 	tup.Modified = time.Now()
 
-	//バリデーションをかける
-	msg, err := upm.Validate(tup)
+	// //バリデーションをかける
+	// msg, err := upm.Validate(tup)
 
-	//バリデーションが成功していたら
-	if !err {
-		//セーブした結果がエラーであれば更新失敗
-		if result := upm.db.Save(&tup); result.Error != nil {
-			return []string{"データベースに保存することができませんでした。"}, true
-		} else {
-			return []string{}, false
-		}
-	} else {
-		//作成できなければエラーメッセージを返す
-		return msg, true
-	}
+	// //バリデーションが成功していたら
+	// if !err {
+	upm.db.Save(&tup)
+	return []string{}, false
+	// //セーブした結果がエラーであれば更新失敗
+	// if result := upm.db.Save(&tup); result.Error != nil {
+	// 	return []string{"データベースに保存することができませんでした。"}, true
+	// } else {
+	// 	return []string{}, false
+	// }
+	// } else {
+	// 	//作成できなければエラーメッセージを返す
+	// 	return msg, true
+	// }
 
 }
 
@@ -229,17 +229,18 @@ func (upm UserProfileModel) Delete(id int) ([]string, bool) {
 		return []string{"削除するプロフィールプロフィールが存在しません。"}, true
 	}
 	upm.db.Delete(&UserProfile{}, id)
-	_, err2 := upm.GetById(id)
-	if err2 { //取得できなかったら成功
-		return []string{"削除に成功しました。"}, false
-	} else {
-		return []string{"削除できませんでした。"}, true
-	}
+	return []string{"削除に成功しました。"}, false
+	// _, err2 := upm.GetById(id)
+	// if err2 { //取得できなかったら成功
+	// 	return []string{"削除に成功しました。"}, false
+	// } else {
+	// 	return []string{"削除できませんでした。"}, true
+	// }
 
 }
 
 //func (upm UserProfileModel) ValidateUniqueUserId(fl validator.FieldLevel) bool {
-func (upm UserProfileModel) ValidateUniqueUserId(id int) bool {
+func (upm UserProfileModel) validateUniqueUserId(id int) bool {
 	// userId := int(fl.Field().Int())
 	up := UserProfile{
 		UserId: id,

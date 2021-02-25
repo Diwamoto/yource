@@ -7,7 +7,17 @@ import (
 
 var um = model.NewUserModel("test")
 
-//ValidateUser()のテスト
+//UserModel.TableName()のテスト
+func TestTableNameForUserModel(t *testing.T) {
+	want := "users"
+	tableName := um.TableName()
+	if tableName != want {
+		t.Errorf("UserModel.TableName()の値が異常です。TableName()の出力結果: %s", tableName)
+	}
+
+}
+
+//UserModel.Validate()のテスト
 func TestValidateUser(t *testing.T) {
 
 	tests := []struct {
@@ -103,7 +113,7 @@ func TestValidateUser(t *testing.T) {
 	}
 }
 
-//CreateUser()のテスト
+//UserModel.Create()のテスト
 func TestCreateUser(t *testing.T) {
 
 	tests := []struct {
@@ -122,6 +132,19 @@ func TestCreateUser(t *testing.T) {
 				Profile:  model.UserProfile{},
 			},
 			false, //エラーはでないはず
+		},
+		{
+			//②: データがおかしいユーザ
+			model.User{
+				Email:    "",
+				Password: "CrtTestPsw",
+				Name:     "Crt Test",
+				Phone:    "000-0000-0000",
+				Nickname: "Crt Nick name",
+				Status:   true,
+				Profile:  model.UserProfile{},
+			},
+			true, //エラーになるはず
 		},
 	}
 	for i, tt := range tests {
@@ -238,7 +261,7 @@ func TestFindUser(t *testing.T) {
 	}
 }
 
-//UpdateUser()のテスト
+//UserModel.Update()のテスト
 //ユーザの情報が更新できなかったらダメ
 func TestUpdateUser(t *testing.T) {
 
@@ -285,6 +308,7 @@ func TestUpdateUser(t *testing.T) {
 
 }
 
+//UserModel.Delete()のテスト
 func TestDeleteUser(t *testing.T) {
 
 	tests := []struct {

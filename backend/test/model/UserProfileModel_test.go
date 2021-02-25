@@ -12,6 +12,16 @@ import (
 
 var upm = model.NewUserProfileModel("test")
 
+//UserProfileModel.TableName()のテスト
+func TestTableNameForUserProfileModel(t *testing.T) {
+	want := "user_profiles"
+	tableName := upm.TableName()
+	if tableName != want {
+		t.Errorf("UserProfileModel.TableName()の値が異常です。TableName()の出力結果: %s", tableName)
+	}
+
+}
+
 //UserProfileModel.Validate()のテスト
 func TestValidateUserProfile(t *testing.T) {
 
@@ -87,7 +97,23 @@ func TestCreateUserProfile(t *testing.T) {
 		{
 			//②: 同じユーザidのプロフィール
 			model.UserProfile{
-				UserId:    2, //既に作成してしまっている
+				UserId:    1, //既に作成してしまっている
+				Profile:   "profile test",
+				Icon:      "test url",
+				Birthday:  time.Date(2020, 1, 1, 12, 0, 0, 0, time.Local),
+				From:      "japan",
+				Job:       "engineer",
+				Twitter:   "@aaa",
+				Facebook:  "my awesome facebook",
+				Instagram: "@myinsta",
+				Other:     "my.awesome.web.com",
+			},
+			true, //エラーになるはず
+		},
+		{
+			//②: 存在しないユーザIDのプロフィール
+			model.UserProfile{
+				UserId:    9999, //存在しない
 				Profile:   "profile test",
 				Icon:      "test url",
 				Birthday:  time.Date(2020, 1, 1, 12, 0, 0, 0, time.Local),
@@ -123,7 +149,7 @@ func TestGetAllUserProfile(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		_, err := um.GetAll()
+		_, err := upm.GetAll()
 		if err != tt.want {
 			t.Errorf("GetAll()を用いて全プロフィールを取得することができませんでした。")
 		}
@@ -310,6 +336,23 @@ func TestUpdateUserProfile(t *testing.T) {
 			1, //先ほどテストで作ったプロフィール
 			model.UserProfile{
 				UserId:    9999,
+				Profile:   "Update",
+				Icon:      "Update",
+				Birthday:  time.Now(),
+				From:      "Update",
+				Job:       "Update",
+				Twitter:   "Update",
+				Facebook:  "Update",
+				Instagram: "Update",
+				Other:     "Update",
+			},
+			true, //ユーザidは変更できない
+		},
+		{
+			//③: 存在しないユーザIDのプロフィール
+			9999, //先ほどテストで作ったプロフィール
+			model.UserProfile{
+				UserId:    1,
 				Profile:   "Update",
 				Icon:      "Update",
 				Birthday:  time.Now(),

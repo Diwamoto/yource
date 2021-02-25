@@ -7,6 +7,16 @@ import (
 
 var sm = model.NewSpaceModel("test")
 
+//SpaceModel.TableName()のテスト
+func TestTableNameForSpaceModel(t *testing.T) {
+	want := "spaces"
+	tableName := sm.TableName()
+	if tableName != want {
+		t.Errorf("SpaceModel.TableName()の値が異常です。TableName()の出力結果: %s", tableName)
+	}
+
+}
+
 //SpaceModel.Validate()のテスト
 func TestValidateSpace(t *testing.T) {
 
@@ -25,7 +35,7 @@ func TestValidateSpace(t *testing.T) {
 			false, //エラーはでないはず
 		},
 		{
-			//②: ユーザIDが存在しないデータのスペース
+			//②: ユーザIDを入力していないデータのスペース
 			model.Space{
 				UserId:      0, //ユーザIDが入力されていない
 				Name:        "test name",
@@ -35,7 +45,17 @@ func TestValidateSpace(t *testing.T) {
 			true, //エラーになるはず
 		},
 		{
-			//③: スペース名が存在しないデータのスペース
+			//③: 存在しないユーザIDのデータのスペース
+			model.Space{
+				UserId:      9999, //存在しないユーザID
+				Name:        "test name",
+				Description: "test desc",
+				SubDomain:   "subdomain",
+			},
+			true, //エラーになるはず
+		},
+		{
+			//④: スペース名が存在しないデータのスペース
 			model.Space{
 				UserId:      1,
 				Name:        "", //スペース名が入力されていない
@@ -45,7 +65,7 @@ func TestValidateSpace(t *testing.T) {
 			true, //エラーになるはず
 		},
 		{
-			//④: サブドメインが入力されていないスペース
+			//⑤ サブドメインが入力されていないスペース
 			model.Space{
 				UserId:      1,
 				Name:        "test name",
@@ -55,7 +75,7 @@ func TestValidateSpace(t *testing.T) {
 			true, //エラーになるはず
 		},
 		{
-			//⑤: サブドメインが半角英字以外でスペース
+			//⑥: サブドメインが半角英字以外でスペース
 			model.Space{
 				UserId:      1,
 				Name:        "test name",
@@ -225,12 +245,17 @@ func TestGetSpaceByUserId(t *testing.T) {
 	}{
 		{
 			//①: 先ほど作成したスペース
-			2,
+			1,
 			false, //エラーはでないはず
+		},
+		{
+			//②: 存在しないユーザidのスペース
+			9999,
+			true, //エラーになるはず
 		},
 	}
 	for _, tt := range tests {
-		_, err := sm.GetById(tt.in)
+		_, err := sm.GetByUserId(tt.in)
 		if err != tt.want {
 			t.Errorf("userID:%dのスペースを取得できませんでした。", tt.in)
 		}
@@ -258,6 +283,19 @@ func TestUpdateSpace(t *testing.T) {
 				Publish:     false,
 			},
 			false, //エラーはでないはず
+		},
+		{
+			//②: 存在しないスペース
+			9999, //存在しないスペース
+			model.Space{
+				UserId:      1,
+				Name:        "Upd Name",
+				Description: "Upd desc",
+				SubDomain:   "upd",
+				Status:      false,
+				Publish:     false,
+			},
+			true, //エラーになるはず
 		},
 	}
 	for i, tt := range tests {

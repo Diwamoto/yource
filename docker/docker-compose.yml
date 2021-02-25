@@ -58,6 +58,7 @@ services:
       - ../frontend/dist:/usr/share/nginx/html
       - ./ssl/keys:/tmp/keys
   #セッション保管用
+  # MEMO: 一日一回セッションをflushする処理を作った方がいいかも
   redis:
     container_name: redis
     image: redis:latest

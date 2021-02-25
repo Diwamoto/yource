@@ -21,13 +21,3 @@ type Entity struct {
 	Created  time.Time
 	Modified time.Time
 }
-
-//モデルからdbへの接続を止める
-func (m *AppModel) Close() {
-	m.db.Close()
-}
-
-//モデルからDBへ直接SQLを投げる
-func (m *AppModel) ExecRawSQL(s string) {
-	m.db.Exec(s)
-}

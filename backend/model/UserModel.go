@@ -39,7 +39,7 @@ func NewUserModel(t string) *UserModel {
 	return &um
 }
 
-func (UserModel) TableName() string {
+func (um UserModel) TableName() string {
 	return "users"
 }
 
@@ -54,7 +54,7 @@ func (um UserModel) Validate(u User) ([]string, bool) {
 
 	//独自バリデーション
 	//メールアドレスをdbに問い合わせて存在していたらエラーを返す。
-	if !um.ValidateUniqueEmail(u.Email) {
+	if !um.validateUniqueEmail(u.Email) {
 		//作成できなければエラーメッセージを返す
 		messages = append(messages, "入力されたメールアドレスは既に登録されています。")
 	}
@@ -204,12 +204,15 @@ func (um UserModel) Update(id int, u User) ([]string, bool) {
 
 	//バリデーションが成功していたら
 	if !err {
-		//セーブした結果がエラーであれば更新失敗
-		if result := um.db.Save(&tu); result.Error != nil {
-			return []string{"データベースに保存することができませんでした。"}, true
-		} else {
-			return []string{}, false
-		}
+		um.db.Save(&tu)
+		return []string{}, false
+
+		// //セーブした結果がエラーであれば更新失敗
+		// if result := um.db.Save(&tu); result.Error != nil {
+		// 	return []string{"データベースに保存することができませんでした。"}, true
+		// } else {
+		// 	return []string{}, false
+		// }
 	} else {
 		//バリデーションが失敗していたらそのエラーメッセージを返す
 		return msg, true
@@ -227,16 +230,18 @@ func (um UserModel) Delete(id int) ([]string, bool) {
 		return []string{"削除するユーザが存在しません。"}, true
 	}
 	um.db.Delete(&User{}, id)
-	_, err2 := um.GetById(id)
-	if err2 { //ユーザが取得できなかったら成功
-		return []string{"削除に成功しました。"}, false
-	} else {
-		return []string{"削除できませんでした。"}, true
-	}
+	// _, err2 := um.GetById(id)
+	// if err2 { //ユーザが取得できなかったら成功
+	return []string{"削除に成功しました。"}, false
+	// } else {
+	// 	return []string{"削除できませんでした。"}, true
+	// }
 
 }
 
-func (um UserModel) ValidateUniqueEmail(email string) bool {
+//独自バリデーション
+//同じメールアドレスがdbに存在しないかどうかを検索する。
+func (um UserModel) validateUniqueEmail(email string) bool {
 	u := User{
 		Email: email,
 	}

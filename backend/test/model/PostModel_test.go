@@ -8,6 +8,16 @@ import (
 
 var pm = model.NewPostModel("test")
 
+//PostModel.TableName()のテスト
+func TestTableNameForPostModel(t *testing.T) {
+	want := "posts"
+	tableName := pm.TableName()
+	if tableName != want {
+		t.Errorf("PostModel.TableName()の値が異常です。TableName()の出力結果: %s", tableName)
+	}
+
+}
+
 //ValidatePost()のテスト
 func TestValidatePost(t *testing.T) {
 
@@ -46,12 +56,42 @@ func TestValidatePost(t *testing.T) {
 			true, //エラーになるはず
 		},
 		{
-			//④: 内容が入力されていない投稿
+			//④: チャンネルidが入力されていない投稿
+			model.Post{
+				ChannelId: 0,
+				UserId:    1,
+				Content:   "",
+				Date:      time.Now(),
+			},
+			true, //エラーになるはず
+		},
+		{
+			//⑤: ユーザidが入力されていない投稿
+			model.Post{
+				ChannelId: 1,
+				UserId:    0,
+				Content:   "",
+				Date:      time.Now(),
+			},
+			true, //エラーになるはず
+		},
+		{
+			//⑥: 内容が入力されていない投稿
 			model.Post{
 				ChannelId: 1,
 				UserId:    1,
 				Content:   "",
 				Date:      time.Now(),
+			},
+			true, //エラーになるはず
+		},
+		{
+			//⑦: 投稿日が入力されていない投稿
+			model.Post{
+				ChannelId: 1,
+				UserId:    1,
+				Content:   "",
+				Date:      time.Time{},
 			},
 			true, //エラーになるはず
 		},
@@ -81,6 +121,16 @@ func TestCreatePost(t *testing.T) {
 				Date:      time.Date(2018, 3, 11, 12, 0, 0, 0, time.Local),
 			},
 			false, //エラーはでないはず
+		},
+		{
+			//②: 作成できない投稿
+			model.Post{
+				ChannelId: 0,
+				UserId:    1,
+				Content:   "test content",
+				Date:      time.Date(2018, 3, 11, 12, 0, 0, 0, time.Local),
+			},
+			true, //エラーになるはず
 		},
 	}
 	for i, tt := range tests {
@@ -259,7 +309,7 @@ func TestGetPostByUserId(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		_, err := pm.GetById(tt.in)
+		_, err := pm.GetByUserId(tt.in)
 		if err != tt.want {
 			t.Errorf("userID:%dの投稿を取得できませんでした。", tt.in)
 		}
@@ -285,6 +335,17 @@ func TestUpdatePost(t *testing.T) {
 				Date:      time.Now(), //timeは変えられない
 			},
 			false, //エラーはでないはず
+		},
+		{
+			//②: 異常なデータ
+			9999, //存在しない投稿
+			model.Post{
+				ChannelId: 1,
+				UserId:    1,
+				Content:   "Upd content",
+				Date:      time.Now(), //timeは変えられない
+			},
+			true, //エラーになるはず
 		},
 	}
 	for i, tt := range tests {

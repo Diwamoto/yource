@@ -119,6 +119,11 @@ func GetRouter() *gin.Engine {
 			v1.GET("/users/:id/posts", controller.GetPostByUserIdAction)  //指定ユーザの投稿を検索する
 			v1.GET("/users/:id/space", controller.GetSpaceByUserIdAction) //指定ユーザのスペースを検索する
 			v1.POST("/users/:id/space", controller.CreateSpaceAction)     //指定ユーザのスペースを作成する
+
+			// //websocket用のルーティング
+			// v1.GET("/ws", func(c *gin.Context) {
+			// 	wshandler(c.Writer, c.Request)
+			// })
 		}
 
 	}

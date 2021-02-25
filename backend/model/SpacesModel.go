@@ -36,7 +36,7 @@ func NewSpaceModel(t string) *SpaceModel {
 	return &sm
 }
 
-func (Space) TableName() string {
+func (sm SpaceModel) TableName() string {
 	return "spaces"
 }
 
@@ -51,7 +51,7 @@ func (sm SpaceModel) Validate(s Space) ([]string, bool) {
 
 	//独自バリデーション
 	//サブドメインをdbに問い合わせて存在していたらエラーを返す。
-	if !sm.ValidateUniqueSubDomain(s.SubDomain) {
+	if !sm.validateUniqueSubDomain(s.SubDomain) {
 		messages = append(messages, "入力されたサブドメインは既に登録されています。")
 	}
 
@@ -216,12 +216,14 @@ func (sm SpaceModel) Update(id int, s Space) ([]string, bool) {
 
 	//バリデーションが成功していたら
 	if !err {
-		//セーブした結果がエラーであれば更新失敗
-		if result := sm.db.Save(&ts); result.Error != nil {
-			return []string{"データベースに保存することができませんでした。"}, true
-		} else {
-			return []string{}, false
-		}
+		sm.db.Save(&ts)
+		return []string{}, false
+		// //セーブした結果がエラーであれば更新失敗
+		// if result := sm.db.Save(&ts); result.Error != nil {
+		// 	return []string{"データベースに保存することができませんでした。"}, true
+		// } else {
+		// 	return []string{}, false
+		// }
 	} else {
 		//バリデーションが失敗していたらそのエラーメッセージを返す
 		return msg, true
@@ -239,16 +241,16 @@ func (sm SpaceModel) Delete(id int) ([]string, bool) {
 		return []string{"削除するスペースが存在しません。"}, true
 	}
 	sm.db.Delete(&Space{}, id)
-	_, err2 := sm.GetById(id)
-	if err2 { //スペースが取得できなかったら成功
-		return []string{"削除に成功しました。"}, false
-	} else {
-		return []string{"削除できませんでした。"}, true
-	}
+	// _, err2 := sm.GetById(id)
+	// if err2 { //スペースが取得できなかったら成功
+	return []string{"削除に成功しました。"}, false
+	// } else {
+	// 	return []string{"削除できませんでした。"}, true
+	// }
 
 }
 
-func (sm SpaceModel) ValidateUniqueSubDomain(dom string) bool {
+func (sm SpaceModel) validateUniqueSubDomain(dom string) bool {
 	s := Space{
 		SubDomain: dom,
 	}

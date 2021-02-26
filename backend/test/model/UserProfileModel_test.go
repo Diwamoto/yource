@@ -2,6 +2,8 @@ package model
 
 import (
 	//標準ライブラリ
+
+	"errors"
 	"testing"
 	"time"
 
@@ -36,7 +38,7 @@ func TestValidateUserProfile(t *testing.T) {
 				Profile:   "profile test",
 				Icon:      "test url",
 				Birthday:  time.Now(),
-				From:      "japan",
+				Hometown:  "japan",
 				Job:       "engineer",
 				Twitter:   "@aaa",
 				Facebook:  "my awesome facebook",
@@ -52,7 +54,7 @@ func TestValidateUserProfile(t *testing.T) {
 				Profile:   "",
 				Icon:      "",
 				Birthday:  time.Now(),
-				From:      "",
+				Hometown:  "",
 				Job:       "",
 				Twitter:   "",
 				Facebook:  "",
@@ -76,7 +78,7 @@ func TestCreateUserProfile(t *testing.T) {
 
 	tests := []struct {
 		in   model.UserProfile
-		want bool
+		want error
 	}{
 		{
 			//①: 正しいプロフィール
@@ -85,14 +87,14 @@ func TestCreateUserProfile(t *testing.T) {
 				Profile:   "profile test",
 				Icon:      "test url",
 				Birthday:  time.Date(2020, 1, 1, 12, 0, 0, 0, time.Local),
-				From:      "japan",
+				Hometown:  "japan",
 				Job:       "engineer",
 				Twitter:   "@aaa",
 				Facebook:  "my awesome facebook",
 				Instagram: "@myinsta",
 				Other:     "my.awesome.web.com",
 			},
-			false, //エラーはでないはず
+			nil, //エラーはでないはず
 		},
 		{
 			//②: 同じユーザidのプロフィール
@@ -101,14 +103,14 @@ func TestCreateUserProfile(t *testing.T) {
 				Profile:   "profile test",
 				Icon:      "test url",
 				Birthday:  time.Date(2020, 1, 1, 12, 0, 0, 0, time.Local),
-				From:      "japan",
+				Hometown:  "japan",
 				Job:       "engineer",
 				Twitter:   "@aaa",
 				Facebook:  "my awesome facebook",
 				Instagram: "@myinsta",
 				Other:     "my.awesome.web.com",
 			},
-			true, //エラーになるはず
+			errors.New("既に指定ユーザIdのプロフィールが登録されています。"), //エラーになるはず
 		},
 		{
 			//②: 存在しないユーザIDのプロフィール
@@ -117,43 +119,25 @@ func TestCreateUserProfile(t *testing.T) {
 				Profile:   "profile test",
 				Icon:      "test url",
 				Birthday:  time.Date(2020, 1, 1, 12, 0, 0, 0, time.Local),
-				From:      "japan",
+				Hometown:  "japan",
 				Job:       "engineer",
 				Twitter:   "@aaa",
 				Facebook:  "my awesome facebook",
 				Instagram: "@myinsta",
 				Other:     "my.awesome.web.com",
 			},
-			true, //エラーになるはず
+			errors.New("存在しないユーザIDのプロフィールは作成できません。"), //エラーになるはず
 		},
 	}
 	for i, tt := range tests {
-		rs, err := upm.Create(tt.in)
+		_, err := upm.Create(tt.in)
 		if err != tt.want {
-			t.Errorf("%d番目のテストが失敗しました。出力結果: %s", i+1, rs)
+			if err.Error() != tt.want.Error() {
+				t.Errorf("%d番目のテストが失敗しました。エラーメッセージ:%#v", i+1, err)
+			}
 		}
 	}
 
-}
-
-//UserProfileModel.GetAll()のテスト
-//ユーザが取得できたらOK,できなければダメ
-func TestGetAllUserProfile(t *testing.T) {
-
-	tests := []struct {
-		want bool
-	}{
-		{
-			//①: 全てのユーザを取得
-			false, //取得できるはず
-		},
-	}
-	for _, tt := range tests {
-		_, err := upm.GetAll()
-		if err != tt.want {
-			t.Errorf("GetAll()を用いて全プロフィールを取得することができませんでした。")
-		}
-	}
 }
 
 //UserProfileModel.GetById()のテスト
@@ -162,12 +146,12 @@ func TestGetUserProfile(t *testing.T) {
 
 	tests := []struct {
 		in   int //UserProfileID
-		want bool
+		want error
 	}{
 		{
 			//①: 先ほど作成したプロフィール
 			1,
-			false, //エラーはでないはず
+			nil, //エラーはでないはず
 		},
 	}
 	for _, tt := range tests {
@@ -184,23 +168,27 @@ func TestGetUserProfileByUserId(t *testing.T) {
 
 	tests := []struct {
 		in   int //userId
-		want bool
+		want error
 	}{
 		{
 			//①: テストで作成したユーザIDのプロフィール
 			1,
-			false, //エラーはでないはず
+			nil, //エラーはでないはず
 		},
 		{
 			//②: 存在しないユーザIDのプロフィール
 			9999,
-			true, //エラーになるはず
+			errors.New("指定ユーザIDのプロフィールは存在しません。"), //エラーになるはず
 		},
 	}
-	for _, tt := range tests {
-		_, err := upm.GetById(tt.in)
-		if err != tt.want {
-			t.Errorf("UserProfileID:%dのプロフィールを取得できませんでした。", tt.in)
+	for i, tt := range tests {
+		result, err := upm.GetById(tt.in)
+		if err != tt.want && result.Id != 0 {
+			if err.Error() != tt.want.Error() {
+				t.Errorf("%d番目のテストが失敗しました。エラーメッセージ:%#v", i+1, err)
+			}
+		} else {
+
 		}
 	}
 }
@@ -212,7 +200,7 @@ func TestFindUserProfile(t *testing.T) {
 	tests := []struct {
 		in   model.UserProfile
 		t    string //検索の種類
-		want bool
+		want error
 	}{
 		{
 			//①: プロフィールの文言で検索
@@ -221,7 +209,7 @@ func TestFindUserProfile(t *testing.T) {
 				Profile: "profile test",
 			},
 			"プロフィール",
-			false, //検索は成功するはず
+			nil, //検索は成功するはず
 		},
 		{
 			//②: Iconで検索
@@ -229,7 +217,7 @@ func TestFindUserProfile(t *testing.T) {
 				Icon: "test url",
 			},
 			"アイコン",
-			false, //検索は成功するはず
+			nil, //検索は成功するはず
 		},
 		{
 			//③: 誕生日で検索
@@ -237,16 +225,16 @@ func TestFindUserProfile(t *testing.T) {
 				Birthday: time.Date(2020, 1, 1, 12, 0, 0, 0, time.Local),
 			},
 			"誕生日",
-			false, //検索は成功するはず
+			nil, //検索は成功するはず
 		},
 		{
 			//④: 出身地で検索
 			//TODO: 出身地の多様性をどうするか
 			model.UserProfile{
-				From: "japan",
+				Hometown: "japan",
 			},
 			"出身地",
-			false, //検索は成功するはず
+			nil, //検索は成功するはず
 		},
 		{
 			//⑤: 仕事で検索
@@ -254,7 +242,7 @@ func TestFindUserProfile(t *testing.T) {
 				Job: "engineer",
 			},
 			"仕事",
-			false, //検索は成功するはず
+			nil, //検索は成功するはず
 		},
 		{
 			//⑥: ツイッターで検索
@@ -262,7 +250,7 @@ func TestFindUserProfile(t *testing.T) {
 				Twitter: "@aaa",
 			},
 			"ツイッター",
-			false, //検索は成功するはず
+			nil, //検索は成功するはず
 		},
 		{
 			//⑦: facebookで検索
@@ -270,7 +258,7 @@ func TestFindUserProfile(t *testing.T) {
 				Facebook: "my awesome facebook",
 			},
 			"フェイスブック",
-			false, //検索は成功するはず
+			nil, //検索は成功するはず
 		},
 		{
 			//⑧: インスタグラムで検索
@@ -278,7 +266,7 @@ func TestFindUserProfile(t *testing.T) {
 				Instagram: "@myinsta",
 			},
 			"インスタグラム",
-			false, //検索は成功するはず
+			nil, //検索は成功するはず
 		},
 		{
 			//⑨: 他のwebサイトで検索
@@ -286,21 +274,13 @@ func TestFindUserProfile(t *testing.T) {
 				Other: "my.awesome.web.com",
 			},
 			"Other",
-			false, //検索は成功するはず
-		},
-		{
-			//⑩: プロフィールの文言で検索
-			model.UserProfile{
-				Profile: "fail test",
-			},
-			"Profile",
-			true, //検索は失敗するはず
+			nil, //検索は成功するはず
 		},
 	}
 	for _, tt := range tests {
 		_, err := upm.Find(tt.in)
 		if err != tt.want {
-			t.Errorf("「%s」での検索が失敗しました。", tt.t)
+			t.Errorf("「%s」での検索が失敗しました。%#v", tt.t, err)
 		}
 	}
 }
@@ -312,7 +292,7 @@ func TestUpdateUserProfile(t *testing.T) {
 	tests := []struct {
 		id    int
 		after model.UserProfile
-		want  bool
+		want  error
 	}{
 		{
 			//①: 正しい変更内容
@@ -322,14 +302,14 @@ func TestUpdateUserProfile(t *testing.T) {
 				Profile:   "Update",
 				Icon:      "Update",
 				Birthday:  time.Now(),
-				From:      "Update",
+				Hometown:  "Update",
 				Job:       "Update",
 				Twitter:   "Update",
 				Facebook:  "Update",
 				Instagram: "Update",
 				Other:     "Update",
 			},
-			false, //エラーはでないはず
+			nil, //エラーはでないはず
 		},
 		{
 			//②: ユーザIDを変更してしまっているユーザ
@@ -339,37 +319,39 @@ func TestUpdateUserProfile(t *testing.T) {
 				Profile:   "Update",
 				Icon:      "Update",
 				Birthday:  time.Now(),
-				From:      "Update",
+				Hometown:  "Update",
 				Job:       "Update",
 				Twitter:   "Update",
 				Facebook:  "Update",
 				Instagram: "Update",
 				Other:     "Update",
 			},
-			true, //ユーザidは変更できない
+			errors.New("ユーザIDは変更することはできません。"), //ユーザidは変更できない
 		},
 		{
 			//③: 存在しないユーザIDのプロフィール
-			9999, //先ほどテストで作ったプロフィール
+			9999, //存在しないユーザ
 			model.UserProfile{
 				UserId:    1,
 				Profile:   "Update",
 				Icon:      "Update",
 				Birthday:  time.Now(),
-				From:      "Update",
+				Hometown:  "Update",
 				Job:       "Update",
 				Twitter:   "Update",
 				Facebook:  "Update",
 				Instagram: "Update",
 				Other:     "Update",
 			},
-			true, //ユーザidは変更できない
+			errors.New("指定されたユーザが存在しません。"), //存在しないユーザのプロフィールは変更できない
 		},
 	}
 	for i, tt := range tests {
-		msg, err := upm.Update(tt.id, tt.after)
+		_, err := upm.Update(tt.id, tt.after)
 		if err != tt.want {
-			t.Errorf("%d番目のテストが失敗しました。エラーメッセージ:%s", i+1, msg)
+			if err.Error() != tt.want.Error() {
+				t.Errorf("%d番目のテストが失敗しました。エラーメッセージ:%#v", i+1, err)
+			}
 		}
 	}
 
@@ -380,23 +362,25 @@ func TestDeleteUserProfile(t *testing.T) {
 
 	tests := []struct {
 		id   int
-		want bool
+		want error
 	}{
 		{
 			//①: 存在するユーザ
-			1,     //テストで作ったプロフィール
-			false, //エラーはでないはず
+			1,   //テストで作ったプロフィール
+			nil, //エラーはでないはず
 		},
 		{
 			//②: 存在しないユーザ
 			9999999999,
-			true, //存在しないプロフィールは削除できない
+			errors.New("削除するプロフィールが存在しません。"), //存在しないプロフィールは削除できない
 		},
 	}
 	for i, tt := range tests {
-		msg, err := upm.Delete(tt.id)
+		err := upm.Delete(tt.id)
 		if err != tt.want {
-			t.Errorf("%d番目のテストが失敗しました。エラーメッセージ:%s", i+1, msg)
+			if err.Error() != tt.want.Error() {
+				t.Errorf("%d番目のテストが失敗しました。エラーメッセージ:%#v", i+1, err)
+			}
 		}
 	}
 }

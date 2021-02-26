@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"main/model"
 	"testing"
 )
@@ -118,7 +119,7 @@ func TestCreateUser(t *testing.T) {
 
 	tests := []struct {
 		in   model.User
-		want bool
+		want error
 	}{
 		{
 			//①: 正しいユーザ
@@ -131,7 +132,7 @@ func TestCreateUser(t *testing.T) {
 				Status:   1,
 				Profile:  model.UserProfile{},
 			},
-			false, //エラーはでないはず
+			nil, //エラーはでないはず
 		},
 		{
 			//②: データがおかしいユーザ
@@ -144,13 +145,15 @@ func TestCreateUser(t *testing.T) {
 				Status:   1,
 				Profile:  model.UserProfile{},
 			},
-			true, //エラーになるはず
+			errors.New("[\"入力されたメールアドレスは既に登録されています。\",\"メールアドレスを入力してください。\"]"), //エラーになるはず
 		},
 	}
 	for i, tt := range tests {
-		rs, err := um.Create(tt.in)
+		_, err := um.Create(tt.in)
 		if err != tt.want {
-			t.Errorf("%d番目のテストが失敗しました。の出力結果: %s", i+1, rs)
+			if err.Error() != tt.want.Error() {
+				t.Errorf("%d番目のテストが失敗しました。エラー内容: %#v", i+1, err.Error())
+			}
 		}
 	}
 
@@ -162,23 +165,23 @@ func TestGetUserById(t *testing.T) {
 
 	tests := []struct {
 		in   int //userID
-		want bool
+		want int //帰ってくる数
 	}{
 		{
 			//①: 先ほど作成したユーザ
 			2,
-			false, //エラーはでないはず
+			1, //一つのみ帰ってくるはず
 		},
 		{
 			//②: 存在しないidのユーザ
 			9999999,
-			true, //エラーになるはず
+			0, //データは帰ってこないはず
 		},
 	}
-	for _, tt := range tests {
-		_, err := um.GetById(tt.in)
-		if err != tt.want {
-			t.Errorf("userID:%dのユーザを取得できませんでした。", tt.in)
+	for i, tt := range tests {
+		users, _ := um.GetById(tt.in)
+		if len(users) != tt.want {
+			t.Errorf("%d番目のテストが失敗しました。期待した結果:%d 実際の結果:%d", i, tt.want, len(users))
 		}
 	}
 }
@@ -267,7 +270,7 @@ func TestUpdateUser(t *testing.T) {
 	tests := []struct {
 		id    int
 		after model.User
-		want  bool
+		want  error
 	}{
 		{
 			//①: 存在するユーザ
@@ -281,7 +284,7 @@ func TestUpdateUser(t *testing.T) {
 				Status:   1,
 				Profile:  model.UserProfile{},
 			},
-			false, //エラーはでないはず
+			nil, //エラーはでないはず
 		},
 		{
 			//②: 存在しないユーザ
@@ -295,13 +298,15 @@ func TestUpdateUser(t *testing.T) {
 				Status:   1,
 				Profile:  model.UserProfile{},
 			},
-			true, //更新はできないはず
+			errors.New("[\"入力されたメールアドレスは既に登録されています。\"]"), //更新はできないはず
 		},
 	}
 	for i, tt := range tests {
-		msg, err := um.Update(tt.id, tt.after)
+		_, err := um.Update(tt.id, tt.after)
 		if err != tt.want {
-			t.Errorf("%d番目のテストが失敗しました。エラーメッセージ:%s", i+1, msg)
+			if err.Error() != tt.want.Error() {
+				t.Errorf("%d番目のテストが失敗しました。エラーメッセージ:%#v", i+1, err.Error())
+			}
 		}
 	}
 
@@ -312,23 +317,25 @@ func TestDeleteUser(t *testing.T) {
 
 	tests := []struct {
 		id   int
-		want bool
+		want error
 	}{
 		{
 			//①: 存在するユーザ
-			2,     //テストで作ったユーザ
-			false, //エラーはでないはず
+			2,   //テストで作ったユーザ
+			nil, //エラーはでないはず
 		},
 		{
 			//②: 存在しないユーザ
 			9999999999,
-			true, //存在しないユーザは削除できない
+			errors.New("削除するユーザが存在しません。"), //存在しないユーザは削除できない
 		},
 	}
 	for i, tt := range tests {
-		msg, err := um.Delete(tt.id)
+		err := um.Delete(tt.id)
 		if err != tt.want {
-			t.Errorf("%d番目のテストが失敗しました。エラーメッセージ:%s", i+1, msg)
+			if err.Error() != tt.want.Error() {
+				t.Errorf("%d番目のテストが失敗しました。エラーメッセージ:%#v", i+1, err)
+			}
 		}
 	}
 }

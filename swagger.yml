@@ -928,7 +928,7 @@ components:
         Birthday:
           type: string
           example: 1992-01-01T00:00:00+09:00
-        From:
+        Hometown:
           type: string
           example: Germany
         Job:

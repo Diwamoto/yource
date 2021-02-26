@@ -4,7 +4,8 @@ import (
 
 	//標準ライブラリ
 
-	"strconv"
+	"encoding/json"
+	"errors"
 	"time"
 
 	//自作ライブラリ
@@ -46,7 +47,8 @@ func (um UserModel) TableName() string {
 //バリデーションをかける
 //文字の整形系はフロントで行うので
 //最低限の入力チェックのみをgoで行う
-func (um UserModel) Validate(u User) ([]string, bool) {
+//返す文字列はエラーの文字配列をjson型にしたもの
+func (um UserModel) Validate(u User) (string, bool) {
 
 	validate := validator.New()
 	err := validate.Struct(u)
@@ -81,15 +83,16 @@ func (um UserModel) Validate(u User) ([]string, bool) {
 	}
 
 	if len(messages) > 0 {
-		return messages, true
+		msgJson, _ := json.Marshal(messages)
+		return string(msgJson), true
 	} else {
-		return []string{}, false
+		return "[]", false
 	}
 
 }
 
 //ユーザを作成する
-func (um UserModel) Create(u User) ([]string, bool) {
+func (um UserModel) Create(u User) (User, error) {
 
 	um.db.AutoMigrate(&u)
 
@@ -101,28 +104,22 @@ func (um UserModel) Create(u User) ([]string, bool) {
 		u.Modified = time.Now()
 		//バリデーションが通れば作成し、メッセージの中に作成したユーザIDを入れて返す
 		um.db.Create(&u)
-		msg = append(msg, strconv.Itoa(int(u.Id)))
-		return msg, false
+		return u, nil
 	} else {
 		//作成できなければエラーメッセージを返す
-		return msg, true
+		return User{}, errors.New(msg)
 	}
 
 }
 
 //指定ユーザidの情報を返す
-func (um UserModel) GetById(id int) (User, bool) {
+//Idで検索するFind()のラッパー
+func (um UserModel) GetById(id int) ([]User, error) {
 
 	var u User
-	um.db.First(&u, id)
-	upm := NewUserProfileModel(um.nc)
-	u.Profile, _ = upm.GetByUserId(u.Id)
-	//値が取得できたら
-	if u.Id == id {
-		return u, false
-	} else {
-		return User{}, true
-	}
+	u.Id = id
+	result, err := um.Find(u)
+	return result, err
 
 }
 
@@ -135,6 +132,9 @@ func (um UserModel) Find(u User) ([]User, error) {
 	builder := um.db.Model(&User{})
 
 	//検索パラメータを解析し、検索条件が存在していればwhere文を追加する
+	if u.Id != 0 {
+		builder = builder.Where("id = ?", u.Id)
+	}
 	if u.Email != "" {
 		builder = builder.Where("email = ?", u.Email)
 	}
@@ -167,7 +167,7 @@ func (um UserModel) Find(u User) ([]User, error) {
 
 //更新メソッド
 //ユーザの情報を更新する
-func (um UserModel) Update(id int, u User) ([]string, bool) {
+func (um UserModel) Update(id int, u User) (User, error) {
 	var tu User
 
 	um.db.AutoMigrate(&tu)
@@ -203,7 +203,7 @@ func (um UserModel) Update(id int, u User) ([]string, bool) {
 	//バリデーションが成功していたら
 	if !err {
 		um.db.Save(&tu)
-		return []string{}, false
+		return tu, nil
 
 		// //セーブした結果がエラーであれば更新失敗
 		// if result := um.db.Save(&tu); result.Error != nil {
@@ -213,27 +213,22 @@ func (um UserModel) Update(id int, u User) ([]string, bool) {
 		// }
 	} else {
 		//バリデーションが失敗していたらそのエラーメッセージを返す
-		return msg, true
+		return User{}, errors.New(msg)
 	}
 
 }
 
 //削除メソッド
 //ユーザを削除する
-func (um UserModel) Delete(id int) ([]string, bool) {
+func (um UserModel) Delete(id int) error {
 
 	//idで削除を実行する
-	_, err := um.GetById(id)
-	if err { //削除するユーザがいなかったらダメ
-		return []string{"削除するユーザが存在しません。"}, true
+	users, _ := um.GetById(id)
+	if len(users) == 0 { //削除するユーザがいなかったらダメ
+		return errors.New("削除するユーザが存在しません。")
 	}
 	um.db.Delete(&User{}, id)
-	// _, err2 := um.GetById(id)
-	// if err2 { //ユーザが取得できなかったら成功
-	return []string{"削除に成功しました。"}, false
-	// } else {
-	// 	return []string{"削除できませんでした。"}, true
-	// }
+	return nil
 
 }
 

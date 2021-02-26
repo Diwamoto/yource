@@ -72,8 +72,8 @@ func (sm SpaceModel) Validate(s Space) ([]string, bool) {
 
 	//ユーザIDは存在するユーザのIDのみを使用できる
 	um := NewUserModel(sm.nc)
-	_, err2 := um.GetById(s.UserId)
-	if err2 {
+	users, _ := um.GetById(s.UserId)
+	if len(users) == 0 {
 		messages = append(messages, "存在しないユーザIDを持つスペースは作成できません。")
 	}
 

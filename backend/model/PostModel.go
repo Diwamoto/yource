@@ -72,8 +72,8 @@ func (pm PostModel) Validate(p Post) ([]string, bool) {
 
 	//存在しないユーザは投稿できない
 	um := NewUserModel(pm.nc)
-	_, err3 := um.GetById(p.UserId)
-	if err3 {
+	users, _ := um.GetById(p.UserId)
+	if len(users) == 0 {
 		messages = append(messages, "存在しないユーザIDの投稿は作成できません。")
 	}
 

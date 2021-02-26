@@ -43,19 +43,15 @@ func CreateUserAction(c *gin.Context) {
 	u.Created = time.Now()
 	u.Modified = time.Now()
 
-	msg, err := um.Create(u)
+	user, err := um.Create(u)
 	//エラーじゃなければuserの情報を返す
-	if !err {
-		userId, _ := strconv.Atoi(msg[0])
-		user, _ := um.GetById(userId)
-		user.Id = userId
-
+	if err == nil {
 		//ユーザのメールアドレス死活監視トークンを生成する。
 
 		c.JSON(http.StatusCreated, user)
 	} else {
 		//作成できなければエラーメッセージを返す。
-		c.JSON(http.StatusConflict, msg)
+		c.JSON(http.StatusConflict, gin.H{"message": err.Error()})
 
 	}
 }
@@ -64,7 +60,7 @@ func CreateUserAction(c *gin.Context) {
 //パラメータを解析して、検索用のオブジェクトに挿入してモデルにて検索する
 func SearchUserAction(c *gin.Context) {
 
-	//um := model.NewUserModel("default")
+	um := model.NewUserModel("default")
 
 	//クエリより検索文字列を取得して、構造体に入れる
 	status, _ := strconv.Atoi(c.Query("status"))
@@ -76,10 +72,9 @@ func SearchUserAction(c *gin.Context) {
 		Status:   status,
 		//とりあえずプロフィールからユーザを検索するのは非対応
 	}
-	um := model.NewUserModel("default")
 	users, err := um.Find(u)
 	//検索した結果が0件でもエラーにはならない。
-	//検索した条件が間違えていればエラーに廃る
+	//検索した条件が間違えていればエラーに入る
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 	} else {
@@ -100,11 +95,11 @@ func GetUserByIdAction(c *gin.Context) {
 	um := model.NewUserModel("default")
 
 	id, _ := strconv.Atoi(c.Param("id"))
-	u, err := um.GetById(id)
-	if !err {
-		c.JSON(http.StatusOK, u)
+	user, err := um.GetById(id)
+	if err == nil {
+		c.JSON(http.StatusOK, user)
 	} else {
-		c.JSON(http.StatusNotFound, []string{})
+		c.JSON(http.StatusNotFound, gin.H{})
 	}
 }
 
@@ -118,7 +113,7 @@ func GetAllUserAction(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusOK, users)
 	} else {
-		c.JSON(http.StatusNotFound, []string{})
+		c.JSON(http.StatusNotFound, gin.H{})
 	}
 }
 
@@ -131,7 +126,7 @@ func UpdateUserAction(c *gin.Context) {
 	userId, _ := strconv.Atoi(c.Param("id"))
 	//ユーザを取得し、取得できたら更新をかける
 	_, err := um.GetById(userId)
-	if !err {
+	if err == nil {
 		//フォームから更新内容を取得したユーザ構造体を作成
 		var u model.User
 		u.Email = c.PostForm("Email")
@@ -140,15 +135,14 @@ func UpdateUserAction(c *gin.Context) {
 		u.Phone = c.PostForm("Phone")
 		Status, _ := strconv.Atoi(c.PostForm("Status"))
 		u.Status = Status
-		msg, err2 := um.Update(userId, u)
-		if !err2 {
-			r, _ := um.GetById(userId)
-			c.JSON(http.StatusOK, r)
+		user, err2 := um.Update(userId, u)
+		if err2 == nil {
+			c.JSON(http.StatusOK, user)
 		} else {
-			c.JSON(http.StatusConflict, msg)
+			c.JSON(http.StatusConflict, err2.Error())
 		}
 	} else {
-		c.JSON(http.StatusNotFound, []string{})
+		c.JSON(http.StatusNotFound, gin.H{})
 	}
 }
 
@@ -157,11 +151,11 @@ func DeleteUserAction(c *gin.Context) {
 
 	um := model.NewUserModel("default")
 	userId, _ := strconv.Atoi(c.Param("id"))
-	msg, err := um.Delete(userId)
-	if !err {
-		c.JSON(http.StatusOK, msg)
+	err := um.Delete(userId)
+	if err == nil {
+		c.JSON(http.StatusOK, gin.H{})
 	} else {
-		c.JSON(http.StatusConflict, msg)
+		c.JSON(http.StatusConflict, err.Error())
 	}
 }
 

@@ -75,7 +75,7 @@ func GetRouter() *gin.Engine {
 			//get → プロフィール取得
 			//post → プロフィール追加
 			//put → プロフィール変更
-			v1.GET("/users/:id/profile", controller.GetUserProfileAction)
+			v1.GET("/users/:id/profile", controller.GetUserByIdAction)
 			v1.POST("/users/:id/profile", controller.CreateUserProfileAction)
 			v1.PUT("/users/:id/profile", controller.UpdateUserProfileAction)
 
@@ -108,7 +108,7 @@ func GetRouter() *gin.Engine {
 			//post → チャンネル追加(スペースからしかできない)
 			//put → チャンネル変更
 			//delete → チャンネル削除
-			v1.GET("/posts", controller.GetAllPostAction)
+			v1.GET("/posts", controller.SearchUserProfileAction)
 			v1.GET("/posts/:id", controller.GetPostAction)
 			v1.PUT("/posts/:id", controller.UpdatePostAction)
 			v1.DELETE("/posts/:id", controller.DeleteChannelAction)

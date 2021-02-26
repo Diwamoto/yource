@@ -29,7 +29,7 @@ func CreateUserProfileAction(c *gin.Context) {
 		Profile:   c.PostForm("Profile"),
 		Icon:      c.PostForm("Icon"),
 		Birthday:  birth,
-		From:      c.PostForm("From"),
+		Hometown:  c.PostForm("Hometown"),
 		Job:       c.PostForm("Job"),
 		Twitter:   c.PostForm("Twitter"),
 		Facebook:  c.PostForm("Facebook"),
@@ -39,50 +39,51 @@ func CreateUserProfileAction(c *gin.Context) {
 	up.Created = time.Now()
 	up.Modified = time.Now()
 
-	msg, err := upm.Create(up)
+	userProfile, err := upm.Create(up)
 	//エラーじゃなければユーザプロフィールの情報を返す
-	if !err {
-		userID, _ := strconv.Atoi(msg[0])
-		a, _ := upm.GetById(userID)
-		a.Id = userID
+	if err == nil && userProfile.Id != 0 {
 
-		//ユーザのメールアドレス死活監視トークンを生成する。
-
-		c.JSON(http.StatusCreated, a)
+		c.JSON(http.StatusCreated, userProfile)
 	} else {
 		//作成できなければエラーメッセージを返す。
-		c.JSON(http.StatusConflict, msg)
+		c.JSON(http.StatusConflict, gin.H{"message": err.Error()})
 
 	}
 }
 
-//ユーザの情報を返すアクション
-//GETでパラメータのユーザの情報を取得する
-func GetUserProfileAction(c *gin.Context) {
+//検索用アクション
+//パラメータを解析して、検索用のオブジェクトに挿入してモデルにて検索する
+func SearchUserProfileAction(c *gin.Context) {
 
 	upm := model.NewUserProfileModel("default")
 
-	id, _ := strconv.Atoi(c.Param("id"))
-	up, err := upm.GetById(id)
-	if !err {
-		c.JSON(http.StatusOK, up)
-	} else {
-		c.JSON(http.StatusNotFound, []string{})
+	//クエリより検索文字列を取得して、構造体に入れる
+	userId, _ := strconv.Atoi(c.Query("Id"))
+	u := model.UserProfile{
+		UserId:    userId,
+		Profile:   c.Query("Profile"),
+		Birthday:  time.Time{},
+		Hometown:  c.Query("Hometown"),
+		Job:       c.Query("Job"),
+		Twitter:   c.Query("Twitter"),
+		Facebook:  c.Query("Facebook"),
+		Instagram: c.Query("Instagram"),
+		Other:     c.Query("Other"),
 	}
-}
-
-//全てのユーザの情報を返すアクション
-//GETでパラメータのユーザの情報を取得する
-func GetAllUserProfileAction(c *gin.Context) {
-
-	um := model.NewUserProfileModel("default")
-
-	users, err := um.GetAll()
-	if !err {
-		c.JSON(http.StatusOK, users)
+	userProfiles, err := upm.Find(u)
+	//検索した結果が0件でもエラーにはならない。
+	//検索した条件が間違えていればエラーに入る
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 	} else {
-		c.JSON(http.StatusNotFound, []string{})
+		if len(userProfiles) > 0 {
+			c.JSON(http.StatusOK, userProfiles)
+		} else {
+			c.JSON(http.StatusNotFound, gin.H{})
+		}
+
 	}
+
 }
 
 //ユーザのプロフィールを更新するアクション
@@ -94,8 +95,8 @@ func UpdateUserProfileAction(c *gin.Context) {
 	userId, _ := strconv.Atoi(c.Param("id"))
 
 	//ユーザを取得し、取得できたら更新をかける
-	_, err := upm.GetByUserId(userId)
-	if !err {
+	userProfile, err := upm.GetByUserId(userId)
+	if err == nil && userProfile.UserId == userId {
 		//フォームから更新内容を取得したユーザ構造体を作成
 		var up model.UserProfile
 		up.UserId = userId
@@ -105,22 +106,22 @@ func UpdateUserProfileAction(c *gin.Context) {
 		up.Profile = c.PostForm("Profile")
 		up.Icon = c.PostForm("Icon")
 		up.Birthday = birth
-		up.From = c.PostForm("From")
+		up.Hometown = c.PostForm("Hometown")
 		up.Job = c.PostForm("Job")
 		up.Twitter = c.PostForm("Twitter")
 		up.Facebook = c.PostForm("Facebook")
 		up.Instagram = c.PostForm("Instagram")
 		up.Other = c.PostForm("Other")
 
-		msg, err2 := upm.Update(userId, up)
-		if !err2 {
+		UserProfile, err2 := upm.Update(userId, up)
+		if err2 == nil && UserProfile.UserId == userId {
 			up, _ = upm.GetByUserId(userId)
 			c.JSON(http.StatusOK, up)
 		} else {
-			c.JSON(http.StatusConflict, msg)
+			c.JSON(http.StatusConflict, gin.H{"message": err.Error()})
 		}
 	} else {
-		c.JSON(http.StatusNotFound, []string{})
+		c.JSON(http.StatusNotFound, gin.H{})
 	}
 }
 
@@ -129,10 +130,10 @@ func DeleteUserProfileAction(c *gin.Context) {
 
 	upm := model.NewUserProfileModel("default")
 	upId, _ := strconv.Atoi(c.Param("id"))
-	msg, err := upm.Delete(upId)
-	if !err {
-		c.JSON(http.StatusOK, msg)
+	err := upm.Delete(upId)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"message": "削除に成功しました。"})
 	} else {
-		c.JSON(http.StatusConflict, msg)
+		c.JSON(http.StatusConflict, gin.H{"message": err.Error()})
 	}
 }

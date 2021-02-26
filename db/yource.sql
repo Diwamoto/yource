@@ -54,7 +54,7 @@ CREATE TABLE `users` (
   `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '名前',
   `nickname` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'ニックネーム',
   `phone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '電話番号',
-  `status` tinyint(1) DEFAULT NULL COMMENT '状態（0:無効, 1:有効）',
+  `status` int(11) DEFAULT NULL COMMENT '状態（1:有効,2:無効）',
   `created` datetime DEFAULT NULL,
   `modified` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -68,7 +68,7 @@ CREATE TABLE `user_profiles` (
   `profile` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '自己紹介文',
   `birthday` datetime DEFAULT NULL COMMENT '誕生日',
   `icon` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'アイコンのCDNurlが入る想定。',
-  `from` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '出身',
+  `hometown` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '出身',
   `job` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '職業',
   `twitter` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'ツイッター',
   `facebook` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'フェイスブック',
@@ -80,4 +80,4 @@ CREATE TABLE `user_profiles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
--- 2021-02-23 17:16:03
+-- 2021-02-26 07:31:07

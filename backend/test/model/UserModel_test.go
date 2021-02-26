@@ -32,7 +32,7 @@ func TestValidateUser(t *testing.T) {
 				Name:     "test name",
 				Phone:    "000-0000-0000",
 				Nickname: "Crt Nick name",
-				Status:   true,
+				Status:   1,
 				Profile:  model.UserProfile{},
 			},
 			false, //エラーはでないはず
@@ -45,7 +45,7 @@ func TestValidateUser(t *testing.T) {
 				Name:     "test name",
 				Phone:    "000-0000-0000",
 				Nickname: "Crt Nick name",
-				Status:   true,
+				Status:   1,
 				Profile:  model.UserProfile{},
 			},
 			true, //エラーになるはず
@@ -58,7 +58,7 @@ func TestValidateUser(t *testing.T) {
 				Name:     "test name",
 				Phone:    "000-0000-0000",
 				Nickname: "Crt Nick name",
-				Status:   true,
+				Status:   1,
 				Profile:  model.UserProfile{},
 			},
 			true, //エラーになるはず
@@ -98,7 +98,7 @@ func TestValidateUser(t *testing.T) {
 				Name:     "test name",
 				Phone:    "000-0000-0000",
 				Nickname: "Crt Nick name",
-				Status:   true,
+				Status:   1,
 				Profile:  model.UserProfile{},
 			},
 			true, //エラーになるはず
@@ -128,7 +128,7 @@ func TestCreateUser(t *testing.T) {
 				Name:     "Crt Test",
 				Phone:    "000-0000-0000",
 				Nickname: "Crt Nick name",
-				Status:   true,
+				Status:   1,
 				Profile:  model.UserProfile{},
 			},
 			false, //エラーはでないはず
@@ -141,7 +141,7 @@ func TestCreateUser(t *testing.T) {
 				Name:     "Crt Test",
 				Phone:    "000-0000-0000",
 				Nickname: "Crt Nick name",
-				Status:   true,
+				Status:   1,
 				Profile:  model.UserProfile{},
 			},
 			true, //エラーになるはず
@@ -154,26 +154,6 @@ func TestCreateUser(t *testing.T) {
 		}
 	}
 
-}
-
-//UserModel.GetAll()のテスト
-//ユーザが取得できたらOK,できなければダメ
-func TestGetAllUser(t *testing.T) {
-
-	tests := []struct {
-		want bool
-	}{
-		{
-			//①: 全て取得できる
-			false, //取得できるはず
-		},
-	}
-	for _, tt := range tests {
-		_, err := um.GetAll()
-		if err != tt.want {
-			t.Errorf("GetAll()を用いてユーザを取得することができませんでした。")
-		}
-	}
 }
 
 //UserModel.GetById()のテスト
@@ -210,53 +190,72 @@ func TestFindUser(t *testing.T) {
 	tests := []struct {
 		in   model.User
 		t    string //検索の種類
-		want bool
+		want error
 	}{
 		{
-			//①: メールアドレスで検索
+			//①: 条件無しで全探索(GetAll()をここでカバー)
+			model.User{},
+			"全探索",
+			nil, //検索は成功するはず
+		},
+		{
+			//②: メールアドレスで検索
 			model.User{
 				Email: "CreateTest@example.com",
 			},
 			"メールアドレス",
-			false, //検索は成功するはず
+			nil, //検索は成功するはず
 		},
 		{
-			//②: ユーザ名で検索
+			//③: ユーザ名で検索
 			model.User{
 				Name: "Crt Test",
 			},
 			"ユーザ名",
-			false, //検索は成功するはず
+			nil, //検索は成功するはず
 		},
 		{
-			//③: 電話番号で検索
+			//④: 電話番号で検索
 			model.User{
 				Phone: "000-0000-0000",
 			},
 			"電話番号",
-			false, //検索は成功するはず
+			nil, //検索は成功するはず
 		},
 		{
-			//④: ステータスで検索
+			//⑤: ステータスで検索
 			model.User{
-				Status: true,
+				Status: 1,
 			},
 			"有効状態のユーザ",
-			false, //検索は成功するはず
+			nil, //検索は成功するはず
 		},
 		{
-			//⑤: ニックネームで検索
+			//⑥: ニックネームで検索
 			model.User{
 				Nickname: "Crt Nick name",
 			},
 			"ニックネーム",
-			false, //検索は成功するはず
+			nil, //検索は成功するはず
 		},
+		// {
+		// 	//⑦: TODO: カバレッジ100%の為にエラーを吐かせる
+		// 	model.User{
+		// 		Email:    "What is Email?",
+		// 		Password: "Password id 1234!",
+		// 		Name:     "I dont know...",
+		// 		Nickname: "Mike stands for McDonald's.",
+		// 		Phone:    "I have PocketBell!",
+		// 		Status:   8,
+		// 	},
+		// 	"ニックネーム",
+		// 	errors.New(""), //意図的にエラーを発生させる まだできてないです
+		// },
 	}
 	for _, tt := range tests {
 		_, err := um.Find(tt.in)
 		if err != tt.want {
-			t.Errorf("「%s」での検索が失敗しました。", tt.t)
+			t.Errorf("「%s」での検索が失敗しました。エラー内容:%#v", tt.t, err)
 		}
 	}
 }
@@ -279,7 +278,7 @@ func TestUpdateUser(t *testing.T) {
 				Name:     "Upd Test",
 				Phone:    "048-8476-8173",
 				Nickname: "Upd nickname",
-				Status:   true,
+				Status:   1,
 				Profile:  model.UserProfile{},
 			},
 			false, //エラーはでないはず
@@ -293,7 +292,7 @@ func TestUpdateUser(t *testing.T) {
 				Name:     "Upd Test",
 				Phone:    "048-8476-8173",
 				Nickname: "Upd nickname",
-				Status:   true,
+				Status:   1,
 				Profile:  model.UserProfile{},
 			},
 			true, //更新はできないはず

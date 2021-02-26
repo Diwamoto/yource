@@ -22,7 +22,7 @@ type User struct {
 	Name     string
 	Nickname string
 	Phone    string
-	Status   bool
+	Status   int //1: 有効, 2: 無効
 	Profile  UserProfile
 }
 
@@ -54,7 +54,7 @@ func (um UserModel) Validate(u User) ([]string, bool) {
 
 	//独自バリデーション
 	//メールアドレスをdbに問い合わせて存在していたらエラーを返す。
-	if !um.validateUniqueEmail(u.Email) {
+	if !um.validateIsUniqueEmail(u.Email) {
 		//作成できなければエラーメッセージを返す
 		messages = append(messages, "入力されたメールアドレスは既に登録されています。")
 	}
@@ -111,25 +111,6 @@ func (um UserModel) Create(u User) ([]string, bool) {
 }
 
 //指定ユーザidの情報を返す
-func (um UserModel) GetAll() ([]User, bool) {
-
-	var users []User
-	um.db.Find(&users)
-	upm := NewUserProfileModel(um.nc)
-	for i, u := range users {
-		users[i].Profile, _ = upm.GetByUserId(u.Id)
-	}
-
-	//値が取得できたら
-	if len(users) > 0 {
-		return users, false
-	} else {
-		return []User{}, true
-	}
-
-}
-
-//指定ユーザidの情報を返す
 func (um UserModel) GetById(id int) (User, bool) {
 
 	var u User
@@ -146,24 +127,41 @@ func (um UserModel) GetById(id int) (User, bool) {
 }
 
 //検索メソッド
-//任意の条件に一致するユーザを取得する
-//TODO: 検索に失敗するということの定義を考える
-//→指定条件で検索したところ、その条件にあうユーザは
-//いなかった。これはエラーなのか？結果が０なだけで
-//検索には成功しているのではないか？
-//→この場合における「検索の失敗」とはSQLの構文エラーが起こることであり、
-//現状の実装だとそこのエラーハンドリングは呼び出し元が請け負っているので
-//Find()でエラーが発生することはありえないと思われる
-func (um UserModel) Find(u User) ([]User, bool) {
+func (um UserModel) Find(u User) ([]User, error) {
 
 	var r []User
-	um.db.Where(&u).Find(&r)
+	//受け取った検索パラメータに応じてSQLをビルドする
 
-	//dbに問い合わせて存在していればユーザを返す。なければエラーを返す ←？？
-	if len(r) > 0 {
-		return r, false
+	builder := um.db.Model(&User{})
+
+	//検索パラメータを解析し、検索条件が存在していればwhere文を追加する
+	if u.Email != "" {
+		builder = builder.Where("email = ?", u.Email)
+	}
+	if u.Name != "" {
+		builder = builder.Where("name LIKE ?", "%"+u.Name+"%")
+	}
+	if u.Nickname != "" {
+		builder = builder.Where("nickname LIKE ?", "%"+u.Nickname+"%")
+	}
+	if u.Phone != "" {
+		builder = builder.Where("phone LIKE ?", u.Phone)
+	}
+	if u.Status != 0 {
+		builder = builder.Where("status = ?", u.Status)
+	}
+
+	//dbに問い合わせる。何らかのエラーが発生した場合はここでハンドリング
+	if result := builder.Find(&r); result.Error != nil {
+		//何らかのエラーを返す
+		//テストで発生させることができずカバレッジが取れない。。。
+		return []User{}, result.Error
 	} else {
-		return []User{}, true
+		upm := NewUserProfileModel(um.nc)
+		for index, user := range r {
+			r[index].Profile, _ = upm.GetByUserId(user.Id)
+		}
+		return r, nil
 	}
 }
 
@@ -241,10 +239,14 @@ func (um UserModel) Delete(id int) ([]string, bool) {
 
 //独自バリデーション
 //同じメールアドレスがdbに存在しないかどうかを検索する。
-func (um UserModel) validateUniqueEmail(email string) bool {
+func (um UserModel) validateIsUniqueEmail(email string) bool {
 	u := User{
 		Email: email,
 	}
-	_, err := um.Find(u)
-	return err
+	users, _ := um.Find(u)
+	if len(users) > 0 {
+		return false
+	} else {
+		return true
+	}
 }

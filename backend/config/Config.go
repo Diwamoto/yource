@@ -1,6 +1,6 @@
 package config
 
-var config = map[string]string{
+var config = map[string]interface{}{
 	//任意Configを定義できる
 
 	//ルートのパス
@@ -9,15 +9,15 @@ var config = map[string]string{
 	//新規登録時のメール死活確認のトークン有効期限(日)
 	"expireToken": "3",
 
-	//dbのデバッグの有無 (debug →全てのsqlがログで流れます)
-	"db_mode": "production",
+	//dbのデバッグの有無 (true →全てのsqlがログで流れます)
+	"debugDB": false,
 }
 
 //configの中から特定の値を取得
-func Get(key string) string {
+func Get(key string) interface{} {
 	if config[key] != "" {
 		return config[key]
 	} else {
-		return ""
+		return nil
 	}
 }

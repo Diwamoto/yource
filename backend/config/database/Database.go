@@ -18,7 +18,7 @@ func GetInstance(t string) *gorm.DB {
 	if !singleton_flg {
 		singleton_flg = true
 		dataBase = ConnectDB(t)
-		if config.Get("db_mode") == "debug" {
+		if config.Get("debugDB") == true {
 			dataBase = dataBase.Debug()
 		}
 	}

@@ -37,7 +37,7 @@ func CreateUserAction(c *gin.Context) {
 		Password: string(password),
 		Name:     c.PostForm("Name"),
 		Phone:    c.PostForm("Phone"),
-		Status:   false, //メールアドレス認証ができるまでステータスは有効にならない
+		Status:   2, //メールアドレス認証ができるまでステータスは有効にならない
 		Profile:  model.UserProfile{},
 	}
 	u.Created = time.Now()
@@ -60,9 +60,42 @@ func CreateUserAction(c *gin.Context) {
 	}
 }
 
+//検索用アクション
+//パラメータを解析して、検索用のオブジェクトに挿入してモデルにて検索する
+func SearchUserAction(c *gin.Context) {
+
+	//um := model.NewUserModel("default")
+
+	//クエリより検索文字列を取得して、構造体に入れる
+	status, _ := strconv.Atoi(c.Query("status"))
+	u := model.User{
+		Email:    c.Query("email"),
+		Name:     c.Query("name"),
+		Nickname: c.Query("nickname"),
+		Phone:    c.Query("phone"),
+		Status:   status,
+		//とりあえずプロフィールからユーザを検索するのは非対応
+	}
+	um := model.NewUserModel("default")
+	users, err := um.Find(u)
+	//検索した結果が0件でもエラーにはならない。
+	//検索した条件が間違えていればエラーに廃る
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	} else {
+		if len(users) > 0 {
+			c.JSON(http.StatusOK, users)
+		} else {
+			c.JSON(http.StatusNotFound, gin.H{})
+		}
+
+	}
+
+}
+
 //ユーザの情報を返すアクション
 //GETでパラメータのユーザの情報を取得する
-func GetUserAction(c *gin.Context) {
+func GetUserByIdAction(c *gin.Context) {
 
 	um := model.NewUserModel("default")
 
@@ -81,8 +114,8 @@ func GetAllUserAction(c *gin.Context) {
 
 	um := model.NewUserModel("default")
 
-	users, err := um.GetAll()
-	if !err {
+	users, err := um.Find(model.User{})
+	if err != nil {
 		c.JSON(http.StatusOK, users)
 	} else {
 		c.JSON(http.StatusNotFound, []string{})
@@ -105,7 +138,7 @@ func UpdateUserAction(c *gin.Context) {
 		u.Password = c.PostForm("Password")
 		u.Name = c.PostForm("Name")
 		u.Phone = c.PostForm("Phone")
-		Status, _ := strconv.ParseBool(c.PostForm("Status"))
+		Status, _ := strconv.Atoi(c.PostForm("Status"))
 		u.Status = Status
 		msg, err2 := um.Update(userId, u)
 		if !err2 {
@@ -138,11 +171,11 @@ func LoginAction(c *gin.Context) {
 	um := model.NewUserModel("default")
 	var user model.User
 	user.Email = c.PostForm("Email")
-	user.Status = true
+	user.Status = 1 //有効なユーザ
 	users, err := um.Find(user)
 
 	//ユーザを取得でき、且ハッシュ化されたパスワードが等しければログイン成功
-	if !err && len(users) == 1 {
+	if err == nil && len(users) == 1 {
 		user := users[0]
 		err1 := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(c.PostForm("Password")))
 		if err1 == nil {

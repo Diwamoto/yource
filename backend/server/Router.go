@@ -65,9 +65,9 @@ func GetRouter() *gin.Engine {
 			v1.GET("/retrive", controller.RetriveUserByJWTAction)
 
 			//ユーザルーティング
-			v1.GET("/users", controller.GetAllUserAction)
+			v1.GET("/users", controller.SearchUserAction)
 			v1.POST("/users", controller.CreateUserAction)
-			v1.GET("/users/:id", controller.GetUserAction)
+			v1.GET("/users/:id", controller.GetUserByIdAction)
 			v1.PUT("/users/:id", controller.UpdateUserAction)
 			v1.DELETE("/users/:id", controller.DeleteUserAction)
 

@@ -29,7 +29,7 @@ func TestMain(m *testing.M) {
 		Password: "4AeNkWVisJ",
 		Name:     "master name",
 		Phone:    "028-0728-9727",
-		Status:   true,
+		Status:   1,
 		Profile:  model.UserProfile{},
 	}
 	mtu.Created = time.Now()
@@ -42,7 +42,7 @@ func TestMain(m *testing.M) {
 		Password: "4AeNkWVisJ",
 		Name:     "master name",
 		Phone:    "028-0728-9727",
-		Status:   true,
+		Status:   1,
 		Profile:  model.UserProfile{},
 	}
 	mtu2.Created = time.Now()

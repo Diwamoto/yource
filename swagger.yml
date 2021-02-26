@@ -1,952 +1,1033 @@
-swagger: "2.0"
-# host: "yource.space"
-host: "localhost:9091"
+openapi: 3.0.1
 info:
-  description: "yourceで使用するrest apiについてのswaggerドキュメント"
-  version: "1.0.0"
-  title: "yourceAPI"
-  termsOfService: "http://swagger.io/terms/"
+  title: yourceAPI
+  description: yourceで使用するrest apiについてのswaggerドキュメント
+  termsOfService: http://swagger.io/terms/
   contact:
-    email: "daiki.work.0118@gmail.com"
+    email: daiki.work.0118@gmail.com
   license:
-    name: "MIT"
-    url: "https://licenses.opensource.jp/MIT/MIT.html"
-basePath: "/api/v1"
-securityDefinitions:
-  tokenAuth:
-    type: "apiKey"
-    name: "Authorization"
-    in: "header"
+    name: MIT
+    url: https://licenses.opensource.jp/MIT/MIT.html
+  version: 1.0.0
+servers:
+- url: https://localhost:9091/api/v1
 tags:
-- name: "user"
-  description: "ユーザ"
-- name: "profile"
-  description: "プロフィール"
-- name: "space"
-  description: "スペース"
-- name: "channel"
-  description: "チャンネル"
-- name: "post"
-  description: "投稿"
-schemes:
-- "https"
+- name: user
+  description: ユーザ
+- name: profile
+  description: プロフィール
+- name: space
+  description: スペース
+- name: channel
+  description: チャンネル
+- name: post
+  description: 投稿
 paths:
   /users:
     get:
       tags:
-      - "user"
-      security:
-        - tokenAuth: []
-      summary: "ユーザの情報を全て取得する"  
+      - user
+      summary: userを検索する
+      parameters:
+      - name: q
+        in: query
+        description: 検索クエリ　もしクエリがなければ全探索する
+        schema:
+          type: string
       responses:
         200:
-          description: "成功時"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/User"
+          description: 成功時
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
         404:
-          description: "ユーザが存在しなかった場合"
-          schema:
-            type: "string"
-            example: "{}"
+          description: 指定したIDを持つユーザが見つからなかった場合
+          content:
+            application/json:
+              schema:
+                type: string
+                example: '{}'
     post:
       tags:
-      - "user"
-      security:
-        - tokenAuth: []
-      consumes:
-          - application/x-www-form-urlencoded
-      summary: "指定されたユーザが存在しなければ作成し、そのユーザのオブジェクトを返す。"
-      parameters:
-        - name: Email
-          in: formData
-          description: メールアドレス
-          required: true
-          type: string
-        - name: Password
-          in: formData
-          description: パスワード
-          required: true
-          type: string
-        - name: Name
-          in: formData
-          description: ユーザ名
-          type: string
-        - name: NickName
-          in: formData
-          description: ニックネーム
-          type: string
-        - name: Phone
-          in: formData
-          description: 電話番号
-          type: string
+      - user
+      summary: 指定されたユーザが存在しなければ作成し、そのユーザのオブジェクトを返す。
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+              - Email
+              - Password
+              properties:
+                Email:
+                  type: string
+                  description: メールアドレス
+                Password:
+                  type: string
+                  description: パスワード
+                Name:
+                  type: string
+                  description: ユーザ名
+                NickName:
+                  type: string
+                  description: ニックネーム
+                Phone:
+                  type: string
+                  description: 電話番号
+        required: true
       responses:
         201:
-          description: "成功時"
-          schema:
-            $ref: "#/definitions/User"
+          description: 成功時
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         409:
-          description: "なんらかの理由で作成に失敗した時"
-          schema:
-            type: "string"
-            example: "作成失敗理由"
+          description: なんらかの理由で作成に失敗した時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 作成失敗理由
   /users/{userId}:
     get:
       tags:
-      - "user"
-      security:
-        - tokenAuth: []
-      summary: "指定されたuserIdの情報を返す"  
+      - user
+      summary: 指定されたuserIdの情報を返す
       parameters:
-      - name: "userId"
-        in: "path"
-        description: "取得したいユーザのID"
+      - name: userId
+        in: path
+        description: 取得したいユーザのID
         required: true
-        type: "integer"
-        format: "int64"
+        schema:
+          type: integer
+          format: int64
       responses:
         200:
-          description: "成功時"
-          schema:
-            $ref: "#/definitions/User"
+          description: 成功時
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         404:
-          description: "指定したIDを持つユーザが見つからなかった場合"
-          schema:
-            type: "string"
-            example: "{}"
+          description: 指定したIDを持つユーザが見つからなかった場合
+          content:
+            application/json:
+              schema:
+                type: string
+                example: '{}'
     put:
       tags:
-      - "user"
-      security:
-        - tokenAuth: []
-      summary: "指定されたuserIdの情報を更新して返す。"
+      - user
+      summary: 指定されたuserIdの情報を更新して返す。
       parameters:
-      - name: "userId"
-        in: "path"
-        description: "更新したいユーザのID"
+      - name: userId
+        in: path
+        description: 更新したいユーザのID
         required: true
-        type: "integer"
-        format: "int64"
-      - name: Email
-        in: formData
-        description: メールアドレス
-        type: string
-      - name: Password
-        in: formData
-        description: パスワード
-        type: string
-      - name: Name
-        in: formData
-        description: 名前
-        type: string
-      - name: Nickname
-        in: formData
-        description: ニックネーム
-        type: string
-      - name: Phone
-        in: formData
-        description: 電話番号
-        type: string
-      - name: Status
-        in: formData
-        description: ステータス
-        type: string
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                Email:
+                  type: string
+                  description: メールアドレス
+                Password:
+                  type: string
+                  description: パスワード
+                Name:
+                  type: string
+                  description: 名前
+                Nickname:
+                  type: string
+                  description: ニックネーム
+                Phone:
+                  type: string
+                  description: 電話番号
+                Status:
+                  type: string
+                  description: ステータス
       responses:
         200:
-          description: "更新成功時 変更後のユーザオブジェクトが表示される"
-          schema:
-            $ref: "#/definitions/User"
-        409:
-          description: "何らかの理由で更新に失敗した時"
-          schema:
-            type: "string"
-            example: "更新失敗理由"
+          description: 更新成功時 変更後のユーザオブジェクトが表示される
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         404:
-          description: "指定されたIDを持つユーザが見つからなかった場合"
-          schema:
-            type: "string"
-            example: ""
+          description: 指定されたIDを持つユーザが見つからなかった場合
+          content:
+            application/json:
+              schema:
+                type: string
+                example: ""
+        409:
+          description: 何らかの理由で更新に失敗した時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 更新失敗理由
     delete:
       tags:
-      - "user"
-      security:
-        - tokenAuth: []
-      summary: "指定されたuserIdの情報を削除する。"
+      - user
+      summary: 指定されたuserIdの情報を削除する。
       parameters:
-      - name: "userId"
-        in: "path"
-        description: "削除したいユーザのID"
+      - name: userId
+        in: path
+        description: 削除したいユーザのID
         required: true
-        type: "integer"
-        format: "int64"
+        schema:
+          type: integer
+          format: int64
       responses:
         200:
-          description: "削除成功時"
-          schema:
-            type: "string"
-            example: "成功しました。"
+          description: 削除成功時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 成功しました。
         409:
-          description: "何らかの理由で削除に失敗した時"
-          schema:
-            type: "string"
-            example: "削除失敗理由"
+          description: 何らかの理由で削除に失敗した時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 削除失敗理由
   /users/{userId}/profile:
     get:
       tags:
-      - "profile"
-      security:
-        - tokenAuth: []
-      summary: "指定ユーザIDのプロフィールを取得する"
+      - profile
+      summary: 指定ユーザIDのプロフィールを取得する
       parameters:
-      - name: "userId"
-        in: "path"
-        description: "取得したいユーザのID"
+      - name: userId
+        in: path
+        description: 取得したいユーザのID
         required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        200:
-          description: "成功時"
-          schema:
-            $ref: "#/definitions/Profile"
-        404:
-          description: "指定したIDを持つユーザが見つからなかった場合"
-          schema:
-            type: "string"
-            example: "{}"
-    post:
-      tags:
-      - "profile"
-      security:
-        - tokenAuth: []
-      consumes:
-          - application/x-www-form-urlencoded
-      summary: "指定されたユーザが存在しなければ作成し、そのユーザのオブジェクトを返す。"
-      parameters:
-        - name: userId
-          in: path
-          description: ユーザID
-          required: true
+        schema:
           type: integer
-        - name: Profile
-          in: formData
-          description: プロフィール
-          type: string
-        - name: Birthday
-          in: formData
-          description: 誕生日
-          type: string
-        - name: From
-          in: formData
-          description: 出身地
-          type: string
-        - name: Job
-          in: formData
-          description: 仕事
-          type: string
-        - name: Twitter
-          in: formData
-          description: ツイッター
-          type: string
-        - name: Facebook
-          in: formData
-          description: フェイスブック
-          type: string
-        - name: Instagram
-          in: formData
-          description: インスタグラム
-          type: string
-        - name: Other
-          in: formData
-          description: 他のwebサイトURL
-          type: string
+          format: int64
       responses:
         200:
-          description: "成功時"
-          schema:
-            $ref: "#/definitions/Profile"
-        409:
-          description: "なんらかの理由で作成に失敗した時"
-          schema:
-            type: "string"
-            example: "作成失敗理由"
+          description: 成功時
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        404:
+          description: 指定したIDを持つユーザが見つからなかった場合
+          content:
+            application/json:
+              schema:
+                type: string
+                example: '{}'
     put:
       tags:
-      - "profile"
-      security:
-        - tokenAuth: []
-      consumes:
-          - application/x-www-form-urlencoded
-      summary: "指定されたユーザIDのプロフィールを変更する。"
+      - profile
+      summary: 指定されたユーザIDのプロフィールを変更する。
       parameters:
-        - name: userId
-          in: path
-          description: ユーザID
-          required: true
+      - name: userId
+        in: path
+        description: ユーザID
+        required: true
+        schema:
           type: integer
-        - name: Profile
-          in: formData
-          description: プロフィール
-          type: string
-        - name: Birthday
-          in: formData
-          description: 誕生日
-          type: string
-        - name: From
-          in: formData
-          description: 出身地
-          type: string
-        - name: Job
-          in: formData
-          description: 仕事
-          type: string
-        - name: Twitter
-          in: formData
-          description: ツイッター
-          type: string
-        - name: Facebook
-          in: formData
-          description: フェイスブック
-          type: string
-        - name: Instagram
-          in: formData
-          description: インスタグラム
-          type: string
-        - name: Other
-          in: formData
-          description: 他のwebサイトURL
-          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                Profile:
+                  type: string
+                  description: プロフィール
+                Birthday:
+                  type: string
+                  description: 誕生日
+                From:
+                  type: string
+                  description: 出身地
+                Job:
+                  type: string
+                  description: 仕事
+                Twitter:
+                  type: string
+                  description: ツイッター
+                Facebook:
+                  type: string
+                  description: フェイスブック
+                Instagram:
+                  type: string
+                  description: インスタグラム
+                Other:
+                  type: string
+                  description: 他のwebサイトURL
       responses:
         200:
-          description: "成功時"
-          schema:
-            $ref: "#/definitions/Profile"
+          description: 成功時
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
         409:
-          description: "なんらかの理由で作成に失敗した時"
-          schema:
-            type: "string"
-            example: "作成失敗理由"
+          description: なんらかの理由で作成に失敗した時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 作成失敗理由
+    post:
+      tags:
+      - profile
+      summary: 指定されたユーザが存在しなければ作成し、そのユーザのオブジェクトを返す。
+      parameters:
+      - name: userId
+        in: path
+        description: ユーザID
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                Profile:
+                  type: string
+                  description: プロフィール
+                Birthday:
+                  type: string
+                  description: 誕生日
+                From:
+                  type: string
+                  description: 出身地
+                Job:
+                  type: string
+                  description: 仕事
+                Twitter:
+                  type: string
+                  description: ツイッター
+                Facebook:
+                  type: string
+                  description: フェイスブック
+                Instagram:
+                  type: string
+                  description: インスタグラム
+                Other:
+                  type: string
+                  description: 他のwebサイトURL
+      responses:
+        200:
+          description: 成功時
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        409:
+          description: なんらかの理由で作成に失敗した時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 作成失敗理由
   /spaces:
     get:
       tags:
-      - "space"
-      security:
-        - tokenAuth: []
-      summary: "全てのスペースを取得する"
+      - space
+      summary: 全てのスペースを取得する
       responses:
         200:
-          description: "成功時"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Space"
+          description: 成功時
+          content:
+            APPLICATION/JSON:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Space'
         404:
-          description: "スペースが存在しなかった場合"
-          schema:
-            type: "string"
-            example: "{}"
+          description: スペースが存在しなかった場合
+          content:
+            application/json:
+              schema:
+                type: string
+                example: '{}'
   /users/{userId}/space:
     get:
       tags:
-      - "user"
-      security:
-        - tokenAuth: []
-      summary: "指定されたユーザidの情報スペースを返す"  
+      - user
+      summary: 指定されたユーザidの情報スペースを返す
       parameters:
-      - name: "userId"
-        in: "path"
-        description: "取得したいスペースのユーザID"
+      - name: userId
+        in: path
+        description: 取得したいスペースのユーザID
         required: true
-        type: "integer"
-        format: "int64"
+        schema:
+          type: integer
+          format: int64
       responses:
         200:
-          description: "成功時"
-          schema:
-            $ref: "#/definitions/Space"
+          description: 成功時
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
         404:
-          description: "指定したユーザのスペースがない時"
-          schema:
-            type: "string"
-            example: "{}"
-    post:
-      tags:
-      - "user"
-      security:
-        - tokenAuth: []
-      consumes:
-          - application/x-www-form-urlencoded
-      summary: "スペースが存在しなければ作成し、そのスペースのオブジェクトを作成する"
-      parameters:
-        - name: userId
-          in: path
-          description: ユーザID
-          required: true
-          type: integer
-        - name: Name
-          in: formData
-          description: ユーザ名
-          type: string
-        - name: Description
-          in: formData
-          description: 説明
-          type: string
-        - name: SubDomain
-          in: formData
-          description: サブドメイン
-          type: string
-      responses:
-        201:
-          description: "成功時"
-          schema:
-            $ref: "#/definitions/Space"
-        409:
-          description: "なんらかの理由で作成に失敗した時"
-          schema:
-            type: "string"
-            example: "作成失敗理由"
+          description: 指定したユーザのスペースがない時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: '{}'
     put:
       tags:
-      - "user"
-      security:
-        - tokenAuth: []
-      summary: "スペースの情報を変更する"
+      - user
+      summary: スペースの情報を変更する
       parameters:
-      - name: "userId"
-        in: "path"
-        description: "更新したいスペースのユーザID"
+      - name: userId
+        in: path
+        description: 更新したいスペースのユーザID
         required: true
-        type: "integer"
-        format: "int64"
-      - name: Name
-        in: formData
-        description: スペース名
-        type: string
-      - name: Description
-        in: formData
-        description: 説明
-        type: string
-      - name: SubDomain
-        in: formData
-        description: サブドメイン
-        type: string
-      - name: Publish
-        in: formData
-        description: 公開:true,非公開:false
-        type: string
-      - name: Status
-        in: formData
-        description: 有効:true,無効:false
-        type: string
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                Name:
+                  type: string
+                  description: スペース名
+                Description:
+                  type: string
+                  description: 説明
+                SubDomain:
+                  type: string
+                  description: サブドメイン
+                Publish:
+                  type: string
+                  description: 公開:true,非公開:false
+                Status:
+                  type: string
+                  description: 有効:true,無効:false
       responses:
         200:
-          description: "更新成功時 変更後のスペースオブジェクトが返却される"
-          schema:
-            $ref: "#/definitions/Space"
-        409:
-          description: "何らかの理由で更新に失敗した時"
-          schema:
-            type: "string"
-            example: "更新失敗理由"
+          description: 更新成功時 変更後のスペースオブジェクトが返却される
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
         404:
-          description: "指定されたIDを持つユーザが見つからなかった場合"
-          schema:
-            type: "string"
-            example: ""
+          description: 指定されたIDを持つユーザが見つからなかった場合
+          content:
+            application/json:
+              schema:
+                type: string
+                example: ""
+        409:
+          description: 何らかの理由で更新に失敗した時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 更新失敗理由
+    post:
+      tags:
+      - user
+      summary: スペースが存在しなければ作成し、そのスペースのオブジェクトを作成する
+      parameters:
+      - name: userId
+        in: path
+        description: ユーザID
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                Name:
+                  type: string
+                  description: ユーザ名
+                Description:
+                  type: string
+                  description: 説明
+                SubDomain:
+                  type: string
+                  description: サブドメイン
+      responses:
+        201:
+          description: 成功時
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
+        409:
+          description: なんらかの理由で作成に失敗した時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 作成失敗理由
     delete:
       tags:
-      - "user"
-      security:
-        - tokenAuth: []
-      summary: "指定されたuserIdのスペースの情報を削除する。"
+      - user
+      summary: 指定されたuserIdのスペースの情報を削除する。
       parameters:
-      - name: "userId"
-        in: "path"
-        description: "削除したいスペースのユーザID"
+      - name: userId
+        in: path
+        description: 削除したいスペースのユーザID
         required: true
-        type: "integer"
-        format: "int64"
+        schema:
+          type: integer
+          format: int64
       responses:
         200:
-          description: "削除成功時"
-          schema:
-            type: "string"
-            example: "成功しました。"
+          description: 削除成功時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 成功しました。
         409:
-          description: "何らかの理由で削除に失敗した時"
-          schema:
-            type: "string"
-            example: "削除失敗理由"
+          description: 何らかの理由で削除に失敗した時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 削除失敗理由
   /channels:
     get:
       tags:
-      - "channel"
-      security:
-        - tokenAuth: []
-      summary: "全てのチャンネルを取得する"
+      - channel
+      summary: 全てのチャンネルを取得する
       responses:
         200:
-          description: "成功時"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Channel"
+          description: 成功時
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Channel'
         404:
-          description: "チャンネルが存在しなかった場合"
-          schema:
-            type: "string"
-            example: "{}"
+          description: チャンネルが存在しなかった場合
+          content:
+            application/json:
+              schema:
+                type: string
+                example: '{}'
   /channels/{channelId}:
     get:
       tags:
-      - "channel"
-      security:
-        - tokenAuth: []
-      summary: "指定されたチャンネルidのチャンネルの情報を返す"  
+      - channel
+      summary: 指定されたチャンネルidのチャンネルの情報を返す
       parameters:
-      - name: "channelId"
-        in: "path"
-        description: "取得したいチャンネルのID"
+      - name: channelId
+        in: path
+        description: 取得したいチャンネルのID
         required: true
-        type: "integer"
-        format: "int64"
+        schema:
+          type: integer
+          format: int64
       responses:
         200:
-          description: "成功時"
-          schema:
-            $ref: "#/definitions/Channel"
+          description: 成功時
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
         404:
-          description: "指定したIDのチャンネルがない時"
-          schema:
-            type: "string"
-            example: "{}"
+          description: 指定したIDのチャンネルがない時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: '{}'
     put:
       tags:
-      - "channel"
-      security:
-        - tokenAuth: []
-      summary: "チャンネルの情報を変更する"
+      - channel
+      summary: チャンネルの情報を変更する
       parameters:
-      - name: "channelId"
-        in: "path"
-        description: "更新したいチャンネルのid"
+      - name: channelId
+        in: path
+        description: 更新したいチャンネルのid
         required: true
-        type: "integer"
-        format: "int64"
-      - name: Name
-        in: formData
-        description: チャンネル名
-        type: string
-      - name: Description
-        in: formData
-        description: 説明
-        type: string
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                Name:
+                  type: string
+                  description: チャンネル名
+                Description:
+                  type: string
+                  description: 説明
       responses:
         200:
-          description: "更新成功時 変更後のチャンネルオブジェクトが返却される"
-          schema:
-            $ref: "#/definitions/Channel"
-        409:
-          description: "何らかの理由で更新に失敗した時"
-          schema:
-            type: "string"
-            example: "更新失敗理由"
+          description: 更新成功時 変更後のチャンネルオブジェクトが返却される
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
         404:
-          description: "指定されたIDを持つユーザが見つからなかった場合"
-          schema:
-            type: "string"
-            example: ""
+          description: 指定されたIDを持つユーザが見つからなかった場合
+          content:
+            application/json:
+              schema:
+                type: string
+                example: ""
+        409:
+          description: 何らかの理由で更新に失敗した時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 更新失敗理由
     delete:
       tags:
-      - "channel"
-      security:
-        - tokenAuth: []
-      summary: "指定されたidのチャンネルを削除する"
+      - channel
+      summary: 指定されたidのチャンネルを削除する
       parameters:
-      - name: "channelId"
-        in: "path"
-        description: "削除したいチャンネルのID"
+      - name: channelId
+        in: path
+        description: 削除したいチャンネルのID
         required: true
-        type: "integer"
-        format: "int64"
+        schema:
+          type: integer
+          format: int64
       responses:
         200:
-          description: "削除成功時"
-          schema:
-            type: "string"
-            example: "成功しました。"
+          description: 削除成功時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 成功しました。
         409:
-          description: "何らかの理由で削除に失敗した時"
-          schema:
-            type: "string"
-            example: "削除失敗理由"
+          description: 何らかの理由で削除に失敗した時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 削除失敗理由
   /spaces/{spaceId}/channels:
     get:
       tags:
-      - "space"
-      security:
-        - tokenAuth: []
-      summary: "指定スペースのチャンネルを全て取得する"  
+      - space
+      summary: 指定スペースのチャンネルを全て取得する
       parameters:
-      - name: "spaceId"
-        in: "path"
-        description: "チャンネル一覧を取得したいスペースのid"
+      - name: spaceId
+        in: path
+        description: チャンネル一覧を取得したいスペースのid
         required: true
-        type: "integer"
-        format: "int64"
+        schema:
+          type: integer
+          format: int64
       responses:
         200:
-          description: "成功時"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Channel"
+          description: 成功時
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Channel'
         404:
-          description: "指定したIDのスペースがない時"
-          schema:
-            type: "string"
-            example: "{}"
+          description: 指定したIDのスペースがない時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: '{}'
     post:
       tags:
-        - "space"
-      security:
-        - tokenAuth: []
-      consumes:
-        - application/x-www-form-urlencoded
-      summary: "指定スペースのチャンネルを作成します"
+      - space
+      summary: 指定スペースのチャンネルを作成します
       parameters:
-        - name: spaceId
-          in: path
-          description: スペースID
-          required: true
+      - name: spaceId
+        in: path
+        description: スペースID
+        required: true
+        schema:
           type: integer
-        - name: Name
-          in: formData
-          description: 名前
-          type: string
-        - name: Description
-          in: formData
-          description: 説明
-          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                Name:
+                  type: string
+                  description: 名前
+                Description:
+                  type: string
+                  description: 説明
       responses:
         200:
-          description: "成功時"
-          schema:
-            $ref: "#/definitions/Channel"
+          description: 成功時
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
         409:
-          description: "なんらかの理由で作成に失敗した時"
-          schema:
-            type: "string"
-            example: "作成失敗理由"
+          description: なんらかの理由で作成に失敗した時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 作成失敗理由
   /posts:
     get:
       tags:
-      - "post"
-      security:
-        - tokenAuth: []
-      summary: "全ての投稿を取得する"
+      - post
+      summary: 全ての投稿を取得する
       responses:
         200:
-          description: "成功時"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Post"
+          description: 成功時
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
         404:
-          description: "投稿が存在しなかった場合"
-          schema:
-            type: "string"
-            example: "{}"
+          description: 投稿が存在しなかった場合
+          content:
+            application/json:
+              schema:
+                type: string
+                example: '{}'
   /posts/{postId}:
     get:
       tags:
-      - "post"
-      security:
-        - tokenAuth: []
-      summary: "指定された投稿IDの情報を返す"  
+      - post
+      summary: 指定された投稿IDの情報を返す
       parameters:
-      - name: "postId"
-        in: "path"
-        description: "取得したい投稿のID"
+      - name: postId
+        in: path
+        description: 取得したい投稿のID
         required: true
-        type: "integer"
-        format: "int64"
+        schema:
+          type: integer
+          format: int64
       responses:
         200:
-          description: "成功時"
-          schema:
-            $ref: "#/definitions/Post"
+          description: 成功時
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
         404:
-          description: "指定したIDの投稿がない時"
-          schema:
-            type: "string"
-            example: "{}"
+          description: 指定したIDの投稿がない時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: '{}'
     put:
       tags:
-      - "post"
-      security:
-        - tokenAuth: []
-      summary: "投稿の情報を変更する"
+      - post
+      summary: 投稿の情報を変更する
       parameters:
-      - name: "postId"
-        in: "path"
-        description: "更新したい投稿のid"
+      - name: postId
+        in: path
+        description: 更新したい投稿のid
         required: true
-        type: "integer"
-        format: "int64"
-      - name: Content
-        in: formData
-        description: 内容
-        type: string
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                Content:
+                  type: string
+                  description: 内容
       responses:
         200:
-          description: "更新成功時 変更後の投稿オブジェクトが返却される"
-          schema:
-            $ref: "#/definitions/Post"
-        409:
-          description: "何らかの理由で更新に失敗した時"
-          schema:
-            type: "string"
-            example: "更新失敗理由"
+          description: 更新成功時 変更後の投稿オブジェクトが返却される
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
         404:
-          description: "指定されたIDを持つユーザが見つからなかった場合"
-          schema:
-            type: "string"
-            example: ""
+          description: 指定されたIDを持つユーザが見つからなかった場合
+          content:
+            application/json:
+              schema:
+                type: string
+                example: ""
+        409:
+          description: 何らかの理由で更新に失敗した時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 更新失敗理由
     delete:
       tags:
-      - "post"
-      security:
-        - tokenAuth: []
-      summary: "指定されたidの投稿を削除する"
+      - post
+      summary: 指定されたidの投稿を削除する
       parameters:
-      - name: "postId"
-        in: "path"
-        description: "削除したい投稿のID"
+      - name: postId
+        in: path
+        description: 削除したい投稿のID
         required: true
-        type: "integer"
-        format: "int64"
+        schema:
+          type: integer
+          format: int64
       responses:
         200:
-          description: "削除成功時"
-          schema:
-            type: "string"
-            example: "成功しました。"
+          description: 削除成功時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 成功しました。
         409:
-          description: "何らかの理由で削除に失敗した時"
-          schema:
-            type: "string"
-            example: "削除失敗理由"
+          description: 何らかの理由で削除に失敗した時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 削除失敗理由
   /channels/{channelId}/posts:
     get:
       tags:
-      - "channel"
-      security:
-        - tokenAuth: []
-      summary: "指定チャンネルの投稿を全て取得する"  
+      - channel
+      summary: 指定チャンネルの投稿を全て取得する
       parameters:
-      - name: "channelId"
-        in: "path"
-        description: "投稿一覧を取得したいチャンネルのid"
+      - name: channelId
+        in: path
+        description: 投稿一覧を取得したいチャンネルのid
         required: true
-        type: "integer"
-        format: "int64"
+        schema:
+          type: integer
+          format: int64
       responses:
         200:
-          description: "成功時"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Channel"
+          description: 成功時
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Channel'
         404:
-          description: "指定したIDのスペースがない時"
-          schema:
-            type: "string"
-            example: "{}"
+          description: 指定したIDのスペースがない時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: '{}'
     post:
       tags:
-        - "channel"
-      security:
-        - tokenAuth: []
-      consumes:
-        - application/x-www-form-urlencoded
-      summary: "指定チャンネルに投稿を作成する"
+      - channel
+      summary: 指定チャンネルに投稿を作成する
       parameters:
-        - name: channelId
-          in: path
-          description: チャンネルID
-          required: true
+      - name: channelId
+        in: path
+        description: チャンネルID
+        required: true
+        schema:
           type: integer
-        - name: UserId
-          in: formData
-          description: ユーザID
-          type: string
-        - name: Content
-          in: formData
-          description: 内容
-          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                UserId:
+                  type: string
+                  description: ユーザID
+                Content:
+                  type: string
+                  description: 内容
       responses:
         200:
-          description: "成功時"
-          schema:
-            $ref: "#/definitions/Post"
+          description: 成功時
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
         409:
-          description: "なんらかの理由で作成に失敗した時"
-          schema:
-            type: "string"
-            example: "作成失敗理由"
-definitions:
-  User:
-    type: "object"
-    properties:
-      Id:
-        type: "integer"
-        format: "int64"
-        example: 1
-      Created:
-        type: "string"
-        example: "2021-01-01T00:00:00+09:00"
-      Modified:
-        type: "string"
-        example: "2021-01-01T00:00:00+09:00"
-      Email: 
-        type: "string"
-        example: "test@example.com"
-      Password:
-        type: "string"
-        example: "test"
-      Name:
-        type: "string"
-        example: "test"
-      Phone:
-        type: "string"
-        example: "090-0909-0909"
-      Status:
-        type: "boolean"
-        example: true
-      Profile:
-        $ref: "#/definitions/Profile" 
-  Profile:
-    type: "object"
-    properties:
-      Id:
-        type: "integer"
-        format: "int64"
-        example: 0
-      Created:
-        type: "string"
-        example: "2021-01-01T00:00:00+09:00"
-      Modified:
-        type: "string"
-        example: "2021-01-01T00:00:00+09:00"
-      UserId: 
-        type: "integer"
-        example: 1
-      Profile:
-        type: "string"
-        example: "My Name is Mike. I am a Engineer at EXAM Company!"
-      Birthday:
-        type: "string"
-        example: "1992-01-01T00:00:00+09:00"
-      From:
-        type: "string"
-        example: "Germany"
-      Job:
-        type: "string"
-        example: "Engineer"
-      Twitter:
-        type: "string"
-        example: "@Twitter"
-      Facebook: 
-        type: "string"
-        example: "url..."
-      Instagram:
-        type: "string"
-        example: "@myawesomeinsta"
-      Other:
-        type: "string"
-        example: "https://my.awesome.homepage.com"
-  Space:
-    type: "object"
-    properties:
-      Id:
-        type: "integer"
-        format: "int64"
-        example: 1
-      Created:
-        type: "string"
-        example: "2021-01-01T00:00:00+09:00"
-      Modified:
-        type: "string"
-        example: "2021-01-01T00:00:00+09:00"
-      UserId:
-        type: "integer"
-        format: "int64"
-        example: 1
-      Name:
-        type: "string"
-        example: "test"
-      Description:
-        type: "string"
-        example: "このスペースは〇〇の為のものです。"
-      Subdomain:
-        type: "string"
-        example: "myspace"
-      Status:
-        type: "boolean"
-        example: true
-      Channels:
-        type: "array"
-        items:
-          $ref: "#/definitions/Channel" 
-  Channel:
-    type: "object"
-    properties:
-      Id:
-        type: "integer"
-        format: "int64"
-        example: 1
-      Created:
-        type: "string"
-        example: "2021-01-01T00:00:00+09:00"
-      Modified:
-        type: "string"
-        example: "2021-01-01T00:00:00+09:00"
-      SpaceId:
-        type: "integer"
-        format: "int64"
-        example: 1
-      Name:
-        type: "string"
-        example: "test"
-      Description:
-        type: "string"
-        example: "このチャンネルは〇〇の為のものです。"
-  Post:
-    type: "object"
-    properties:
-      Id:
-        type: "integer"
-        format: "int64"
-        example: 1
-      Created:
-        type: "string"
-        example: "2021-01-01T00:00:00+09:00"
-      Modified:
-        type: "string"
-        example: "2021-01-01T00:00:00+09:00"
-      ChannelId:
-        type: "integer"
-        format: "int64"
-        example: 1
-      UserId:
-        type: "integer"
-        format: "int64"
-        example: 1
-      Content:
-        type: "string"
-        example: "Hello, World!"
-      Date:
-        type: "string"
-        example: "2021-01-01T00:00:00+09:00"
+          description: なんらかの理由で作成に失敗した時
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 作成失敗理由
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        Id:
+          type: integer
+          format: int64
+          example: 1
+        Created:
+          type: string
+          example: 2021-01-01T00:00:00+09:00
+        Modified:
+          type: string
+          example: 2021-01-01T00:00:00+09:00
+        Email:
+          type: string
+          example: test@example.com
+        Password:
+          type: string
+          example: test
+        Name:
+          type: string
+          example: test
+        Phone:
+          type: string
+          example: 090-0909-0909
+        Status:
+          type: boolean
+          example: true
+        Profile:
+          $ref: '#/components/schemas/Profile'
+    Profile:
+      type: object
+      properties:
+        Id:
+          type: integer
+          format: int64
+          example: 0
+        Created:
+          type: string
+          example: 2021-01-01T00:00:00+09:00
+        Modified:
+          type: string
+          example: 2021-01-01T00:00:00+09:00
+        UserId:
+          type: integer
+          example: 1
+        Profile:
+          type: string
+          example: My Name is Mike. I am a Engineer at EXAM Company!
+        Birthday:
+          type: string
+          example: 1992-01-01T00:00:00+09:00
+        From:
+          type: string
+          example: Germany
+        Job:
+          type: string
+          example: Engineer
+        Twitter:
+          type: string
+          example: '@Twitter'
+        Facebook:
+          type: string
+          example: url...
+        Instagram:
+          type: string
+          example: '@myawesomeinsta'
+        Other:
+          type: string
+          example: https://my.awesome.homepage.com
+    Space:
+      type: object
+      properties:
+        Id:
+          type: integer
+          format: int64
+          example: 1
+        Created:
+          type: string
+          example: 2021-01-01T00:00:00+09:00
+        Modified:
+          type: string
+          example: 2021-01-01T00:00:00+09:00
+        UserId:
+          type: integer
+          format: int64
+          example: 1
+        Name:
+          type: string
+          example: test
+        Description:
+          type: string
+          example: このスペースは〇〇の為のものです。
+        Subdomain:
+          type: string
+          example: myspace
+        Status:
+          type: boolean
+          example: true
+        Channels:
+          type: array
+          items:
+            $ref: '#/components/schemas/Channel'
+    Channel:
+      type: object
+      properties:
+        Id:
+          type: integer
+          format: int64
+          example: 1
+        Created:
+          type: string
+          example: 2021-01-01T00:00:00+09:00
+        Modified:
+          type: string
+          example: 2021-01-01T00:00:00+09:00
+        SpaceId:
+          type: integer
+          format: int64
+          example: 1
+        Name:
+          type: string
+          example: test
+        Description:
+          type: string
+          example: このチャンネルは〇〇の為のものです。
+    Post:
+      type: object
+      properties:
+        Id:
+          type: integer
+          format: int64
+          example: 1
+        Created:
+          type: string
+          example: 2021-01-01T00:00:00+09:00
+        Modified:
+          type: string
+          example: 2021-01-01T00:00:00+09:00
+        ChannelId:
+          type: integer
+          format: int64
+          example: 1
+        UserId:
+          type: integer
+          format: int64
+          example: 1
+        Content:
+          type: string
+          example: Hello, World!
+        Date:
+          type: string
+          example: 2021-01-01T00:00:00+09:00
+security:
+  - bearerAuth: []  

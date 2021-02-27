@@ -112,6 +112,7 @@ export default {
 .input-form {
   position: fixed;
   margin-top: 85vh;
+  width: calc(100vw - 256px);
   padding-top: 1vh;
   padding-left: 1vw;
   border-width: 1px 0 0 0;
@@ -119,6 +120,6 @@ export default {
   border-color: #909090;
 }
 .input-box {
-  width: 81vw;
+  width: 98%;
 }
 </style>

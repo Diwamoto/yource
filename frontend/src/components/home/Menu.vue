@@ -51,7 +51,7 @@ export default {
 .menu {
   position: fixed;
   height: 7vh;
-  width: 100vw;
+  width: calc(100vw - 256px);
   border-width: 0 0 1px 0;
   border-style: solid;
   border-color: #d0d0d0;
@@ -67,6 +67,7 @@ export default {
 .menu-items-icons {
   margin-top: -5px;
   margin-left: 78vw;
+  width: 200px;
 }
 .menu-items-icons a {
   text-decoration: none;

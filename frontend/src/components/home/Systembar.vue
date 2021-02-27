@@ -1,6 +1,6 @@
 <template>
   <div class="system">
-    <v-system-bar color="blue darken-1" dark app>
+    <v-system-bar color="blue-grey darken-3" dark app>
       <v-spacer></v-spacer>
       <v-spacer></v-spacer>
       <v-spacer></v-spacer>

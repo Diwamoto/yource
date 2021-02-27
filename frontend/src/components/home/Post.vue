@@ -5,7 +5,7 @@
             <h5>説明: {{ channel.Description }}</h5>
         </div>
         <div v-if="posts.length > 0" class="posts">
-            <div class="posts-item" v-for="post in posts" :key="post.id">
+            <div class="posts-item" v-for="post in posts" :key="post.id" @contextmenu="showContext">
                 <v-row>
                     <v-col cols="12">
                         <v-avatar
@@ -22,6 +22,24 @@
                     </v-col>
                 </v-row>
             </div>
+
+            <v-menu
+                v-model="showMenu"
+                :position-x="x"
+                :position-y="y"
+                absolute
+                offset-y
+            >
+                <v-list>
+                    <v-list-item
+                    v-for="(item, index) in items"
+                    :key="index"
+                    link
+                    >
+                    <v-list-item-title>{{ item.title }}</v-list-item-title>
+                    </v-list-item>
+                </v-list>
+            </v-menu>
         </div>
     </div>
 </template>
@@ -37,7 +55,16 @@ export default {
         return {
             marginTop: {
                 "margin-top" : "650px"
-            }
+            },
+            showMenu: false,
+            x: 0,
+            y: 0,
+            items: [
+                { title: 'Click Me' },
+                { title: 'Click Me' },
+                { title: 'Click Me' },
+                { title: 'Click Me 2' },
+            ],
         }
     },
     mounted(){
@@ -55,6 +82,18 @@ export default {
         this.dynamicMargin()
     },
     methods: {
+
+        //右クリックメニュー 投稿を削除できるようにする
+        showContext(e){
+            e.preventDefault()
+            console.log(e)
+            this.showMenu = false
+            this.x = e.clientX
+            this.y = e.clientY
+            this.$nextTick(() => {
+                this.showMenu = true
+            })
+        },
         
         //一番下までスクロールする
         scrollBottom(){
@@ -99,36 +138,42 @@ export default {
 <style>
 .posts-wrapper{
   position: fixed;
-  height: 77.6%;
-  width: 86.6%;
-  margin-top: 68px;
-  padding-top: 10px;
+  height: 78vh;
+  width: calc(100vw - 256px);
+  margin-top: 7vh;
+  padding-top: 2vh;
   overflow:auto;
 }
 .posts-wrapper::-webkit-scrollbar { 
   display:none;
-}
+} 
+
 .posts-item{
-  margin-left: 15px;
-  height: 80px;
-  width: 80%;
+  margin-left: 1vw;
+  height: 76px;
+  width: 50vw;
 }
+
 .welcome{
-  margin-left: 30px;
-  width: 86.6%;
+  margin-left: 1.5vw;
+  width: 86.6vw;
 }
+
 .posts-item-user-name{
-  margin-left: 9px;
+  margin-left: 10px;
   font-weight:bold;
 }
+
 .posts-item-date{
-  margin-left: 10px
+  margin-left: 10px;
 }
+
 .v-avatar{
-  margin-top: 30px;
+  margin-top: 3.6vh;
 }
+
 .posts-item-content{
-  margin-top: -3.7%;
-  margin-left: 58px;
+  margin-top: -47px;
+  margin-left: 60px;
 }
 </style>

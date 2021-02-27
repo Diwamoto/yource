@@ -1,7 +1,7 @@
 <template>
   <div class="navbar">
-    <v-navigation-drawer v-model="drawer" color="blue darken-3" dark app>
-      <v-sheet color="blue darken-3" class="pa-4">
+    <v-navigation-drawer v-model="drawer" color="blue-grey darken-2" dark app>
+      <v-sheet color="blue-grey darken-2" class="pa-4">
         <div>
           <h2>{{ space.Name }}</h2>
         </div>
@@ -142,6 +142,7 @@ export default {
 .pa-4 {
   position: fixed;
   width: 256px;
+  color: #455a64;
   border-width: 0 0 1px 0;
   border-style: solid;
   border-color: #000000;
@@ -150,7 +151,9 @@ export default {
 .channels {
   overflow: auto;
   margin-top: 68px;
-  z-index: 100;
+  border-width: 1px 0 0 0;
+  border-style: solid;
+  border-color: #000000;
 }
 .v-navigation-drawer__content::-webkit-scrollbar {
   display: none;

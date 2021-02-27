@@ -22,7 +22,7 @@
       <v-col cols="1" v-bind:class="[mej, mej_scroll]">
         <router-link to="/login">
           <v-btn color="red" elevation="5" large outlined rounded
-            >新規登録</v-btn
+            >ログイン</v-btn
           >
         </router-link>
       </v-col>

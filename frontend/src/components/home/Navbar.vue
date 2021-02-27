@@ -141,9 +141,11 @@ export default {
 <style>
 .pa-4 {
   position: fixed;
-  border-width: 0 0 10px 0;
+  width: 256px;
+  border-width: 0 0 1px 0;
   border-style: solid;
-  border-color: #f0f0f0;
+  border-color: #000000;
+  z-index: 100;
 }
 .channels {
   overflow: auto;

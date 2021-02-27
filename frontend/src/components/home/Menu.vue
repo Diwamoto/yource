@@ -1,9 +1,7 @@
 <template>
   <div class="menu">
     <div class="menu-items-wrap">
-      <div class="menu-items-channel">
-        <h3>#{{ channel.Name }}</h3>
-      </div>
+      <div class="menu-items-channel">#{{ channel.Name }}</div>
 
       <div class="menu-items-icons">
         <v-dialog v-model="dialog" width="500" height="400">
@@ -52,22 +50,23 @@ export default {
 <style>
 .menu {
   position: fixed;
-  height: 68px;
-  width: 100%;
+  height: 7vh;
+  width: 100vw;
   border-width: 0 0 1px 0;
   border-style: solid;
   border-color: #d0d0d0;
 }
 .menu-items-wrap {
-  margin-left: 1.5%;
-  padding-top: 1%;
+  margin-left: 1.5vw;
+  padding-top: 2vh;
 }
 .menu-items-channel {
   float: left;
+  font-weight: 900;
 }
 .menu-items-icons {
   margin-top: -5px;
-  margin-left: 75%;
+  margin-left: 78vw;
 }
 .menu-items-icons a {
   text-decoration: none;

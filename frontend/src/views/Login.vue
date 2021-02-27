@@ -40,8 +40,12 @@
               @keydown.enter="login_submit"
             >
             </v-text-field>
-            <h4 v-if="Failed" class="login-failed-message">{{ response }}</h4>
-            <v-btn color="primary" type="submit" @click="login_submit"
+            <v-alert
+              v-if="Failed"
+              type="error"
+              dense
+            >{{ response }}</v-alert>
+            <v-btn color="primary" type="submit" class="submit-button" @click="login_submit"
               >ログイン</v-btn
             >
           </v-form>
@@ -77,8 +81,12 @@
               @keydown.enter="signup_submit"
             >
             </v-text-field>
-            <h4 v-if="Conflict" class="login-failed-message">{{ response }}</h4>
-            <v-btn color="primary" type="submit" @click="signup_submit"
+            <v-alert
+              v-if="Conflict"
+              type="error"
+              dense
+            >{{ response }}</v-alert>
+            <v-btn color="primary" type="submit" class="submit-button" @click="signup_submit"
               >新規登録</v-btn
             >
           </v-form>
@@ -253,45 +261,48 @@ export default {
 
 <style>
 .login {
-  height: 100%;
+  height: 100vh;
   background-color: #f3f3f3;
 }
 .login-box {
   text-align: center;
-  margin: 6% 35% 0 35%;
-  height: 60%;
+  margin: 10vh 35vw 0 35vw;
+  height: 60vh;
+  width: 30vw;
   background-color: white;
 }
 .login-logo-image {
-  width: 150px;
-  margin-top: 3%;
+  width: 10vw;
+  margin-top: 3vh;
 }
 .login-title {
-  margin-top: 50px;
+  margin-top: 3vh;
 }
 .login-failed-message {
   color: red;
 }
 .login-form {
   text-align: center;
-  margin-top: 10%;
-  margin-left: 10%;
-  margin-right: 10%;
+  margin-top: 4vh;
+  margin-left: 5vw;
+  margin-right: 5vw;
 }
 .signup-form {
   text-align: center;
-  margin-top: 10%;
-  margin-left: 10%;
-  margin-right: 10%;
+  margin-top: 4vh;
+  margin-left: 5vw;
+  margin-right: 5vw;
 }
 .input_email input {
   ime-mode: disabled;
 }
 .input_password {
-  margin-top: 5%;
+  margin-top: 10vh;
 }
 .input_password input {
   ime-mode: disabled;
-  margin-top: 5%;
+}
+.submit-button {
+  margin-top:2vh;
 }
 </style>

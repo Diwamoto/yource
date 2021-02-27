@@ -111,15 +111,14 @@ export default {
 <style>
 .input-form {
   position: fixed;
-  margin-top: 43%;
-  width: 87%;
-  padding-top: 10px;
-  padding-left: 10px;
+  margin-top: 85vh;
+  padding-top: 1vh;
+  padding-left: 1vw;
   border-width: 1px 0 0 0;
   border-style: solid;
   border-color: #909090;
 }
 .input-box {
-  width: 98%;
+  width: 81vw;
 }
 </style>

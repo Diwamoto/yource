@@ -1,97 +1,135 @@
 <template>
   <div class="login">
     <div class="login-box rounded-lg">
-      <a href="/"
-        ><img class="login-logo-image" href="/" src="/img/logo_transparent.png"
-      /></a>
-      <v-tabs fixed-tabs v-model="model">
-        <v-tab href="#login">ログイン</v-tab>
-        <v-tab href="#signup">新規登録</v-tab>
-      </v-tabs>
-      <v-tabs-items v-model="model">
-        <v-tab-item value="login">
-          <h2 class="login-title">ログイン</h2>
-          <v-form
-            ref="form"
-            class="login-form"
-            v-on:keyup.enter="login_submit"
-            @submit.prevent
-          >
-            <v-text-field
-              class="input_email"
-              v-model="Email"
-              label="メールアドレス"
-              :rules="[email_required, email]"
-              placeholder="user@example.com"
-              outlined
-              @keydown.enter="login_submit"
+      <h1><a href="/"
+          ><img class="login-logo-image" href="/" src="/img/logo_transparent.png"
+        /></a></h1>
+      <div class="standard-login-box-wrapper">
+        <h2 class="login-title">{{model_jp}}</h2>
+        <v-tabs fixed-tabs v-model="model">
+          <v-tab href="#login">ログイン</v-tab>
+          <v-tab href="#signup">新規登録</v-tab>
+        </v-tabs>
+        <v-tabs-items v-model="model">
+          <v-tab-item value="login">
+            <v-form
+              ref="form"
+              class="login-form"
+              v-on:keyup.enter="login_submit"
+              @submit.prevent
             >
-            </v-text-field>
-            <v-text-field
-              class="input_password"
-              v-model="Password"
-              label="パスワード"
-              :type="show ? 'text' : 'password'"
-              :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-              :rules="[pass_required]"
-              placeholder="Password"
-              outlined
-              @click:append="show = !show"
-              @keydown.enter="login_submit"
+              <v-text-field
+                class="input_email"
+                v-model="Email"
+                label="メールアドレス"
+                :rules="[email_required, email]"
+                placeholder="user@example.com"
+                outlined
+                @keydown.enter="login_submit"
+              >
+              </v-text-field>
+              <v-text-field
+                class="input_password"
+                v-model="Password"
+                label="パスワード"
+                :type="show ? 'text' : 'password'"
+                :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                :rules="[pass_required]"
+                placeholder="Password"
+                outlined
+                @click:append="show = !show"
+                @keydown.enter="login_submit"
+              >
+              </v-text-field>
+              <v-alert
+                v-if="Failed"
+                type="error"
+                dense
+              >{{ response }}</v-alert>
+              <v-btn color="primary" type="submit" large class="submit-button" @click="login_submit"
+                >ログイン</v-btn
+              >
+            </v-form>
+          </v-tab-item>
+          <v-tab-item value="signup">
+            <v-form
+              ref="form"
+              class="signup-form"
+              v-on:keyup.enter="signup_submit"
+              @submit.prevent
             >
-            </v-text-field>
-            <v-alert
-              v-if="Failed"
-              type="error"
-              dense
-            >{{ response }}</v-alert>
-            <v-btn color="primary" type="submit" class="submit-button" @click="login_submit"
-              >ログイン</v-btn
-            >
-          </v-form>
-        </v-tab-item>
-        <v-tab-item value="signup">
-          <h2 class="login-title">新規登録</h2>
-          <v-form
-            ref="form"
-            class="signup-form"
-            v-on:keyup.enter="signup_submit"
-            @submit.prevent
-          >
-            <v-text-field
-              class="input_email"
-              v-model="Email"
-              label="メールアドレス"
-              :rules="[email_required, email]"
-              placeholder="user@example.com"
-              outlined
-              @keydown.enter="signup_submit"
-            >
-            </v-text-field>
-            <v-text-field
-              class="input_password"
-              v-model="Password"
-              label="パスワード"
-              :type="show ? 'text' : 'password'"
-              :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-              :rules="[pass_required]"
-              placeholder="Password"
-              outlined
-              @click:append="show = !show"
-              @keydown.enter="signup_submit"
-            >
-            </v-text-field>
-            <v-alert
-              v-if="Conflict"
-              type="error"
-              dense
-            >{{ response }}</v-alert>
-            <v-btn color="primary" type="submit" class="submit-button" @click="signup_submit"
-              >新規登録</v-btn
-            >
-          </v-form>
-        </v-tab-item>
-      </v-tabs-items>
+              <v-text-field
+                class="input_email"
+                v-model="Email"
+                label="メールアドレス"
+                :rules="[email_required, email]"
+                placeholder="user@example.com"
+                outlined
+                @keydown.enter="signup_submit"
+              >
+              </v-text-field>
+              <v-text-field
+                class="input_password"
+                v-model="Password"
+                label="パスワード"
+                :type="show ? 'text' : 'password'"
+                :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                :rules="[pass_required]"
+                placeholder="Password"
+                outlined
+                @click:append="show = !show"
+                @keydown.enter="signup_submit"
+              >
+              </v-text-field>
+              <v-alert
+                v-if="Conflict"
+                type="error"
+                dense
+              >{{ response }}</v-alert>
+              <v-btn color="primary" type="submit" large class="submit-button" @click="signup_submit"
+                >新規登録</v-btn
+              >
+            </v-form>
+          </v-tab-item>
+        </v-tabs-items>
+      </div>
+      <div class="sns-login-wrapper">
+      <h2 class="login-title">SNSでログインする</h2>
+      <!-- LINEログインのみアイコンを用意するため分ける-->
+      <div class="sns-login">
+        
+        <v-btn
+          depressed
+          dark
+          x-large
+          :style="{ backgroundColor: '#00B900'}"
+          class="sns-login-button"
+        >
+          <v-img
+            src="/img/line_88.png"
+            max-width=40
+            left
+          ></v-img>
+          LINEでログイン
+        </v-btn>
+      </div>
+      <!-- 他はマテリアルアイコンを使用する -->
+      <div class="sns-login" v-for="item in sns" :key="item.name">
+        
+        <v-btn
+          depressed
+          dark
+          x-large
+          :style="{ backgroundColor: item.color}"
+          class="sns-login-button"
+        >
+          <v-icon left >
+            {{item.icon}}
+          </v-icon>
+          {{item.name}}でログイン
+        </v-btn>
+      </div>
+    </div>
     </div>
   </div>
 </template>
@@ -102,6 +140,7 @@ export default {
   data: function () {
     return {
       model: "login",
+      model_jp: "ログイン",
       Failed: false,
       Conflict: false,
       userId: null,
@@ -116,21 +155,53 @@ export default {
       email: (Email) =>
         (!!Email && /.+@.+\..+/.test(Email)) ||
         "正しいメールアドレスを入力してください",
+      sns: [
+        {
+          name: "GitHub",
+          icon: "mdi-github",
+          color: "#171515",
+        },
+        {
+          name: "Twitter",
+          icon: "mdi-twitter",
+          color: "#00acee",
+        },
+        {
+          name: "Facebook",
+          icon: "mdi-facebook",
+          color: "#3B5998",
+        },
+        {
+          name: "Google+",
+          icon: "mdi-google-plus",
+          color: "#DB4437",
+        },
+      ],
     };
   },
   created() {
     //ログイン画面に遷移時にトークンが残っており有効期限が消えていなければそのままログインさせる
-    if (this.$cookies.get("token") != "") {
+    if (this.$cookies.get("token") != null) {
       this.$router.push({ path: "home" }).catch(() => {});
     }
   },
   mounted() {
     //フラッシュメッセージ
-    if (this.$cookies.get("msg") != "") {
+    if (this.$cookies.get("msg") != null) {
       this.Failed = true;
 
       this.response = this.$cookies.get("msg");
       this.$cookies.remove("msg");
+    }
+  },
+  beforeUpdate(){
+    switch (this.model) {
+      case "login":
+        this.model_jp = "ログイン"
+        break;
+      case "signup":
+        this.model_jp = "新規登録"
+        break;
     }
   },
   methods: {
@@ -229,15 +300,12 @@ export default {
         //ユーザを作成する。エラーがでたら失敗
         this.$http
           .post("https://" + this.$api + "/api/v1/signup", params, {
-            headers: {
-              Authorization: "Bearer " + this.$cookies.get("token"),
-            },
             withCredentials: true,
           })
           .then(() => {
             //登録成功
             //新規登録したユーザはまずスペースを作成する
-            this.$router.push({ path: `/new` }).catch(() => {});
+            this.$router.push({ path: `/new` }).catch((err) => {console.log(err)});
           })
           .catch((err) => {
             if (err.response) {
@@ -249,7 +317,7 @@ export default {
                   break;
                 case 409:
                   this.Conflict = true;
-                  this.response = err.response.data[0];
+                  this.response = err.response.data["message"].replace("[", "").replace("]", "").replace("\"","").replace("\"","");
               }
             }
           });
@@ -261,22 +329,33 @@ export default {
 
 <style>
 .login {
-  height: 100vh;
+  height: 100%;
   background-color: #f3f3f3;
 }
 .login-box {
   text-align: center;
-  margin: 10vh 35vw 0 35vw;
-  height: 60vh;
-  width: 30vw;
+  margin: 10vh 20vw 0 20vw;
+  height: 70%;
+  width: 60vw;
   background-color: white;
+  box-shadow: 0 6px 6px -3px rgba(0, 0, 0, 0.2),
+    0 10px 14px 1px rgba(0, 0, 0, 0.14), 0 4px 18px 3px rgba(0, 0, 0, 0.12) !important;
+}
+.standard-login-box-wrapper{
+  float:left;
+  padding: 0 10px 0 10px;
+  height: 80%;
+  width: 50%;
+  border-width: 0 1px 0 0;
+  border-style: solid;
+  border-color: #d0d0d0;
 }
 .login-logo-image {
-  width: 10vw;
-  margin-top: 3vh;
+  width: 8vw;
+  padding: 2vh 0 2vh 0;
 }
 .login-title {
-  margin-top: 3vh;
+  font-weight: 600;
 }
 .login-failed-message {
   color: red;
@@ -304,5 +383,17 @@ export default {
 }
 .submit-button {
   margin-top:2vh;
+  width: 300px;
+}
+.sns-login-wrapper{
+  height: 100%;
+}
+.sns-login-button{
+  width: 300px;
+  text-transform: none !important;
+  margin: 10px 40px 10px 20px;
+}
+.v-icon{
+  width: 40px;
 }
 </style>

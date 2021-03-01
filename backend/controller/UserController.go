@@ -5,6 +5,7 @@ import (
 
 	"crypto/sha256"
 	"encoding/hex"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -219,6 +220,7 @@ func RetriveUserByJWTAction(c *gin.Context) {
 
 	session := sessions.Default(c)
 	userId := session.Get(tokenString)
+	log.Println(userId)
 
 	//MEMO: jwtからparseする処理がうまく動かないので、いったんセッションはそのままトークンから呼び出す。
 	// claims := jwt.MapClaims{}

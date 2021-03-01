@@ -17,6 +17,10 @@ const routes = [
     component: () => import('../views/About.vue')
   },
   {
+    path: '/privacy',
+    component: () => import('../views/PrivacyPolicy.vue'),
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('../views/Login.vue')
@@ -29,6 +33,17 @@ const routes = [
     path: '/new',
     component: () => import('../views/Create.vue'),
     meta: { requiresAuth: true },
+  },
+  { path: '/user', component: () => import('../views/User.vue'),
+    children: [
+      {
+        // /user/:id/profile がマッチした時に
+        // UserProfile は User の <router-view> 内部で描画されます
+        path: 'profile',
+        component: () => import('@/components/user/Profile.vue'),
+      },
+      { path: '', component: () => import('@/components/user/Main.vue')},
+    ]
   },
   //ブラウザバック対策
   { path: '*', component: NotFoundComponent }
@@ -48,7 +63,7 @@ router.beforeEach((to, from, next) => {
 
       ////////////////////////////////
       //
-      // TODO:エラーメッセージを作る
+      // TODO:エラーメッセージのデザインを作る
       //
       /////////////////////////////////
       Vue.$cookies.set("msg", "続けるにはログインが必要です。", 3600, "/", "localhost", true, "None")
@@ -65,7 +80,7 @@ router.beforeEach((to, from, next) => {
 })
 
 function isLogin(){
-  return Vue.$cookies.get("token")
+  return Vue.$cookies.get("token") != null
 }
 
 

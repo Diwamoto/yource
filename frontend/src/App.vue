@@ -14,11 +14,12 @@ export default {
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400&display=swap');
 #app {
-  font-family: "Helvetica Neue",
+  font-family: -apple-system, "BlinkMacSystemFont", "Helvetica Neue",
     Arial,
     "Hiragino Kaku Gothic ProN",
     "Hiragino Sans",
     Meiryo,
-    sans-serif;
+    sans-serif,
+    "Segoe UI Emoji";
 }
 </style>

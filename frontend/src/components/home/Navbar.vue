@@ -104,7 +104,6 @@ export default {
       params.append("Description", this.channelDescription);
       this.$http
         .post(
-          "https://" +
             this.$api +
             "/api/v1/spaces/" +
             this.space.Id +

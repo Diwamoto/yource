@@ -62,7 +62,6 @@ export default {
         params.append("UserId", this.userId);
         this.$http
           .post(
-            "https://" +
               this.$api +
               "/api/v1/channels/" +
               this.channel.Id +

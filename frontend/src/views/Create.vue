@@ -65,7 +65,7 @@ export default {
       params.append("SubDomain", this.message);
       this.$http
         .post(
-          "https://" + this.$api + "/api/v1/users/" + this.userId + "/space",
+          this.$api + "/api/v1/users/" + this.userId + "/space",
           params,
           {
             headers: {
@@ -84,7 +84,6 @@ export default {
           params.append("Description", "メインチャンネルです。");
           this.$http
             .post(
-              "https://" +
                 this.$api +
                 "/api/v1/spaces/" +
                 space.Id +
@@ -107,7 +106,6 @@ export default {
           );
           this.$http
             .post(
-              "https://" +
                 this.$api +
                 "/api/v1/spaces/" +
                 space.Id +

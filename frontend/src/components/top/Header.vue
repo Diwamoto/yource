@@ -92,39 +92,39 @@ export default {
   width: 100%;
   z-index: 5;
   background-color: white;
-  height: 100px;
+  height: 80px;
   transition: all 0.2s ease-in-out;
 }
 .header_scrolling {
-  height: 75px;
+  height: 50px;
   box-shadow: 0px 8px 22px -5px rgba(0, 0, 0, 0.2);
   transition: all 0.2s ease-in-out;
 }
 .main-logo-image {
-  width: 150px;
-  margin-top: 7%;
+  width: 130px;
+  margin-top: 3%;
   margin-left: 45%;
   transition: all 0.2s ease-in-out;
 }
 .main-logo-image_scrolling {
-  width: 100px;
-  margin-top: 15px;
+  width: 80px;
+  margin-top: 8px;
   margin-left: 45%;
   transition: all 0.2s ease-in-out;
 }
 .menu-element {
   margin-left: -1%;
-  margin-top: 40px;
+  margin-top: 30px;
   transition: all 0.2s ease-in-out;
 }
 .menu-element-join {
   margin-left: -1%;
-  margin-top: 30px;
+  margin-top: 20px;
   transition: all 0.2s ease-in-out;
 }
 .menu-element-hamburger {
   margin-left: 19px;
-  margin-top: 33px;
+  margin-top: 23px;
   transition: all 0.2s ease-in-out;
 }
 .menu-element a {
@@ -136,15 +136,15 @@ export default {
   text-decoration: none;
 }
 .menu-element_scrolling {
-  margin-top: 28px;
+  margin-top: 15px;
   transition: all 0.2s ease-in-out;
 }
 .menu-element-join_scrolling {
-  margin-top: 18px;
+  margin-top: 2px;
   transition: all 0.2s ease-in-out;
 }
 .menu-element-hamburger_scrolling {
-  margin-top: 21px;
+  margin-top: 7px;
   transition: all 0.2s ease-in-out;
 }
 .btn-join {

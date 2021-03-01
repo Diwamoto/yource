@@ -18,3 +18,4 @@ new Vue({
 
 Vue.prototype.$http = axios
 Vue.prototype.$api = process.env.VUE_APP_API_URL
+Vue.prototype.$front = process.env.VUE_APP_FRONT_URL

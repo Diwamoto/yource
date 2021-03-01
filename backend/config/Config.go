@@ -15,7 +15,7 @@ var config = map[string]interface{}{
 
 //configの中から特定の値を取得
 func Get(key string) interface{} {
-	if config[key] != "" {
+	if config[key] != nil {
 		return config[key]
 	} else {
 		return nil

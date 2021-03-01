@@ -21,6 +21,7 @@ import (
 )
 
 func GetRouter() *gin.Engine {
+
 	router := gin.Default()
 
 	// //セッション管理用にredisを設定

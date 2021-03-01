@@ -1,3 +1,6 @@
+/*
+Package main is main package.
+*/
 package main
 
 import (
@@ -7,6 +10,7 @@ import (
 	//githubライブラリ
 )
 
+// Main is used to start the gin server.
 func main() {
 	r := server.GetRouter()
 	r.Run(":3001")

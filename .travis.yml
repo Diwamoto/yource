@@ -23,6 +23,7 @@ script:
   - goveralls -coverprofile=model.out -service=travis-ci -repotoken mHNbLYbbcny5kU3e09cdWOOV0Tjv0v3jx
   - go test ./test/config/... -v -covermode=count -coverprofile=config.out -coverpkg=./config
   #- goveralls -coverprofile=config.out -service=travis-ci -repotoken mHNbLYbbcny5kU3e09cdWOOV0Tjv0v3jx
+  - go test ./test/controller/... -v -covermode=count -coverprofile=controller.out -coverpkg=./controller
 
 notifications:
   email: false

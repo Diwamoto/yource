@@ -1,3 +1,6 @@
+/*
+Package controller is handle some requests.
+*/
 package controller
 
 import (

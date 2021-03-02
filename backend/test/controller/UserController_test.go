@@ -19,7 +19,7 @@ func TestCreateUserAction(t *testing.T) {
 		want preferResponse
 	}{
 		{
-			//①: 正しいユーザ
+			//①: テーブルにレコードが何もない状態で作成するユーザ（コンフリクトは起きないはず）
 			model.User{
 				Email:    "test@example.com",
 				Password: "test password",
@@ -35,7 +35,7 @@ func TestCreateUserAction(t *testing.T) {
 			}, //ユーザは作成できるはず
 		},
 		{
-			//①: メールアドレスがかぶっているユーザ
+			//②: メールアドレスがかぶっているユーザ
 			model.User{
 				Email:    "test@example.com",
 				Password: "test password",

@@ -42,7 +42,7 @@ export default {
   mounted() {
     //ユーザIDを取得してくる
     this.$http
-      .get("https://" + this.$api + "/api/v1/retrive", {
+      .get(this.$api + "/api/v1/retrive", {
         headers: {
           Authorization: "Bearer " + this.$cookies.get("token"),
         },
@@ -56,7 +56,6 @@ export default {
             //スペースの名前を取得してくる
             this.$http
               .get(
-                "https://" +
                   this.$api +
                   "/api/v1/users/" +
                   this.userId +
@@ -85,20 +84,20 @@ export default {
         }
       })
       .catch(() => {
-        //ユーザ情報が取得できなかったら再ログインさせる
-        this.$cookies.remove("token");
-        this.$cookies.set(
-          "msg",
-          "続けるにはログインが必要です。",
-          3600,
-          "/",
-          "localhost",
-          true,
-          "None"
-        );
-        this.$router.push({ path: "login" }).catch((err) => {
-          console.log(err);
-        });
+        // //ユーザ情報が取得できなかったら再ログインさせる
+        // this.$cookies.remove("token");
+        // this.$cookies.set(
+        //   "msg",
+        //   "続けるにはログインが必要です。",
+        //   3600,
+        //   "/",
+        //   "localhost",
+        //   true,
+        //   "None"
+        // );
+        // this.$router.push({ path: "/login" }).catch((err) => {
+        //   console.log(err);
+        // });
       });
   },
   methods: {
@@ -108,7 +107,6 @@ export default {
       this.posts = [];
       this.$http
         .get(
-          "https://" +
             this.$api +
             "/api/v1/channels/" +
             this.channel.Id +

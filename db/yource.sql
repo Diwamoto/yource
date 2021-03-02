@@ -66,7 +66,7 @@ CREATE TABLE `user_profiles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL COMMENT 'ユーザID',
   `profile` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '自己紹介文',
-  `birthday` datetime DEFAULT NULL COMMENT '誕生日',
+  `birthday` date DEFAULT NULL COMMENT '誕生日',
   `icon` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'アイコンのCDNurlが入る想定。',
   `hometown` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '出身',
   `job` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '職業',
@@ -80,4 +80,4 @@ CREATE TABLE `user_profiles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
--- 2021-02-26 07:31:07
+-- 2021-03-02 06:39:59

@@ -98,12 +98,22 @@ func GetUserByIdAction(c *gin.Context) {
 
 	um := model.NewUserModel("default")
 
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	user, err := um.GetById(id)
+	log.Printf("user = %#v", user)
 	if err == nil {
-		c.JSON(http.StatusOK, user)
-	} else {
-		c.JSON(http.StatusNotFound, gin.H{})
+		log.Printf("len(user) = %d", len(user))
+		if len(user) == 0 {
+			c.JSON(http.StatusNotFound, []model.User{})
+		} else {
+			c.JSON(http.StatusOK, user)
+		}
+	} else { //エラーが発生した場合はそのエラーを返す
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 }
 

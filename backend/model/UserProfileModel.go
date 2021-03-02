@@ -164,6 +164,9 @@ func (um UserProfileModel) Find(up UserProfile) ([]UserProfile, error) {
 	if up.Birthday != nilTime { //入力されていない設定
 		builder = builder.Where("birthday = ?", up.Birthday.Format("2006-01-02 03:04:05"))
 	}
+	if up.UserId != 0 {
+		builder = builder.Where("user_id = ?", up.UserId)
+	}
 	if up.Hometown != "" {
 		builder = builder.Where("hometown LIKE ?", "%"+up.Hometown+"%")
 	}
@@ -229,23 +232,21 @@ func (upm UserProfileModel) Update(userId int, up UserProfile) (UserProfile, err
 	//更新日を現在にする
 	tup.Modified = time.Now()
 
-	// //バリデーションをかける
-	// msg, err := upm.Validate(tup)
+	//バリデーションをかける
+	msg, err := upm.Validate(tup)
 
-	// //バリデーションが成功していたら
-	// if !err {
-	upm.db.Save(&tup)
-	return tup, nil
-	// //セーブした結果がエラーであれば更新失敗
-	// if result := upm.db.Save(&tup); result.Error != nil {
-	// 	return []string{"データベースに保存することができませんでした。"}, true
-	// } else {
-	// 	return []string{}, false
-	// }
-	// } else {
-	// 	//作成できなければエラーメッセージを返す
-	// 	return msg, true
-	// }
+	//バリデーションが成功していたら
+	if !err {
+		//セーブした結果がエラーであれば更新失敗
+		if result := upm.db.Save(&tup); result.Error != nil {
+			return UserProfile{}, result.Error
+		} else {
+			return tup, nil
+		}
+	} else {
+		//作成できなければエラーメッセージを返す
+		return UserProfile{}, errors.New(msg)
+	}
 
 }
 

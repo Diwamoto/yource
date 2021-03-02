@@ -102,7 +102,7 @@ func UpdateUserProfileAction(c *gin.Context) {
 		up.UserId = userId
 
 		//誕生日を時間型に変換
-		birth, _ := time.Parse("2006/01/02 15:04:05", c.PostForm("Birthday"))
+		birth, _ := time.Parse("2006-01-02 15:04:05", c.PostForm("Birthday")+" 00:00:00")
 		up.Profile = c.PostForm("Profile")
 		up.Icon = c.PostForm("Icon")
 		up.Birthday = birth
@@ -118,10 +118,10 @@ func UpdateUserProfileAction(c *gin.Context) {
 			up, _ = upm.GetByUserId(userId)
 			c.JSON(http.StatusOK, up)
 		} else {
-			c.JSON(http.StatusConflict, gin.H{"message": err.Error()})
+			c.JSON(http.StatusConflict, gin.H{"message": err2.Error()})
 		}
 	} else {
-		c.JSON(http.StatusNotFound, gin.H{})
+		c.JSON(http.StatusNotFound, gin.H{"message": "something went long"})
 	}
 }
 

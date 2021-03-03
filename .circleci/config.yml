@@ -13,7 +13,8 @@ jobs:
         environment:
           MYSQL_DATABASE: 'test_yource'
           MYSQL_USER: 'circleci'
-          MYSQL_ROOT_PASSWORD: 'password'
+          MYSQL_PASSWORD: 'password'
+          MYSQL_ROOT_PASSWORD: 'root'
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/

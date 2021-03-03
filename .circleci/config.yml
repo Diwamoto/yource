@@ -12,9 +12,8 @@ jobs:
       - image: circleci/mysql:5.7
         environment:
           MYSQL_DATABASE: 'test_yource'
-          MYSQL_USER: 'test'
-          MYSQL_ROOT_PASSWORD: 'test'
-
+          MYSQL_USER: 'circleci'
+          MYSQL_ROOT_PASSWORD: 'password'
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -43,6 +42,10 @@ jobs:
       - run:
           name: Get Go Modules
           command: go mod tidy
+          working_directory: /go/src/github.com/Diwamoto/yource/backend
+      - run:
+          name: Setup Env File
+          command: cp .circleci/.env .env
           working_directory: /go/src/github.com/Diwamoto/yource/backend
       - run: 
           name: Test Go Library

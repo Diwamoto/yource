@@ -9,7 +9,7 @@ jobs:
       - image: circleci/golang:1.16
 
       # mysql for test
-      - image: circleci/mysql:5.7.22
+      - image: circleci/mysql:5.7
         environment:
           MYSQL_DATABASE: 'test_yource'
           MYSQL_USER: 'test'
@@ -29,6 +29,17 @@ jobs:
       - checkout
 
       # specify any bash command here prefixed with `run: `
+      - run:
+      # プライマリ コンテナは MySQL ではないため、準備が完了するまで sleep コマンドを実行します。
+          name: Wait for mysql
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z 127.0.0.1 3306 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for MySQL && exit 1
       - run:
           name: Get Go Modules
           command: go mod tidy

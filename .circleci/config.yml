@@ -45,8 +45,7 @@ jobs:
           working_directory: /go/src/github.com/Diwamoto/yource/backend
       - run:
           name: Setup Env File
-          command: cp .circleci/.env .env && export ENV_PATH=/go/src/github.com/Diwamoto/yource/backend/.env
-          
+          command: cp .circleci/.env .env &&  echo "export ENV_PATH=/go/src/github.com/Diwamoto/yource/backend/.env" >> $BASH_ENV
           working_directory: /go/src/github.com/Diwamoto/yource/backend
       - run: 
           name: Test Go Library

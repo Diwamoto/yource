@@ -46,7 +46,7 @@ func CreateUserProfileAction(c *gin.Context) {
 		c.JSON(http.StatusCreated, userProfile)
 	} else {
 		//作成できなければエラーメッセージを返す。
-		c.JSON(http.StatusConflict, gin.H{"message": err.Error()})
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 
 	}
 }
@@ -74,7 +74,7 @@ func SearchUserProfileAction(c *gin.Context) {
 	//検索した結果が0件でもエラーにはならない。
 	//検索した条件が間違えていればエラーに入る
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	} else {
 		if len(userProfiles) > 0 {
 			c.JSON(http.StatusOK, userProfiles)
@@ -118,10 +118,10 @@ func UpdateUserProfileAction(c *gin.Context) {
 			up, _ = upm.GetByUserId(userId)
 			c.JSON(http.StatusOK, up)
 		} else {
-			c.JSON(http.StatusConflict, gin.H{"message": err2.Error()})
+			c.JSON(http.StatusConflict, gin.H{"error": err2.Error()})
 		}
 	} else {
-		c.JSON(http.StatusNotFound, gin.H{"message": "something went long"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "something went long"})
 	}
 }
 

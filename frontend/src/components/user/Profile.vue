@@ -240,7 +240,7 @@ export default {
         }
       })
       .catch((err) => {
-        this.flashMsg("error",err.response.data.message)
+        this.flashMsg("error",err.response.data.error)
       });
     },
   },

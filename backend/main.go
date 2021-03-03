@@ -15,3 +15,9 @@ func main() {
 	r := server.GetRouter()
 	r.Run(":3001")
 }
+
+// To exec Mailtest, then use under main().
+// And run `go run *.go`
+// func main(){
+// 	Mailtest()
+// }

@@ -16,6 +16,7 @@ func TestMain(m *testing.M) {
 	db := database.GetInstance("test")
 	//テストに必要なテーブルを全て作成する
 	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.UserToken{})
 	db.AutoMigrate(&model.UserProfile{})
 	db.AutoMigrate(&model.Space{})
 	db.AutoMigrate(&model.Channel{})
@@ -77,6 +78,7 @@ func TestMain(m *testing.M) {
 
 	//テスト用のデータベースの全てのテーブルを破棄
 	db.DropTable(&model.User{})
+	db.DropTable(&model.UserToken{})
 	db.DropTable(&model.UserProfile{})
 	db.DropTable(&model.Space{})
 	db.DropTable(&model.Channel{})

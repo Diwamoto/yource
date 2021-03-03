@@ -59,83 +59,91 @@ export default {
     },
     submit() {
       //スペースを作成
-      this.userId = this.$cookies.get("id");
-      var params = new URLSearchParams();
-      params.append("Name", this.message);
-      params.append("SubDomain", this.message);
+      //jwtを使ってuseridを取得する
+      //ユーザIDを取得してくる
       this.$http
-        .post(
-          this.$api + "/api/v1/users/" + this.userId + "/space",
-          params,
-          {
-            headers: {
-              Authorization: "Bearer " + this.$cookies.get("token"),
-            },
-            withCredentials: true,
-          }
-        )
-        .then((response) => {
-          //スペースの作成終了
-          var space = response.data;
-
-          //デフォルトで#mainと#randomを追加する
-          params = new URLSearchParams();
-          params.append("Name", "main");
-          params.append("Description", "メインチャンネルです。");
-          this.$http
-            .post(
-                this.$api +
-                "/api/v1/spaces/" +
-                space.Id +
-                "/channels",
-              params,
-              {
-                headers: {
-                  Authorization: "Bearer " + this.$cookies.get("token"),
-                },
-                withCredentials: true,
-              }
-            )
-            .then(() => {})
-            .catch(() => {});
-          params = new URLSearchParams();
-          params.append("Name", "random");
-          params.append(
-            "Description",
-            "仕事以外の話はこちらでした方がいいでしょう。"
-          );
-          this.$http
-            .post(
-                this.$api +
-                "/api/v1/spaces/" +
-                space.Id +
-                "/channels",
-              params,
-              {
-                headers: {
-                  Authorization: "Bearer " + this.$cookies.get("token"),
-                },
-                withCredentials: true,
-              }
-            )
-            .then(() => {})
-            .catch(() => {});
-
-          //作成したスペースへ移動する
-          this.$router.push({ path: "home" }).catch(() => {});
+        .get(this.$api + "/api/v1/retrive", {
+          headers: {
+            Authorization: "Bearer " + this.$cookies.get("token"),
+          },
+          withCredentials: true,
         })
-        .catch((err) => {
-          if (err.response) {
-            switch (err.response.status) {
-              case 404:
-                this.Conflict = true;
-                this.response =
-                  "サーバーが一時的にダウンしています。管理者に連絡してください。";
-                break;
-              case 409:
-                this.Conflict = true;
-                this.response = err.response.data[0];
-            }
+        .then((response) => {
+          switch (response.status) {
+            case 200: //ユーザidを保存する
+              this.userId = response.data.userId;
+              var params = new URLSearchParams();
+              params.append("Name", this.message);
+              params.append("SubDomain", this.message);
+              this.$http
+                .post(
+                  this.$api + "/api/v1/users/" + this.userId + "/space",
+                  params,
+                  {
+                    headers: {
+                      Authorization: "Bearer " + this.$cookies.get("token"),
+                    },
+                    withCredentials: true,
+                  }
+                )
+                .then((response) => {
+                  //スペースの作成終了
+                  var space = response.data;
+
+                  //デフォルトで#mainと#randomを追加する
+                  params = new URLSearchParams();
+                  params.append("Name", "main");
+                  params.append("Description", "メインチャンネルです。");
+                  this.$http
+                    .post(
+                      this.$api + "/api/v1/spaces/" + space.Id + "/channels",
+                      params,
+                      {
+                        headers: {
+                          Authorization: "Bearer " + this.$cookies.get("token"),
+                        },
+                        withCredentials: true,
+                      }
+                    )
+                    .then(() => {})
+                    .catch(() => {});
+                  params = new URLSearchParams();
+                  params.append("Name", "random");
+                  params.append(
+                    "Description",
+                    "仕事以外の話はこちらでした方がいいでしょう。"
+                  );
+                  this.$http
+                    .post(
+                      this.$api + "/api/v1/spaces/" + space.Id + "/channels",
+                      params,
+                      {
+                        headers: {
+                          Authorization: "Bearer " + this.$cookies.get("token"),
+                        },
+                        withCredentials: true,
+                      }
+                    )
+                    .then(() => {})
+                    .catch(() => {});
+
+                  //作成したスペースへ移動する
+                  this.$router.push({ path: "home" }).catch(() => {});
+                })
+                .catch((err) => {
+                  if (err.response) {
+                    switch (err.response.status) {
+                      case 404:
+                        this.Conflict = true;
+                        this.response =
+                          "サーバーが一時的にダウンしています。管理者に連絡してください。";
+                        break;
+                      case 409:
+                        this.Conflict = true;
+                        this.response = err.response.data[0];
+                    }
+                  }
+                });
           }
         });
     },

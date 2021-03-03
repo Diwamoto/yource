@@ -54,13 +54,6 @@ func (um UserModel) Validate(u User) (string, bool) {
 	err := validate.Struct(u)
 	var messages []string
 
-	//独自バリデーション
-	//メールアドレスをdbに問い合わせて存在していたらエラーを返す。
-	if !um.validateIsUniqueEmail(u.Email) {
-		//作成できなければエラーメッセージを返す
-		messages = append(messages, "入力されたメールアドレスは既に登録されています。")
-	}
-
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
 			fieldName := err.Field()
@@ -99,6 +92,13 @@ func (um UserModel) Create(u User) (User, error) {
 	msg, err := um.Validate(u)
 
 	if !err {
+
+		//独自バリデーション
+		//メールアドレスをdbに問い合わせて存在していたらエラーを返す。
+		if !um.validateIsUniqueEmail(u.Email) {
+			//作成できなければエラーメッセージを返す
+			return User{}, errors.New("入力されたメールアドレスは既に登録されています。")
+		}
 
 		u.Created = time.Now()
 		u.Modified = time.Now()
@@ -173,10 +173,26 @@ func (um UserModel) Update(id int, u User) (User, error) {
 	um.db.AutoMigrate(&tu)
 	um.db.First(&tu, id)
 
+	//データベースから取得できなければダメ
+	users, err := um.GetById(id)
+	if len(users) == 0 {
+		return User{}, errors.New("ユーザが存在しません。")
+	}
+	if err != nil {
+		return User{}, err
+	}
+
 	//引数のユーザの情報を移す
 	//ここでは変更の検知のみ
 	if u.Email != "" {
 		tu.Email = u.Email
+		//独自バリデーション
+		//メールアドレスをdbに問い合わせて存在していたらエラーを返す。
+		//更新している時のみバリデーションを通す
+		if tu.Email != u.Email && !um.validateIsUniqueEmail(u.Email) {
+			//作成できなければエラーメッセージを返す
+			return User{}, errors.New("入力されたメールアドレスは既に登録されています。")
+		}
 	}
 	if u.Name != "" {
 		tu.Name = u.Name
@@ -198,19 +214,17 @@ func (um UserModel) Update(id int, u User) (User, error) {
 	tu.Modified = time.Now()
 
 	//バリデーションをかける
-	msg, err := um.Validate(tu)
+	msg, err2 := um.Validate(tu)
 
 	//バリデーションが成功していたら
-	if !err {
-		um.db.Save(&tu)
-		return tu, nil
+	if !err2 {
 
-		// //セーブした結果がエラーであれば更新失敗
-		// if result := um.db.Save(&tu); result.Error != nil {
-		// 	return []string{"データベースに保存することができませんでした。"}, true
-		// } else {
-		// 	return []string{}, false
-		// }
+		//セーブした結果がエラーであれば更新失敗
+		if result := um.db.Save(&tu); result.Error != nil {
+			return tu, result.Error
+		} else {
+			return tu, nil
+		}
 	} else {
 		//バリデーションが失敗していたらそのエラーメッセージを返す
 		return User{}, errors.New(msg)

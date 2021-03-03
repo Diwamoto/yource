@@ -86,7 +86,6 @@ export default {
         //右クリックメニュー 投稿を削除できるようにする
         showContext(e){
             e.preventDefault()
-            console.log(e)
             this.showMenu = false
             this.x = e.clientX
             this.y = e.clientY

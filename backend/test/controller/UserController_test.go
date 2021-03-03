@@ -45,7 +45,7 @@ func TestCreateUserAction(t *testing.T) {
 			preferResponse{
 				code: http.StatusConflict,
 				body: map[string]interface{}{
-					"error": "[\"入力されたメールアドレスは既に登録されています。\"]",
+					"error": "入力されたメールアドレスは既に登録されています。",
 				},
 			}, //既に作成されているのでコンフリクトが起きるはず
 		},

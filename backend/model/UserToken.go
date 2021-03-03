@@ -1,191 +1,129 @@
 package model
 
-// import (
+import (
 
-// 	//標準ライブラリ
+	//標準ライブラリ
 
-// 	"strconv"
-// 	"time"
+	"errors"
+	"time"
 
-// 	//自作ライブラリ
-// 	"main/config"
-// 	"main/config/database"
+	//自作ライブラリ
 
-// 	//githubライブラリ
-// 	"github.com/go-playground/validator"
-// )
+	"main/config/database"
+	//githubライブラリ
+)
 
-// //UserTokenEntity　Entityを埋め込まれている
-// type UserToken struct {
-// 	Entity
-// 	UserId int
-// 	Token  string
-// 	Expire time.Time
-// }
+//UserTokenEntity　Entityを埋め込まれている
+type UserToken struct {
+	Entity
+	UserId int
+	Token  string
+	Expire time.Time
+}
 
-// //呼び出し用ユーザトークンモデル
-// //AppModelを埋め込み
-// type UserTokenModel struct {
-// 	AppModel
-// }
+//呼び出し用ユーザトークンモデル
+//AppModelを埋め込み
+type UserTokenModel struct {
+	AppModel
+}
 
-// func NewUserTokenModel(t string) *UserTokenModel {
-// 	var utm UserTokenModel
-// 	utm.db = database.GetInstance(t)
-// 	utm.nc = t
-// 	return &utm
-// }
+func NewUserTokenModel(t string) *UserTokenModel {
+	var utm UserTokenModel
+	utm.db = database.GetInstance(t)
+	utm.nc = t
+	return &utm
+}
 
-// func (UserTokenModel) TableName() string {
-// 	return "users"
-// }
+func (utm UserTokenModel) TableName() string {
+	return "user_tokens"
+}
 
-// //バリデーションをかける
-// func (utm UserTokenModel) Validate(ut UserToken) ([]string, bool) {
+//作成メソッド
+//トークンを作成する
+func (utm UserTokenModel) Create(ut UserToken) (UserToken, error) {
 
-// 	validate := validator.New()
-// 	err := validate.Struct(ut)
-// 	var messages []string
-// 	if err != nil {
-// 		for _, err := range err.(validator.ValidationErrors) {
-// 			fieldName := err.Field()
-// 			switch fieldName {
-// 			//ユーザトークンは基本的にnull許容
-// 			}
-// 		}
-// 	}
+	utm.db.AutoMigrate(&ut)
 
-// 	if len(messages) > 0 {
-// 		return messages, true
-// 	} else {
-// 		return []string{}, false
-// 	}
+	um := NewUserModel(utm.nc)
 
-// }
+	//データベースから取得できなければダメ
+	users, err := um.GetById(ut.UserId)
+	if len(users) == 0 {
+		return UserToken{}, errors.New("ユーザが存在しません。")
+	}
+	if err != nil {
+		return UserToken{}, err
+	}
 
-// //ユーザトークンを作成する
-// func (utm UserTokenModel) Create(ut UserToken) ([]string, bool) {
+	ut.Created = time.Now()
+	ut.Modified = time.Now()
+	//バリデーションが通れば作成し、メッセージの中に作成したユーザIDを入れて返す
+	utm.db.Create(&ut)
+	return ut, nil
 
-// 	utm.db.AutoMigrate(&ut)
+}
 
-// 	msg, err := utm.Validate(ut)
+//トークン文字列でデータベースを検索する
+func (utm UserTokenModel) GetByToken(token string) ([]UserToken, error) {
 
-// 	if !err {
-// 		//有効期限をconfigから持ってきて生成する
-// 		expire := config.Get("expireToken")
-// 		expireDay, _ := strconv.Atoi(expire)
-// 		ut.Expire = time.Now().AddDate(0, 0, expireDay)
-// 		ut.Created = time.Now()
-// 		ut.Modified = time.Now()
-// 		//バリデーションが通れば作成し、メッセージの中に作成したユーザトークンIDを入れて返す
-// 		utm.db.Create(&ut)
-// 		msg = append(msg, strconv.Itoa(int(ut.Id)))
-// 		return msg, false
-// 	} else {
-// 		//作成できなければエラーメッセージを返す
-// 		return msg, true
-// 	}
+	var r []UserToken
 
-// }
+	//dbに問い合わせる。何らかのエラーが発生した場合はここでハンドリング
+	if result := utm.db.Model(&UserToken{}).Where("token = ?", token).Find(&r); result.Error != nil {
+		//何らかのエラーを返す
+		return []UserToken{}, result.Error
+	} else {
 
-// //指定ユーザトークンidの情報を返す
-// func (utm UserTokenModel) GetAll() ([]UserToken, bool) {
+		if len(r) == 0 {
+			return []UserToken{}, errors.New("トークンが見つかりません。")
+		} else {
+			return r, nil
+		}
 
-// 	var userTokens []UserToken
-// 	utm.db.Find(&userTokens)
+	}
+}
 
-// 	//値が取得できたら
-// 	if len(userTokens) > 0 {
-// 		return userTokens, false
-// 	} else {
-// 		return []UserToken{}, true
-// 	}
+//トークンが有効であるかを調査する
+func (utm UserTokenModel) IsValid(token string) (User, error) {
 
-// }
+	um := NewUserModel(utm.nc)
 
-// //指定ユーザトークンidの情報を返す
-// func (utm UserTokenModel) GetById(id int) (UserToken, bool) {
+	userTokens, err := utm.GetByToken(token)
+	//エラーが出ればダメ
+	if err != nil {
+		return User{}, err
+	}
 
-// 	var ut UserToken
-// 	utm.db.First(&ut, id)
+	ut := userTokens[0]
+	//有効期限がすぎていてもダメ
+	//→現在時刻より有効期限が先じゃないとダメ
+	if !ut.Expire.After(time.Now()) {
+		//有効期限が切れている場合はそのトークンとトークンに紐づいたユーザを削除する
+		if utm.nc == "default" {
+			utm.Delete(token)
+			um.Delete(ut.UserId)
+		}
 
-// 	//値が取得できたら
-// 	if ut.Id == id {
-// 		return ut, false
-// 	} else {
-// 		return UserToken{}, true
-// 	}
+		return User{}, errors.New("有効期限が切れています。")
+	}
 
-// }
+	//ユーザの情報を入れて返す
+	user, _ := um.GetById(ut.UserId)
 
-// //検索メソッド
-// //ユーザトークンの任意の条件に一致するユーザトークンを取得する
-// //TODO: 検索に失敗するということの定義を考える
-// //→指定条件で検索したところ、その条件にあうユーザトークンは
-// //いなかった。これはエラーなのか？結果が０なだけで
-// //検索には成功しているのではないか？
-// //→この場合における「検索の失敗」とはSQLの構文エラーが起こることであり、
-// //現状の実装だとそこのエラーハンドリングは呼び出し元が請け負っているので
-// //Find()でエラーが発生することはありえないと思われる
-// func (utm UserTokenModel) Find(ut UserToken) ([]UserToken, bool) {
+	return user[0], nil
+}
 
-// 	var r []UserToken
-// 	utm.db.Where(&ut).Find(&r)
+//削除メソッド
+//ユーザを削除する
+func (utm UserTokenModel) Delete(token string) error {
 
-// 	//dbに問い合わせて存在していればユーザトークンを返す。なければエラーを返す ←？？
-// 	if len(r) > 0 {
-// 		return r, false
-// 	} else {
-// 		return []UserToken{}, true
-// 	}
-// }
+	//idで削除を実行する
+	userTokens, err := utm.GetByToken(token)
+	if err != nil || len(userTokens) == 0 { //削除するトークンがなければダメ
+		return errors.New("削除するトークンが存在しません。")
+	}
+	userToken := userTokens[0]
+	utm.db.Delete(&UserToken{}, userToken.Id)
+	return nil
 
-// //更新メソッド
-// //ユーザトークンの情報を更新する
-// func (utm UserTokenModel) Update(id int) ([]string, bool) {
-// 	var tu UserToken
-
-// 	utm.db.AutoMigrate(&tu)
-// 	utm.db.First(&tu, id)
-
-// 	//ユーザトークンテーブルでは、基本的に情報の更新は行わない。
-
-// 	//更新日を現在にする
-// 	tu.Modified = time.Now()
-
-// 	//バリデーションをかける
-// 	msg, err := utm.Validate(tu)
-
-// 	//バリデーションが成功していたら
-// 	if !err {
-// 		//セーブした結果がエラーであれば更新失敗
-// 		if result := utm.db.Save(&tu); result.Error != nil {
-// 			return []string{"データベースに保存することができませんでした。"}, true
-// 		} else {
-// 			return []string{}, false
-// 		}
-// 	} else {
-// 		//バリデーションが失敗していたらそのエラーメッセージを返す
-// 		return msg, true
-// 	}
-
-// }
-
-// //削除メソッド
-// //ユーザトークンを削除する
-// func (utm UserTokenModel) Delete(id int) ([]string, bool) {
-
-// 	//idで削除を実行する
-// 	_, err := utm.GetById(id)
-// 	if err { //削除するユーザトークンがいなかったらダメ
-// 		return []string{"削除するユーザトークンが存在しません。"}, true
-// 	}
-// 	utm.db.Delete(&UserToken{}, id)
-// 	_, err2 := utm.GetById(id)
-// 	if err2 { //ユーザトークンが取得できなかったら成功
-// 		return []string{"削除に成功しました。"}, false
-// 	} else {
-// 		return []string{"削除できませんでした。"}, true
-// 	}
-
-// }
+}

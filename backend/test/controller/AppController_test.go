@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"errors"
 	"main/config/database"
+	"main/controller"
 	"main/model"
 	"os"
 	"testing"
@@ -94,4 +96,49 @@ func TestMain(m *testing.M) {
 	db.DropTable(&model.Post{})
 	db.Close()
 	os.Exit(code)
+}
+
+//sendMailのテスト
+func TestSendMail(t *testing.T) {
+	type args struct {
+		to       string
+		receiver string
+		subject  string
+		templete string
+		data     map[string]string
+		option   map[string]string
+	}
+	tests := []struct {
+		args    args
+		wantErr error
+	}{
+		{
+			//①: 正しい入力値
+			args{
+				to:       "test@example.com",
+				receiver: "test",
+				subject:  "test",
+				templete: "verify_email",
+			},
+			nil, //メールは飛ぶはず
+		},
+		{
+			//②: 存在しないテンプレート
+			args{
+				to:       "test@example.com",
+				receiver: "test",
+				subject:  "test",
+				templete: "NotFound",
+			},
+			errors.New("open /go/src/github.com/Diwamoto/yource/view/mail/NotFound.html: no such file or directory"), //エラーになるはず
+		},
+	}
+	for i, tt := range tests {
+		_, err := controller.SendMail(tt.args.to, tt.args.subject, tt.args.templete, tt.args.data, tt.args.option)
+		if err != tt.wantErr {
+			if err.Error() != tt.wantErr.Error() {
+				t.Errorf("%d番目のテストが失敗しました。想定結果：%s、実際の結果：%#v", i+1, tt.wantErr.Error(), err.Error())
+			}
+		}
+	}
 }

@@ -91,19 +91,23 @@ func TestValidateUser(t *testing.T) {
 		// 	},
 		// 	true, //エラーになるはず
 		// },
-		{
-			//⑥(4): メールアドレスが既にデータベースに存在しているユーザ
-			model.User{
-				Email:    "master@example.com",
-				Password: "4AeNkWVisJ",
-				Name:     "test name",
-				Phone:    "000-0000-0000",
-				Nickname: "Crt Nick name",
-				Status:   1,
-				Profile:  model.UserProfile{},
-			},
-			true, //エラーになるはず
-		},
+		//
+		//
+		// メールアドレスのユニークチェックはCreate()とUpdate()で処理が違う為ここではバリデーションしない
+		//
+		// {
+		// 	//⑥(4): メールアドレスが既にデータベースに存在しているユーザ
+		// 	model.User{
+		// 		Email:    "master@example.com",
+		// 		Password: "4AeNkWVisJ",
+		// 		Name:     "test name",
+		// 		Phone:    "000-0000-0000",
+		// 		Nickname: "Crt Nick name",
+		// 		Status:   1,
+		// 		Profile:  model.UserProfile{},
+		// 	},
+		// 	true, //エラーになるはず
+		// },
 	}
 	for i, tt := range tests {
 		rs, err := um.Validate(tt.in)
@@ -145,7 +149,20 @@ func TestCreateUser(t *testing.T) {
 				Status:   1,
 				Profile:  model.UserProfile{},
 			},
-			errors.New("[\"入力されたメールアドレスは既に登録されています。\",\"メールアドレスを入力してください。\"]"), //エラーになるはず
+			errors.New("[\"メールアドレスを入力してください。\"]"), //エラーになるはず
+		},
+		{
+			//②: 既にメールアドレスがデータベースに存在するユーザ
+			model.User{
+				Email:    "CreateTest@example.com",
+				Password: "CrtTestPsw",
+				Name:     "Crt Test",
+				Phone:    "000-0000-0000",
+				Nickname: "Crt Nick name",
+				Status:   1,
+				Profile:  model.UserProfile{},
+			},
+			errors.New("入力されたメールアドレスは既に登録されています。"), //エラーはでないはず
 		},
 	}
 	for i, tt := range tests {
@@ -281,7 +298,7 @@ func TestUpdateUser(t *testing.T) {
 				Name:     "Upd Test",
 				Phone:    "048-8476-8173",
 				Nickname: "Upd nickname",
-				Status:   1,
+				Status:   0,
 				Profile:  model.UserProfile{},
 			},
 			nil, //エラーはでないはず
@@ -298,7 +315,20 @@ func TestUpdateUser(t *testing.T) {
 				Status:   1,
 				Profile:  model.UserProfile{},
 			},
-			errors.New("[\"入力されたメールアドレスは既に登録されています。\"]"), //更新はできないはず
+			errors.New("ユーザが存在しません。"), //更新はできないはず
+		},
+		{
+			//③: データがおかしいユーザ
+			2, //先ほどテストで作ったユーザ
+			model.User{
+				Email:    "test",
+				Password: "UpdTestPsw",
+				Name:     "Upd Test",
+				Phone:    "",
+				Nickname: "",
+				Status:   0,
+			},
+			errors.New("[\"正しいメールアドレスを入力してください。\"]"), //エラーになるはず
 		},
 	}
 	for i, tt := range tests {
@@ -321,7 +351,7 @@ func TestDeleteUser(t *testing.T) {
 	}{
 		{
 			//①: 存在するユーザ
-			2,   //テストで作ったユーザ
+			3,   //テストで作ったユーザ
 			nil, //エラーはでないはず
 		},
 		{

@@ -36,6 +36,11 @@ func TestGetConfig(t *testing.T) {
 			"CantFindString",
 			nil, //取得できないはず
 		},
+		{
+			//⑥: sendGridの送信者名を取得
+			"sendGridFrom",
+			"info@yource.space", //取得できるはず
+		},
 	}
 	for i, tt := range tests {
 		result := config.Get(tt.in)

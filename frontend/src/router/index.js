@@ -34,6 +34,14 @@ const routes = [
     component: () => import('../views/Create.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/register',
+    component: () => import('../views/Register.vue'),
+  },
+  {
+    path: '/verify',
+    component: () => import('../views/Verify.vue'),
+  },
   { path: '/user', component: () => import('../views/User.vue'),
     children: [
       {
@@ -46,7 +54,7 @@ const routes = [
     ]
   },
   //ブラウザバック対策
-  { path: '*', component: NotFoundComponent }
+  { path: '*', name:"404", component: NotFoundComponent }
 ]
 
 const router = new VueRouter({

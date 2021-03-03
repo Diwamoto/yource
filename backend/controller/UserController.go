@@ -4,11 +4,11 @@ Package controller is handle some requests.
 package controller
 
 import (
-	//標準ライブラリ
 
+	//標準ライブラリ
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -22,11 +22,11 @@ import (
 	"github.com/form3tech-oss/jwt-go"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 )
 
 //TODO: 変数の具体名化
-//TODO: 返り値をなるべくgin.Hで書く
 
 //ユーザー作成アクション
 //POSTされた要素でデータを作成する
@@ -50,12 +50,36 @@ func CreateUserAction(c *gin.Context) {
 	user, err := um.Create(u)
 	//エラーじゃなければuserの情報を返す
 	if err == nil {
-		//ユーザのメールアドレス死活監視トークンを生成する。
 
-		c.JSON(http.StatusCreated, user)
+		//ユーザのメールアドレスからurlセーフな死活監視トークンを生成する。
+		encode_str := base64.StdEncoding.EncodeToString([]byte(user.Email))
+		r := strings.NewReplacer("=", "-", "/", "_", "+", ".")
+		token := r.Replace(encode_str)
+		//トークンモデルに一時保存
+		utm := model.NewUserTokenModel("default")
+		ut := model.UserToken{
+			UserId: user.Id,
+			Token:  token,
+			Expire: time.Now().Add(24 * time.Hour), //有効期限は一日
+		}
+		utm.Create(ut)
+
+		mailData := map[string]string{
+			"Token": token,
+		}
+
+		//メールを送信する
+		_, err := SendMail(user.Email, "[yource]仮登録完了のお知らせ", "verify_email", mailData, nil)
+		if err != nil {
+			//作成できなければエラーメッセージを返す。
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		} else {
+			//送信できれば作成できた旨を返却する。
+			c.JSON(http.StatusCreated, user)
+		}
 	} else {
 		//作成できなければエラーメッセージを返す。
-		c.JSON(http.StatusConflict, gin.H{"message": err.Error()})
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 
 	}
 }
@@ -80,7 +104,7 @@ func SearchUserAction(c *gin.Context) {
 	//検索した結果が0件でもエラーにはならない。
 	//検索した条件が間違えていればエラーに入る
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	} else {
 		if len(users) > 0 {
 			c.JSON(http.StatusOK, users)
@@ -104,9 +128,7 @@ func GetUserByIdAction(c *gin.Context) {
 		return
 	}
 	user, err := um.GetById(id)
-	log.Printf("user = %#v", user)
 	if err == nil {
-		log.Printf("len(user) = %d", len(user))
 		if len(user) == 0 {
 			c.JSON(http.StatusNotFound, []model.User{})
 		} else {
@@ -176,6 +198,8 @@ func DeleteUserAction(c *gin.Context) {
 //ログインアクション
 func LoginAction(c *gin.Context) {
 
+	godotenv.Load(os.Getenv("ENV_PATH"))
+
 	um := model.NewUserModel("default")
 	var user model.User
 	user.Email = c.PostForm("Email")
@@ -199,7 +223,7 @@ func LoginAction(c *gin.Context) {
 			})
 
 			//電子署名
-			tokenString, _ := token.SignedString([]byte(os.Getenv("SIGNKEY")))
+			tokenString, _ := token.SignedString([]byte(os.Getenv("SIGN_KEY")))
 
 			//セッションに保存
 			session := sessions.Default(c)
@@ -233,7 +257,6 @@ func RetriveUserByJWTAction(c *gin.Context) {
 
 	session := sessions.Default(c)
 	userId := session.Get(tokenString)
-	log.Println(userId)
 
 	//MEMO: jwtからparseする処理がうまく動かないので、いったんセッションはそのままトークンから呼び出す。
 	// claims := jwt.MapClaims{}
@@ -248,6 +271,39 @@ func RetriveUserByJWTAction(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, "ログインしていません")
 	}
 
+}
+
+//ユーザ有効化アクション
+//新規登録を行ったのち、メールアドレスの死活監視を行ったユーザを有効化しログインできるようにする
+func VerifyUserAction(c *gin.Context) {
+
+	//フォームのトークンを読む
+	token := c.PostForm("Token")
+
+	utm := model.NewUserTokenModel("default")
+
+	user, err := utm.IsValid(token)
+
+	//問題なければユーザを有効化する。
+	//トークンも合わせて削除しStatusOKを返す
+	if err == nil {
+		um := model.NewUserModel("default")
+
+		user.Status = 1 //有効(ログインできる)
+		_, err := um.Update(user.Id, user)
+		if err == nil {
+			err := utm.Delete(token)
+			if err == nil {
+				c.JSON(http.StatusOK, "")
+			} else {
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			}
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		}
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
 }
 
 func hash(s string) string {

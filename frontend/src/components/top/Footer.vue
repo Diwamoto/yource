@@ -40,7 +40,7 @@ export default {
 
 <style>
 .footer a {
-  color: white;
+  color: white !important;
   text-decoration: none;
 }
 </style>

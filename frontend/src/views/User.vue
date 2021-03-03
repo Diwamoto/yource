@@ -60,9 +60,7 @@ export default {
         true,
         "None"
       );
-      this.$router.push({ path: "/login" }).catch((err) => {
-        console.log(err);
-      });
+      this.$router.push({ path: "/login" });
     },
     flash(type, text){
       this.flashMsg = text

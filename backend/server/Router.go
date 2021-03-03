@@ -18,11 +18,13 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func GetRouter() *gin.Engine {
 
 	router := gin.Default()
+	godotenv.Load(os.Getenv("ENV_PATH"))
 
 	// //セッション管理用にredisを設定
 	store, _ := redis.NewStore(10, "tcp", "redis:6379", "", []byte(os.Getenv("REDIS_KEY")))
@@ -58,6 +60,7 @@ func GetRouter() *gin.Engine {
 		//ログインとユーザ作成はセッションなしでもアクセスできる
 		v1.POST("/signup", controller.CreateUserAction)
 		v1.POST("/login", controller.LoginAction)
+		v1.POST("/verify", controller.VerifyUserAction)
 		//ログインしている状態の場合のみ以下のルーティングを使用可能
 		v1.Use(IsLogin())
 		{
@@ -137,7 +140,7 @@ func IsLogin() gin.HandlerFunc {
 
 		//jwtを検証して存在しなければだめ
 		_, err := request.ParseFromRequest(c.Request, request.OAuth2Extractor, func(token *jwt.Token) (interface{}, error) {
-			b := []byte(os.Getenv("SIGNKEY"))
+			b := []byte(os.Getenv("SIGN_KEY"))
 			return b, nil
 		})
 		if err != nil {

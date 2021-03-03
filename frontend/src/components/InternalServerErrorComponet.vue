@@ -4,12 +4,12 @@
     <Header></Header> 
     <v-img
         class="notfound-img"
-        src="/img/404.svg"
+        src="/img/500.svg"
     ></v-img>
     <div class="message text-center">
-        <h3>404 Notfound</h3>
-        <p>ページが見つかりません。</p> 
-        <p>お探しのページは存在しないか、削除された可能性があります。</p>
+        <h3>500 InternalServerError</h3>
+        <p>サーバ内部のエラーにより表示できません。</p> 
+        <p>しばらく時間をおいてからやり直してください。</p>
         <router-link to="/"><v-btn
   elevation="2"
   outlined
@@ -24,22 +24,19 @@
 import Header from '@/components/top/Header.vue'
 import Footer from '@/components/top/Footer.vue'
 export default {
-    name: "NotFoundComponent",
-    components: { Header, Footer},
+    name: "InternalServerErrorComponent",
+    components: { Header, Footer },
 
 }
 </script>
 
 <style>
 .notfound{
-    height: 100vh;
+    height: 100%;
 }
 .notfound-img{
-    margin: 20vh auto 10vh auto;
-    width: 30%;
-}
-.message{
-    height: 23.25vh;
+    margin: 200px auto 100px auto;
+    width: 500px;
 }
 .message a{
     color: black;

@@ -8,6 +8,13 @@ jobs:
       # specify the version
       - image: circleci/golang:1.16
 
+      # mysql for test
+      - image: circleci/mysql:5.7.22
+        environment:
+          MYSQL_DATABASE: 'test_yource'
+          MYSQL_USER: 'test'
+          MYSQL_ROOT_PASSWORD: 'test'
+
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -28,5 +35,5 @@ jobs:
           working_directory: /go/src/github.com/Diwamoto/yource/backend
       - run: 
           name: Test Go Library
-          command: go test -v ./...
+          command: go test ./test/model/... -v -covermode=count -coverprofile=model.out -coverpkg=./model
           working_directory: /go/src/github.com/Diwamoto/yource/backend

@@ -23,6 +23,10 @@ jobs:
 
       # specify any bash command here prefixed with `run: `
       - run:
+          name: Check Now Directory
+          command: pwd
+          working_directory: /go/src/github.com/Diwamoto/yource/backend
+      - run:
           name: Get Go Modules
           command: go mod tidy
           working_directory: /go/src/github.com/Diwamoto/yource/backend

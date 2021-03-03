@@ -4,8 +4,22 @@
 
 A service that allows you to create a blog like slack.
 
+https://yource.space
+
 
 # 環境構築
+
+```
+cd docker/ssl
+./initssl.sh
+cd ..
+docker-compose up -d
+cd ..
+cp docker/ssl/keys frontend/keys
+npm run serve
+```
+で起動します。
+ローカル環境は全てssl通信に対応しています。
 
 ## 環境イメージ図
 ![関係イメージ図](https://github.com/Diwamoto/yource/blob/main/docker/relation.png '関係イメージ図')
@@ -17,7 +31,7 @@ A service that allows you to create a blog like slack.
 `npm install`したのち`npm run serve`で起動します。
 
 
-`http://localhost:9092` で起動します。
+`https://localhost:9092` で起動します。
 
 ## バックエンド開発
 
@@ -25,6 +39,8 @@ A service that allows you to create a blog like slack.
 
 `https://localhost:9091` で起動します。
 
+
 # CI
 
-自動テスト環境にはtravisCIを使用しています。
+自動テスト環境にはtravisCI/CircleCIを使用しています。
+AWS上にCircleCIを用いてデプロイします（予定）

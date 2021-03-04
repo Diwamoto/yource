@@ -1,19 +1,24 @@
 <template>
   <div class="space">
-    <v-main class="space-title">
-      <h1>あなたのコミュニティもしくはチームの名前を教えてください</h1>
-      <p>素敵な名前をつけましょう！</p>
-
+    <v-main class="space-box rounded-lg">
+      <h1 class="space-title">スペースを作成する</h1>
+      <h5 class="space-subtitle ml-12 mt-12">
+        あなたのコミュニティもしくはチームの名前を教えてください
+      </h5>
+      <h5 class="space-subtitle ml-12">
+        素敵な名前をつけましょう！
+      </h5>
       <v-form>
         <v-text-field
           v-model="message"
+          class="ma-12 mt-12 text-center"
           append-outer-icon="mdi-send"
           outlined
           clear-icon="mdi-close"
           clearable
           counter="25"
           placeholder="myspace"
-          label="コミュニティーの名前"
+          label="スペースの名前"
           type="text"
           @click:append="toggleMarker"
           @click:append-outer="submit"
@@ -163,8 +168,41 @@ export default {
 </script>
 
 <style>
+.space {
+  height: 100%;
+  background-color: #f3f3f3;
+}
+.space-box {
+  background-color: white;
+  margin: 15vh 30vw 10vh 30vw;
+  height: 50%;
+  width: 40vw;
+  opacity: 0;
+  box-shadow: 0 6px 6px -3px rgba(0, 0, 0, 0.2),
+    0 10px 14px 1px rgba(0, 0, 0, 0.14), 0 4px 18px 3px rgba(0, 0, 0, 0.12) !important;
+  animation-name: space;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
 .space-title {
-  width: 900px;
-  margin: 15% auto;
+  padding: 2% 0 2% 0;
+  text-align: center;
+  border-width: 0 0 2px 0;
+  border-style: solid;
+  border-color: #f0f0f0;
+}
+.privacy-subtitle {
+  padding: 3% 10% 0 10%;
+}
+@keyframes space {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

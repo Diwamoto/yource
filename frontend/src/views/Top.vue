@@ -109,7 +109,7 @@ export default {
 
 <style>
 .home{
-  height: 350vh;
+  height: 100vh;
 }
 .title {
   height: 900px;

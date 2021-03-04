@@ -19,3 +19,14 @@ new Vue({
 Vue.prototype.$http = axios
 Vue.prototype.$api = process.env.VUE_APP_API_URL
 Vue.prototype.$front = process.env.VUE_APP_FRONT_URL
+//カスタムスクロールディレクティブの作成
+Vue.directive('scroll', {
+  inserted: function (el, binding) {
+      let f = function (evt) {
+          if (binding.value(evt, el)) {
+              window.removeEventListener('scroll', f)
+          }
+      }
+      window.addEventListener('scroll', f)
+  }
+})

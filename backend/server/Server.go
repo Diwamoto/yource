@@ -45,7 +45,8 @@ func Initiate() *gin.Engine {
 	server.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
 			"http://localhost:9092",
-			"https://localhost:9092"},
+			"https://localhost:9092",
+			"https://yource.space"},
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		AllowHeaders: []string{
 			"Access-Control-Allow-Credentials",

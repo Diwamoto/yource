@@ -399,6 +399,10 @@ export default {
   background-color: white;
   box-shadow: 0 6px 6px -3px rgba(0, 0, 0, 0.2),
     0 10px 14px 1px rgba(0, 0, 0, 0.14), 0 4px 18px 3px rgba(0, 0, 0, 0.12) !important;
+  animation-name: login;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
 }
 .standard-login-box-wrapper {
   float: left;
@@ -457,5 +461,15 @@ export default {
 }
 .v-icon {
   width: 40px;
+}
+@keyframes login {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

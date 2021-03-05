@@ -236,14 +236,11 @@ export default {
         });
     }
   },
+  mounted() {
+    this.flash_msg()
+  },
   updated() {
-    //フラッシュメッセージ
-    if (this.$cookies.get("msg") != null) {
-      this.Failed = true;
-
-      this.response = this.$cookies.get("msg");
-      this.$cookies.remove("msg");
-    }
+    this.flash_msg()
   },
   beforeUpdate() {
     switch (this.model) {
@@ -387,6 +384,16 @@ export default {
               }
             }
           });
+      }
+    },
+
+    flash_msg() {
+      //フラッシュメッセージ
+      if (this.$cookies.get("msg") != null) {
+        this.Failed = true;
+
+        this.response = this.$cookies.get("msg");
+        this.$cookies.remove("msg");
       }
     },
   },

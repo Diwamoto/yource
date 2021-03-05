@@ -11,10 +11,10 @@ jobs:
       # mysql for test
       - image: circleci/mysql:5.7
         environment:
-          MYSQL_DATABASE: 'test_yource'
-          MYSQL_USER: 'circleci'
-          MYSQL_PASSWORD: 'password'
-          MYSQL_ROOT_PASSWORD: 'root'
+          MYSQL_DATABASE: "test_yource"
+          MYSQL_USER: "circleci"
+          MYSQL_PASSWORD: "password"
+          MYSQL_ROOT_PASSWORD: "root"
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -30,7 +30,7 @@ jobs:
 
       # specify any bash command here prefixed with `run: `
       - run:
-      # プライマリ コンテナは MySQL ではないため、準備が完了するまで sleep コマンドを実行します。
+          # プライマリ コンテナは MySQL ではないため、準備が完了するまで sleep コマンドを実行します。
           name: Wait for mysql
           command: |
             for i in `seq 1 10`;
@@ -48,7 +48,32 @@ jobs:
           name: Setup Env File
           command: cp .circleci/.env .env &&  echo "export ENV_PATH=/go/src/github.com/Diwamoto/yource/backend/.env" >> $BASH_ENV
           working_directory: /go/src/github.com/Diwamoto/yource/backend
-      - run: 
+      - run:
           name: Test Go Library
           command: go test ./test/model/... -v -covermode=count -coverprofile=model.out -coverpkg=./model
           working_directory: /go/src/github.com/Diwamoto/yource/backend
+  deploy:
+    machine:
+      image: circleci/classic:edge
+    steps:
+      - checkout
+      # CircleCI に登録した秘密鍵を呼び出す
+      - add_ssh_keys:
+          fingerprints:
+            - "19:e5:c6:6c:a8:04:07:0d:7b:08:29:5c:85:48:8f:09"
+      # CircleCI に登録した環境変数を使って SSH
+      - run: ssh ubuntu@yource.space 'cd ~/yource && git pull'
+
+# テストが成功した場合のみ、deployを実行するように
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          # mainブランチがpushされた場合のみdeployするようにする。
+          filters:
+            branches:
+              only: main

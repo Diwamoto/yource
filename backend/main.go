@@ -12,7 +12,7 @@ import (
 
 // Main is used to start the gin server.
 func main() {
-	r := server.GetRouter()
+	r := server.Initiate()
 	r.Run(":3001")
 }
 

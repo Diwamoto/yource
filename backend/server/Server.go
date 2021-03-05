@@ -4,10 +4,12 @@ import (
 	//標準ライブラリ
 
 	"fmt"
+	"io"
 	"os"
 	"time"
 
 	//自作ライブラリ
+	"main/config"
 	"main/controller"
 
 	//githubライブラリ
@@ -21,21 +23,26 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func GetRouter() *gin.Engine {
+func Initiate() *gin.Engine {
 
-	router := gin.Default()
+	server := gin.Default()
+	//サーバーのログファイルの出力先を設定
+	f, _ := os.Create(config.ToString("rootPath") + "/log/gin.log")
+	gin.DefaultWriter = io.MultiWriter(f)
+
+	//環境変数を読み込み
 	godotenv.Load(os.Getenv("ENV_PATH"))
 
-	// //セッション管理用にredisを設定
+	//セッション管理用にredisを設定
 	store, _ := redis.NewStore(10, os.Getenv("REDIS_PROTOCOL"), os.Getenv("REDIS_HOST")+":"+os.Getenv("REDIS_PORT"), os.Getenv("REDIS_PASSWORD"), []byte(os.Getenv("REDIS_KEY")))
 	//セッションの有効期限一日後を設定
 	store.Options(sessions.Options{
 		MaxAge: 60 * 60 * 24,
 	})
-	router.Use(sessions.Sessions("session", store))
+	server.Use(sessions.Sessions("session", store))
 
 	//corsの設定
-	router.Use(cors.New(cors.Config{
+	server.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
 			"http://localhost:9092",
 			"https://localhost:9092"},
@@ -52,10 +59,10 @@ func GetRouter() *gin.Engine {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	router.LoadHTMLGlob("view/*.html")
+	server.LoadHTMLGlob("view/*.html")
 
 	//apiはhttps://hogehoge.com/api/v1以下のルーティングで判断する
-	v1 := router.Group("/api/v1")
+	v1 := server.Group("/api/v1")
 	{
 		//ログインとユーザ作成はセッションなしでもアクセスできる
 		v1.POST("/signup", controller.CreateUserAction)
@@ -131,7 +138,7 @@ func GetRouter() *gin.Engine {
 		}
 
 	}
-	return router
+	return server
 }
 
 //クッキーのjwtを検証する

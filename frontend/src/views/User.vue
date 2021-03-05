@@ -54,11 +54,7 @@ export default {
       this.$cookies.set(
         "msg",
         "続けるにはログインが必要です。",
-        3600,
-        "/",
-        "localhost",
-        true,
-        "None"
+        {expires: "1H",}
       );
       this.$router.push({ path: "/login" });
     },

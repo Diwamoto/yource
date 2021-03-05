@@ -4,6 +4,8 @@ backend/tmp/*
 backend/.env
 backend/config/keys/*
 !backend/config/keys/.gitkeep
+backend/log/*
+!backend/log/.gitkeep
 .DS_Store
 docker/db/mysql_data/*
 docker/db/logs

@@ -207,21 +207,36 @@ export default {
           this.$cookies.set(
             "msg",
             "LINEでログインすることができませんでした。",
-            3600,
-            "/",
-            "localhost",
-            true,
-            "None"
+            { expires: "1H" }
           );
         });
     }
 
-    //ログイン画面に遷移時にトークンが残っており有効期限が消えていなければそのままログインさせる
+    //ログイン画面に遷移時にトークンが残っており、トークンがまだ有効であれば自動でログインさせる。
+    //有効でなければ再ログインが必要な旨を表示する
     if (this.$cookies.get("token") != null) {
-      this.$router.push({ path: "home" }).catch(() => {});
+      this.$http
+        .get(this.$api + "/api/v1/retrive", {
+          headers: {
+            Authorization: "Bearer " + this.$cookies.get("token"),
+          },
+          withCredentials: true,
+        })
+        .then((response) => {
+          switch (response.status) {
+            case 200: //ユーザidが取得できたらログインさせる。
+              this.$router.push({ path: "home" }).catch(() => {});
+          }
+        })
+        .catch(() => {
+          this.$cookies.remove("token");
+          this.$cookies.set("msg", "続けるにはログインが必要です。", {
+            expires: "1H",
+          });
+        });
     }
   },
-  mounted() {
+  updated() {
     //フラッシュメッセージ
     if (this.$cookies.get("msg") != null) {
       this.Failed = true;
@@ -258,16 +273,7 @@ export default {
             //ログイン成功
 
             //jwtをサーバに保存
-            this.$cookies.set(
-              "token",
-              response.data.token,
-              3600,
-              "/",
-              "localhost",
-              true,
-              "None"
-            );
-
+            this.$cookies.set("token", response.data.token, { expires: "1D" });
 
             //jwtを使ってuseridを取得する
             //ユーザIDを取得してくる
@@ -290,7 +296,8 @@ export default {
                         this.$api + "/api/v1/users/" + this.userId + "/space",
                         {
                           headers: {
-                            Authorization: "Bearer " + this.$cookies.get("token"),
+                            Authorization:
+                              "Bearer " + this.$cookies.get("token"),
                           },
                           withCredentials: true,
                         }
@@ -356,7 +363,7 @@ export default {
               Math.random().toString(32).substring(2),
               3600,
               "/",
-              "localhost",
+              this.$host,
               true,
               "None"
             );

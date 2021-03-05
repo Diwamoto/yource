@@ -74,7 +74,7 @@ router.beforeEach((to, from, next) => {
       // TODO:エラーメッセージのデザインを作る
       //
       /////////////////////////////////
-      Vue.$cookies.set("msg", "続けるにはログインが必要です。", 3600, "/", "localhost", true, "None")
+      Vue.$cookies.set("msg", "続けるにはログインが必要です。", {expires: "1H",})
       next({
         path: '/login',
         query: { redirect: to.fullPath }

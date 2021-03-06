@@ -50,6 +50,8 @@
               <v-btn
                 color="primary"
                 type="submit"
+                ref="submit"
+                :disabled="loading"
                 large
                 class="submit-button"
                 @click="login_submit"
@@ -93,12 +95,20 @@
               <v-btn
                 color="primary"
                 type="submit"
+                ref="submit"
+                :disabled="loading"
                 large
                 class="submit-button"
                 @click="signup_submit"
                 >新規登録</v-btn
               >
             </v-form>
+            <v-progress-circular
+                v-show="loading"
+                indeterminate
+                color="primary"
+                class="loader mt-6"
+              ></v-progress-circular>
           </v-tab-item>
         </v-tabs-items>
       </div>
@@ -152,6 +162,7 @@ export default {
       response: "",
       message: "",
       Email: "",
+      loading: false,
       Password: "",
       line_url:
         "https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=1655708978&redirect_uri=https%3A%2F%2F0c583dca4f4a.ngrok.io%2Flogin&state=" +
@@ -255,6 +266,7 @@ export default {
   methods: {
     //ログインフォーム
     login_submit() {
+      this.loading = true
       //バリデートに成功したらログイン処理を実行する
       if (this.$refs.form.validate()) {
         const params = new URLSearchParams();
@@ -338,10 +350,12 @@ export default {
             }
           });
       }
+      this.loading = false
     },
 
     //新規登録フォーム
     signup_submit() {
+      this.loading = true
       //バリデートに成功したら
       if (this.$refs.form.validate()) {
         let params = new URLSearchParams();
@@ -385,6 +399,7 @@ export default {
             }
           });
       }
+      this.loading = false
     },
 
     flash_msg() {

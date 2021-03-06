@@ -61,8 +61,8 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "ac:0a:18:9a:69:b9:01:33:88:e2:04:ad:2d:35:50:cb"
-      # CircleCI に登録した環境変数を使って SSH
-      - run: ssh ubuntu@yource.space 'cd ~/yource && git pull'
+      # AWSにSSH接続してデプロイ
+      - run: ssh ubuntu@yource.space 'cd ~/yource && ./deployment.sh'
 
 # テストが成功した場合のみ、deployを実行するように
 workflows:

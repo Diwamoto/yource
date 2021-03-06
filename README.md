@@ -40,7 +40,9 @@ npm run serve
 `https://localhost:9091` で起動します。
 
 
-# CI
+# CI/CD
 
 自動テスト環境にはtravisCI/CircleCIを使用しています。
-AWS上にCircleCIを用いてデプロイします（予定）
+AWS上にCircleCIを使って自動デプロイしています。
+設定ファイルは`.circleCI/config.yml`にあり、sshでawsにつないで
+`deployment.sh`を叩くだけの簡単なシステムです。

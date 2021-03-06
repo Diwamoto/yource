@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # setup env
-export PATH=$PATH:/home/ubuntu/.nodenv/shims:/home/ubuntu/.nodenv/bin
+export PATH=$PATH:/home/ubuntu/.nodenv/shims:/home/ubuntu/.nodenv/bin:/usr/bin/go/bin:
 
 # setup go modules
 cd ~/yource/backend

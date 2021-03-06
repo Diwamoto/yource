@@ -2,6 +2,7 @@
 
 # setup env
 source ~/.profile
+printenv
 
 # setup go modules
 cd ~/yource/backend

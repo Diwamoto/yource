@@ -34,7 +34,7 @@ func Initiate() *gin.Engine {
 	godotenv.Load(os.Getenv("ENV_PATH"))
 
 	//セッション管理用にredisを設定
-	store, _ := redis.NewStore(100, os.Getenv("REDIS_PROTOCOL"), os.Getenv("REDIS_HOST")+":"+os.Getenv("REDIS_PORT"), os.Getenv("REDIS_PASSWORD"), []byte(os.Getenv("REDIS_KEY")))
+	store, _ := redis.NewStore(50, os.Getenv("REDIS_PROTOCOL"), os.Getenv("REDIS_HOST")+":"+os.Getenv("REDIS_PORT"), os.Getenv("REDIS_PASSWORD"), []byte(os.Getenv("REDIS_KEY")))
 	//セッションの有効期限一日後を設定
 	store.Options(sessions.Options{
 		MaxAge: 60 * 60 * 24,

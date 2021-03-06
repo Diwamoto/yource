@@ -7,6 +7,7 @@
             large
             width="180"
             :href="link.link"
+            :target="link.target"
           >{{ link.name }}</v-btn>
       </div>
   </div>
@@ -21,14 +22,17 @@ export default {
                 {
                     name: "概要",
                     link: "/about",
+                    target: "",
                 },
                 {
                     name: "プライバシーポリシー",
                     link: "/privacy",
+                    target: "",
                 },
                 {
                     name: "サイト運営者について",
-                    link: "/history",
+                    link: "https://diwamoto.dev",
+                    target: "_brank",
                 },
 
             ]

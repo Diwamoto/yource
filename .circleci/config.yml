@@ -60,7 +60,7 @@ jobs:
       # CircleCI に登録した秘密鍵を呼び出す
       - add_ssh_keys:
           fingerprints:
-            - "d4:2b:96:57:f9:20:51:28:c8:11:15:2d:55:ed:a7:9d"
+            - "ac:0a:18:9a:69:b9:01:33:88:e2:04:ad:2d:35:50:cb"
       # CircleCI に登録した環境変数を使って SSH
       - run: ssh ubuntu@yource.space 'cd ~/yource && git pull'
 

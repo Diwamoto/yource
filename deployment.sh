@@ -3,12 +3,8 @@
 # setup env
 source ~/.profile
 
-# checkout 
-cd ~/yource
-git pull
-
 # setup go modules
-cd backend
+cd ~/yource/backend
 go mod tidy
 
 # deploy frontend

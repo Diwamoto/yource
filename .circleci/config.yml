@@ -62,7 +62,7 @@ jobs:
           fingerprints:
             - "ac:0a:18:9a:69:b9:01:33:88:e2:04:ad:2d:35:50:cb"
       # AWSにSSH接続してデプロイ
-      - run: ssh ubuntu@yource.space 'cd ~/yource && ./deployment.sh'
+      - run: ssh ubuntu@yource.space 'cd ~/yource && git pull && ./deployment.sh'
 
 # テストが成功した場合のみ、deployを実行するように
 workflows:

@@ -1,7 +1,7 @@
 # Golang CircleCI 2.0 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-go/ for more details
-version: 2
+version: 2.1
 orbs:
   slack: circleci/slack@4.3.0
 jobs:
@@ -78,7 +78,7 @@ jobs:
 # テストが成功した場合のみ、deployを実行するように
 workflows:
   version: 2
-  build_and_deploy:
+  cicd:
     jobs:
       - build
       - deploy:

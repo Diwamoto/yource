@@ -1,6 +1,7 @@
 <template>
   <div class="about">
     <Header></Header>
+    <Menu></Menu>
     <div class="about-box rounded-lg">
       <h1 class="about-title">yourceについて</h1>
       <div class="about-body-wrapper">
@@ -25,11 +26,13 @@
 <script>
 import Header from "@/components/top/Header.vue";
 import Footer from "@/components/top/Footer.vue";
+import Menu from "@/components/top/Menu.vue";
 export default {
   name: "About",
   components: {
     Header,
     Footer,
+    Menu,
   }
 };
 </script>
@@ -41,7 +44,7 @@ export default {
 }
 .about-box {
   background-color: white;
-  margin: 15vh 25vw 10vh 25vw;
+  margin: 8vh 25vw 10vh 25vw;
   height: 100vh;
   width: 50vw;
   opacity: 0;

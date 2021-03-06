@@ -1,6 +1,7 @@
 <template>
   <div class="privacy">
     <Header></Header>
+    <Menu></Menu>
     <div class="privacy-box rounded-lg">
       <h1 class="privacy-title">プライバシーポリシー</h1>
       <h4 class="privacy-subtitle">
@@ -210,11 +211,13 @@
 <script>
 import Header from "@/components/top/Header.vue";
 import Footer from "@/components/top/Footer.vue";
+import Menu from "@/components/top/Menu.vue";
 export default {
   name: "PrivacyPolicy",
   components: {
     Header,
     Footer,
+    Menu,
   }
 };
 </script>
@@ -226,7 +229,7 @@ export default {
 }
 .privacy-box {
   background-color: white;
-  margin: 15vh 25vw 10vh 25vw;
+  margin: 8vh 25vw 10vh 25vw;
   width: 50vw;
   opacity: 0;
   box-shadow: 0 6px 6px -3px rgba(0, 0, 0, 0.2),

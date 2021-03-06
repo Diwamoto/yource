@@ -69,11 +69,11 @@ jobs:
     steps:
       - slack/notify:
           event: fail
-          mentions: '@everyone'
+          mentions: '<@U013BDR327K>, @daiki.work.0118'
           template: basic_fail_1
       - slack/notify:
           event: pass
-          mentions: '@everyone'
+          mentions: '<@U013BDR327K>, @daiki.work.0118'
           template: success_tagged_deploy_1
       # - status:
       #     name: Send Notice to slack

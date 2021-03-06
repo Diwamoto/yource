@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # setup env
-source ~/.profile
-printenv
+export PATH=$PATH:/home/ubuntu/.nodenv/shims:/home/ubuntu/.nodenv/bin
 
 # setup go modules
 cd ~/yource/backend

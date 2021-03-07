@@ -14,7 +14,7 @@
             </v-col>
           </v-row>
         </div>
-        <div :class="{about:true, fadein_left:fadein1, hide:!fadein1}">
+        <div :class="{fadein_left:fadein1, hide:!fadein1}">
           <v-row>
             <v-col md6 offset-md="3" class="message">
               <h1>Yourceについて</h1>
@@ -38,7 +38,7 @@
             </v-col>
           </v-row>
         </div>
-        <div :class="{about:true, fadein_left:fadein3, hide:!fadein3}">
+        <div :class="{fadein_left:fadein3, hide:!fadein3}">
           <v-row>
             <v-col md6 offset-md="3" class="message">
               <h1>活動を発信する</h1>

@@ -32,7 +32,7 @@ export default {
         link: "https://www.facebook.com/profile.php?id=100045347584995",
       },
       { icon: "mdi-twitter", link: "https://twitter.com/Diwamoto_" },
-      { icon: "mdi-github", link: "https://github.com/Diwamoto" },
+      { icon: "mdi-github", link: "https://github.com/Diwamoto/yource" },
     ],
   }),
 };

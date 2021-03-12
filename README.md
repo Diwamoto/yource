@@ -33,6 +33,7 @@ npm run serve
 
 `https://localhost:9092` で起動します。
 
+
 ## バックエンド開発
 
 バックエンドにはginを使用し、dbアクセスのAPIサーバーとして動かします。
@@ -46,3 +47,8 @@ npm run serve
 AWS上にCircleCIを使って自動デプロイしています。
 設定ファイルは`.circleCI/config.yml`にあり、sshでawsにつないで
 `deployment.sh`を叩くだけの簡単なシステムです。
+
+# デプロイ
+今まではAWSにフロント、バックエンド両方おいてありましたが、[vercel]{https://vercel.com/}
+という素晴らしいフロントエンドデプロイサービスがありますので、フロントはそちらを利用して
+バックエンドは変わらずawsを利用する形にしようかと思っています。

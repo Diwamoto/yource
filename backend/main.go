@@ -13,6 +13,7 @@ import (
 // Main is used to start the gin server.
 func main() {
 	r := server.Initiate()
+	go server.WSserver()
 	r.Run(":3001")
 }
 

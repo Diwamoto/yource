@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <Systembar :space-name="space.Name"></Systembar>
+    <Systembar :space-name="space.Name" ref="Systembar"></Systembar>
 
     <Navbar
       :space="space"

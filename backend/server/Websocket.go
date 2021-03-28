@@ -14,7 +14,11 @@ var clients = make(map[*websocket.Conn]bool)
 var broadcast = make(chan Message)
 
 // WebSocket 更新用
-var upgrader = websocket.Upgrader{}
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true //TODO:ドメイン判定を作る
+	},
+}
 
 // クライアントからは JSON 形式で受け取る
 type Message struct {

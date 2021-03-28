@@ -26,6 +26,8 @@ services:
       dockerfile: ./go/Dockerfile
     ports:
       - '9091:9091'
+      - '3001:3001'
+      - '4000:4000'
       # - '2345:2345'
     command: bash -c "go mod tidy && gin -p 9091 --certFile /tmp/keys/server.crt --keyFile /tmp/keys/server.key"
     volumes:

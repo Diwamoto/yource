@@ -33,6 +33,7 @@ export default {
   },
   data() {
     return {
+      socket: new WebSocket("ws://localhost:4000/chat"),
       label: "",
       newPost: "",
       hint: "",
@@ -41,6 +42,17 @@ export default {
   created() {
     //ラベルを読み込む
     this.updateLabel();
+
+    //websocket経由でメッセージの追加の通知をもらった際に投稿を更新する
+    this.socket.onmessage = () => {
+        this.getPosts();
+    };
+  },
+  mounted() {
+    //システムバーにwifiアイコンを表示する
+    this.socket.onopen = () =>{
+      this.$parent.$parent.$parent.$refs.Systembar.loadComplete()
+    }
   },
   updated() {
     //フォームに文字が入力されていれば送信ヒントメッセージを追加
@@ -77,6 +89,13 @@ export default {
           .then(() => {
             //投稿が作成できたら投稿一覧をリセットし、入力欄を削除する。
             this.getPosts();
+            
+            //同時にws経由でメッセージの追加を送信
+            this.socket.send(JSON.stringify(
+                {
+                    message: this.newPost
+                }
+            ));
             this.newPost = "";
           })
           .catch((err) => {

@@ -10,7 +10,7 @@
       <v-spacer></v-spacer>
       <v-spacer></v-spacer>
       <v-spacer></v-spacer>
-      <v-spacer></v-spacer>
+      <v-icon>{{ connect }}</v-icon>
       <span>{{ date }}</span>
       <span>{{ time }}</span>
     </v-system-bar>
@@ -25,6 +25,7 @@ export default {
   },
   data: () => {
     return {
+      connect: "signal-off",
       date: "",
       time: "",
       month: 0,
@@ -58,7 +59,10 @@ export default {
     setInterval(this.updateTime, 1000);
   },
   methods: {
-    renderComma: function () {
+    loadComplete(){
+      this.connect = "mdi-signal"
+    },
+    renderComma(){
       //間のコンマを描画しない
       this.time =
         "　" + this.prefix + this.hour + " " + this.zeroPadding(this.minute, 2);
@@ -69,7 +73,7 @@ export default {
         "日" +
         this.week[this.day % 7];
     },
-    updateTime: function () {
+    updateTime() {
       //現在日時を取得
       const JST = new Date().toLocaleString({ timeZone: "Asia/Tokyo" });
       let now = new Date(JST);

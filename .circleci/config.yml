@@ -72,8 +72,14 @@ jobs:
           mentions: '<@U013BDR327K>, @daiki.work.0118'
           custom: |
             {
-              "text": "CircleCIのビルドが失敗しました。:exclamation:",
               "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "CircleCIのビルドが失敗しました。:exclamation:"
+                  }
+                }
                 {
                   "type": "section",
                   "fields": [
@@ -91,8 +97,14 @@ jobs:
           mentions: '<@U013BDR327K>, @daiki.work.0118'
           custom: |
             {
-              "text": "デプロイが完了しました。:tada:",
               "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "デプロイが完了しました。:tada:"
+                  }
+                }
                 {
                   "type": "section",
                   "fields": [

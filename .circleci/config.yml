@@ -70,16 +70,61 @@ jobs:
       - slack/notify:
           event: fail
           mentions: '<@U013BDR327K>, @daiki.work.0118'
-          message: "CircleCIのビルドが失敗しました。:exclamation: [該当ビルドを見る](${CIRCLE_BUILD_URL})"
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "CircleCIのビルドが失敗しました。:exclamation:"
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "ビルドを見る",
+                        "emoji": true
+                      },
+                      "url": "${CIRCLE_BUILD_URL}"
+                    }
+                  ]
+                }
+              ]
+            }
       - slack/notify:
           event: pass
           mentions: '<@U013BDR327K>, @daiki.work.0118'
-          message: "デプロイが完了しました。:tada: [該当ビルドを見る](${CIRCLE_BUILD_URL})"
-      # - status:
-      #     name: Send Notice to slack
-      #     success_message: ':circleci-pass: $CIRCLE_BRANCH のデプロイが完了しました\n:github_octocat: User：$CIRCLE_USERNAME'
-      #     failure_message: ':circleci-fail: $CIRCLE_BRANCH のデプロイが失敗しました\n:github_octocat: User：$CIRCLE_USERNAME'
-      #     webhook: '${SLACK_WEBHOOK}'
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "デプロイが完了しました。:tada:"
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "ビルドを見る",
+                        "emoji": true
+                      },
+                      "url": "${CIRCLE_BUILD_URL}"
+                    }
+                  ]
+                }
+              ]
+            }
 # テストが成功した場合のみ、deployを実行するように
 orbs:
   slack: circleci/slack@4.1.1

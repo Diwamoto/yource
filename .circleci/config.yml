@@ -62,7 +62,7 @@ jobs:
           fingerprints:
             - "ac:0a:18:9a:69:b9:01:33:88:e2:04:ad:2d:35:50:cb"
       # AWSにSSH接続してデプロイ
-      - run: ssh ubuntu@yource.space 'cd ~/yource && git pull && ./deployment.sh'
+      - run: ssh ubuntu@api.yource.space 'cd ~/yource && git pull && ./deployment.sh'
   notify:
     docker:
       - image: 'cimg/base:stable'

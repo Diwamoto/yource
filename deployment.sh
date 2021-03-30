@@ -7,7 +7,8 @@ export PATH=$PATH:/home/ubuntu/.nodenv/shims:/home/ubuntu/.nodenv/bin:/usr/bin/g
 cd ~/yource/backend
 go mod tidy
 
-# deploy frontend
-cd ../frontend
-npm install 
-npm run build
+# フロントエンドはvercelに移管したのでコメントアウト
+# # deploy frontend
+# cd ../frontend
+# npm install 
+# npm run build

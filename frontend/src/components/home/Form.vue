@@ -33,7 +33,7 @@ export default {
   },
   data() {
     return {
-      socket: new WebSocket("ws://" + process.env.VUE_APP_WEBSOCKET_URL),
+      socket: new WebSocket("wss://" + process.env.VUE_APP_WEBSOCKET_URL),
       label: "",
       newPost: "",
       hint: "",

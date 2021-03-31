@@ -10,7 +10,8 @@
       </h5>
       <v-form>
         <v-text-field
-          v-model="message"
+          v-model="space"
+          :rules="[space_rule]"
           class="ma-12 mt-12 text-center"
           append-outer-icon="mdi-send"
           outlined
@@ -36,8 +37,11 @@ export default {
   data: function () {
     return {
       userId: "",
+      space_rule: () =>
+        (!!this.space && /^[a-zA-Z]*$/.test(this.space)) ||
+        "スペース名に使えるのは半角英字のみです。",
       show: false,
-      message: "",
+      space: "",
       marker: true,
       iconIndex: 0,
       icons: [
@@ -78,8 +82,8 @@ export default {
             case 200: //ユーザidを保存する
               this.userId = response.data.userId;
               var params = new URLSearchParams();
-              params.append("Name", this.message);
-              params.append("SubDomain", this.message);
+              params.append("Name", this.space);
+              params.append("SubDomain", this.space);
               this.$http
                 .post(
                   this.$api + "/api/v1/users/" + this.userId + "/space",
@@ -153,7 +157,7 @@ export default {
         });
     },
     clearMessage() {
-      this.message = "";
+      this.space = "";
     },
     resetIcon() {
       this.iconIndex = 0;

@@ -1,9 +1,9 @@
 <template>
   <div class="space">
     <v-main class="space-box rounded-lg">
-      <h1 class="space-title">スペースを作成する</h1>
+      <h1 class="space-title">セットアップ</h1>
       <h5 class="space-subtitle ml-12 mt-12">
-        あなたのコミュニティもしくはチームの名前を教えてください
+        あなたの情報を教えて下さい。
       </h5>
       <h5 class="space-subtitle ml-12">
         素敵な名前をつけましょう！
@@ -38,7 +38,7 @@ export default {
     return {
       userId: "",
       space_rule: () =>
-        (!!this.space && /^[a-zA-Z]*$/.test(this.space)) ||
+        (this.space != "ws" && this.space != "api" && !!this.space && /^[a-zA-Z]*$/.test(this.space)) ||
         "スペース名に使えるのは半角英字のみです。",
       show: false,
       space: "",

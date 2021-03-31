@@ -33,7 +33,7 @@ export default {
   },
   data() {
     return {
-      socket: new WebSocket("ws://localhost:4000/chat"),
+      socket: new WebSocket("ws://" + process.env.VUE_APP_WEBSOCKET_URL),
       label: "",
       newPost: "",
       hint: "",

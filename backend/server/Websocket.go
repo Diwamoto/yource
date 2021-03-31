@@ -3,8 +3,10 @@ package server
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/websocket"
+	"github.com/joho/godotenv"
 )
 
 // WebSocket サーバーにつなぎにいくクライアント
@@ -54,13 +56,15 @@ func HandleClients(w http.ResponseWriter, r *http.Request) {
 }
 
 func WSserver() {
+	//環境変数を読み込み
+	godotenv.Load(os.Getenv("ENV_PATH"))
 	// localhost:8080 でアクセスした時に index.html を読み込む
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "index.html")
 	})
 
-	http.HandleFunc("/chat", HandleClients)
-	err := http.ListenAndServe(":4000", nil)
+	http.HandleFunc("/socket", HandleClients)
+	err := http.ListenAndServeTLS(":4000", os.Getenv("CRT_PATH"), os.Getenv("KEY_PATH"), nil)
 	if err != nil {
 		log.Fatal("error starting http server::", err)
 		return

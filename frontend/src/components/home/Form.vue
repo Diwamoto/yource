@@ -13,6 +13,7 @@
         type="text"
         :hint="hint"
         v-on:keydown.meta.enter="submit"
+        v-on:keydown.ctrl.enter="submit"
         @click:append-outer="submit"
         @click:clear="clearMessage"
       ></v-text-field>
@@ -57,7 +58,12 @@ export default {
   updated() {
     //フォームに文字が入力されていれば送信ヒントメッセージを追加
     if (this.newPost != "") {
-      this.hint = "cmd + enterでも送信することができます。";
+      var ua = window.navigator.userAgent.toLowerCase()
+      if(ua.indexOf("windows nt") !== -1) {
+        this.hint = "ctrl + enterでも送信することができます。";
+      } else if(ua.indexOf("mac os x") !== -1) {
+        this.hint = "cmd + enterでも送信することができます。";
+      }
     } else {
       this.hint = "";
     }

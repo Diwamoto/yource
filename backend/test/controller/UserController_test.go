@@ -63,7 +63,7 @@ func TestCreateUserAction(t *testing.T) {
 		//リクエストを格納
 		c.Request, _ = http.NewRequest(
 			http.MethodPost,
-			"/api/v1/users",
+			"/v1/users",
 			requestBody,
 		)
 		//フォーム属性を付与

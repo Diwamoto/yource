@@ -10,7 +10,7 @@ info:
     url: https://licenses.opensource.jp/MIT/MIT.html
   version: 1.0.0
 servers:
-- url: https://localhost:9091/api/v1
+- url: https://api.yource.space/v1
 tags:
 - name: user
   description: ユーザ

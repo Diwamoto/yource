@@ -20,7 +20,7 @@ export default {
   mounted(){
     //ユーザIDを取得してくる
     this.$http
-      .get(this.$api + "/api/v1/retrive", {
+      .get(this.$api + "/v1/retrive", {
         headers: {
           Authorization: "Bearer " + this.$cookies.get("token"),
         },
@@ -31,7 +31,7 @@ export default {
           case 200: //ユーザ情報を取得
             this.userId = response.data["userId"];
             //ユーザIDからユーザの情報を取得
-            this.$http.get(this.$api + "/api/v1/users/" + this.userId, {
+            this.$http.get(this.$api + "/v1/users/" + this.userId, {
               headers: {
                 Authorization: "Bearer " + this.$cookies.get("token"),
               },

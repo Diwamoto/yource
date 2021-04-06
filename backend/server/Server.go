@@ -44,9 +44,7 @@ func Initiate() *gin.Engine {
 	//corsの設定
 	server.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
-			"http://localhost:9092",
-			"https://localhost:9092",
-			"http://yource.localhost",
+			"https://yource.localhost",
 			"https://yource.space"},
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		AllowHeaders: []string{
@@ -63,8 +61,8 @@ func Initiate() *gin.Engine {
 
 	server.LoadHTMLGlob("view/*.html")
 
-	//apiはhttps://hogehoge.com/api/v1以下のルーティングで判断する
-	v1 := server.Group("/api/v1")
+	//apiはhttps://api.yource.space/v1以下のルーティングで判断する
+	v1 := server.Group("/v1")
 	{
 		//ログインとユーザ作成はセッションなしでもアクセスできる
 		v1.POST("/signup", controller.CreateUserAction)

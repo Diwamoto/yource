@@ -25,26 +25,13 @@ services:
       context: ./
       dockerfile: ./go/Dockerfile
     ports:
-      - '9091:9091'
-      - '3001:3001'
-      - '4000:4000'
-      # - '2345:2345'
+      - "9091:9091"
+      - "3001:3001"
+      - "4000:4000"
     command: bash -c "go mod tidy && gin -p 9091 --certFile /tmp/keys/server.crt --keyFile /tmp/keys/server.key"
     volumes:
       - ../backend:/go/src/github.com/Diwamoto/yource
       - ./ssl/keys:/tmp/keys
-  # ビルドが遅いので使わない
-  # frontend:
-  #   container_name: vue
-  #   tty: true
-  #   build:
-  #     context: ./
-  #     dockerfile: ./vue/Dockerfile
-  #   command: bash -c "npm install && npm run serve"
-  #   ports:
-  #     - '9092:9092'
-  #   volumes:
-  #     - ../frontend:/app
   nginx:
     container_name: nginx
     build:
@@ -52,7 +39,8 @@ services:
       dockerfile: ./nginx/Dockerfile
     ports:
       - "80:80"
-    depends_on:
+      - "443:443"
+    links:
       - "backend"
       - "adminer"
     volumes:

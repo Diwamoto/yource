@@ -47,7 +47,7 @@ export default {
     let params = new URLSearchParams();
     params.append("Token", this.$route.query.token);
     this.$http
-      .post(this.$api + "/api/v1/verify", params, {
+      .post(this.$api + "/v1/verify", params, {
         withCredentials: true,
       })
       .then(() => {

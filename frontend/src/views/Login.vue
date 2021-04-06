@@ -227,7 +227,7 @@ export default {
     //有効でなければ再ログインが必要な旨を表示する
     if (this.$cookies.get("token") != null) {
       this.$http
-        .get(this.$api + "/api/v1/retrive", {
+        .get(this.$api + "/v1/retrive", {
           headers: {
             Authorization: "Bearer " + this.$cookies.get("token"),
           },
@@ -275,7 +275,7 @@ export default {
         //クッキーを同時送信する
         //ログイン処理してユーザが存在すればログイン。いなければエラー
         this.$http
-          .post(this.$api + "/api/v1/login", params, {
+          .post(this.$api + "/v1/login", params, {
             withCredentials: true,
           })
           .then((response) => {
@@ -287,7 +287,7 @@ export default {
             //jwtを使ってuseridを取得する
             //ユーザIDを取得してくる
             this.$http
-              .get(this.$api + "/api/v1/retrive", {
+              .get(this.$api + "/v1/retrive", {
                 headers: {
                   Authorization: "Bearer " + this.$cookies.get("token"),
                 },
@@ -302,7 +302,7 @@ export default {
                     //存在しなければ作成ページ、存在すればそのスペースに飛ばす
                     this.$http
                       .get(
-                        this.$api + "/api/v1/users/" + this.userId + "/space",
+                        this.$api + "/v1/users/" + this.userId + "/space",
                         {
                           headers: {
                             Authorization:
@@ -363,7 +363,7 @@ export default {
         params.append("Password", this.Password);
         //ユーザを作成する。エラーがでたら失敗
         this.$http
-          .post(this.$api + "/api/v1/signup", params, {
+          .post(this.$api + "/v1/signup", params, {
             withCredentials: true,
           })
           .then(() => {

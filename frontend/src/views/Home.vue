@@ -42,7 +42,7 @@ export default {
   mounted() {
     //ユーザIDを取得してくる
     this.$http
-      .get(this.$api + "/api/v1/retrive", {
+      .get(this.$api + "/v1/retrive", {
         headers: {
           Authorization: "Bearer " + this.$cookies.get("token"),
         },
@@ -57,7 +57,7 @@ export default {
             this.$http
               .get(
                   this.$api +
-                  "/api/v1/users/" +
+                  "/v1/users/" +
                   this.userId +
                   "/space",
                 {
@@ -108,7 +108,7 @@ export default {
       this.$http
         .get(
             this.$api +
-            "/api/v1/channels/" +
+            "/v1/channels/" +
             this.channel.Id +
             "/posts",
           {

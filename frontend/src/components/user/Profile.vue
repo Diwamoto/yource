@@ -177,7 +177,7 @@ export default {
   created() {
     //ユーザIDを取得してくる
     this.$http
-      .get(this.$api + "/api/v1/retrive", {
+      .get(this.$api + "/v1/retrive", {
         headers: {
           Authorization: "Bearer " + this.$cookies.get("token"),
         },
@@ -189,7 +189,7 @@ export default {
             this.userId = response.data["userId"];
             //ユーザIDからユーザの情報を取得
             this.$http
-              .get(this.$api + "/api/v1/users/" + this.userId, {
+              .get(this.$api + "/v1/users/" + this.userId, {
                 headers: {
                   Authorization: "Bearer " + this.$cookies.get("token"),
                 },
@@ -227,7 +227,7 @@ export default {
         params.append("Instagram", this.profile.Instagram);
         params.append("Other", this.profile.Other);
     this.$http
-      .put(this.$api + "/api/v1/users/" + this.userId + "/profile", params, {
+      .put(this.$api + "/v1/users/" + this.userId + "/profile", params, {
         headers: {
           Authorization: "Bearer " + this.$cookies.get("token"),
         },

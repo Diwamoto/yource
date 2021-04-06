@@ -1,6 +1,7 @@
 <template>
   <div class="navbar">
-    <v-navigation-drawer v-model="drawer" color="blue-grey darken-2" dark app>
+    <v-navigation-drawer v-model="drawer" color="blue-grey darken-2" dark clipped
+      permanent app>
       <v-sheet color="blue-grey darken-2" class="pa-4">
         <div>
           <h2>{{ space.Name }}</h2>
@@ -105,7 +106,7 @@ export default {
       this.$http
         .post(
             this.$api +
-            "/api/v1/spaces/" +
+            "/v1/spaces/" +
             this.space.Id +
             "/channels",
           params,

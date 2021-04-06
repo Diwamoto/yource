@@ -71,7 +71,7 @@ export default {
       //jwtを使ってuseridを取得する
       //ユーザIDを取得してくる
       this.$http
-        .get(this.$api + "/api/v1/retrive", {
+        .get(this.$api + "/v1/retrive", {
           headers: {
             Authorization: "Bearer " + this.$cookies.get("token"),
           },
@@ -86,7 +86,7 @@ export default {
               params.append("SubDomain", this.space);
               this.$http
                 .post(
-                  this.$api + "/api/v1/users/" + this.userId + "/space",
+                  this.$api + "/v1/users/" + this.userId + "/space",
                   params,
                   {
                     headers: {
@@ -105,7 +105,7 @@ export default {
                   params.append("Description", "メインチャンネルです。");
                   this.$http
                     .post(
-                      this.$api + "/api/v1/spaces/" + space.Id + "/channels",
+                      this.$api + "/v1/spaces/" + space.Id + "/channels",
                       params,
                       {
                         headers: {
@@ -124,7 +124,7 @@ export default {
                   );
                   this.$http
                     .post(
-                      this.$api + "/api/v1/spaces/" + space.Id + "/channels",
+                      this.$api + "/v1/spaces/" + space.Id + "/channels",
                       params,
                       {
                         headers: {

@@ -6,6 +6,8 @@ backend/config/keys/*
 !backend/config/keys/.gitkeep
 backend/log/*
 !backend/log/.gitkeep
+backend/server/keys/*
+!backend/server/keys/.gitkeep
 .DS_Store
 docker/db/mysql_data/*
 docker/db/logs

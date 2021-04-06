@@ -75,7 +75,7 @@ export default {
         this.$http
           .post(
               this.$api +
-              "/api/v1/channels/" +
+              "v1/channels/" +
               this.channel.Id +
               "/posts",
             params,

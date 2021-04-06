@@ -64,8 +64,8 @@ func (pm PostModel) Validate(p Post) ([]string, bool) {
 	}
 
 	//存在しないチャンネルの投稿は作成できない
-	sm := NewSpaceModel(pm.nc)
-	_, err2 := sm.GetById(p.ChannelId)
+	cm := NewChannelModel(pm.nc)
+	_, err2 := cm.GetById(p.ChannelId)
 	if err2 {
 		messages = append(messages, "存在しないチャンネルの投稿は作成できません。")
 	}

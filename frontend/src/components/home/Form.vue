@@ -45,8 +45,13 @@ export default {
     this.updateLabel();
 
     //websocket経由でメッセージの追加の通知をもらった際に投稿を更新する
-    this.socket.onmessage = () => {
+    //同じチャンネルで更新があった場合のみ更新をかける
+    this.socket.onmessage = (message) => {
+      var obj = JSON.parse(message.data)
+      if (this.channel.Id == obj.Channel){
         this.getPosts();
+      }
+      
     };
   },
   mounted() {
@@ -95,13 +100,13 @@ export default {
           .then(() => {
             //投稿が作成できたら投稿一覧をリセットし、入力欄を削除する。
             this.getPosts();
+            var msg = {
+              post: this.newPost,
+              channel: this.channel.Id
+            }
             
             //同時にws経由でメッセージの追加を送信
-            this.socket.send(JSON.stringify(
-                {
-                    message: this.newPost
-                }
-            ));
+            this.socket.send(JSON.stringify(msg));
             this.newPost = "";
           })
           .catch((err) => {

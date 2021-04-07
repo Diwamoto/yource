@@ -24,7 +24,8 @@ var upgrader = websocket.Upgrader{
 
 // クライアントからは JSON 形式で受け取る
 type Message struct {
-	Message string
+	Channel int
+	Post    string
 }
 
 // クライアントのハンドラ

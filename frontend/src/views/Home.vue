@@ -103,8 +103,9 @@ export default {
   methods: {
     //投稿を取得する
     getPosts() {
-      //一度投稿を初期化
-      this.posts = [];
+      // 初期化を入れると一度メッセージが消えてしまう為いったんコメントアウト
+      // //一度投稿を初期化
+      // this.posts = [];
       this.$http
         .get(
             this.$api +

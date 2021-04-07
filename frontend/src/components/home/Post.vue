@@ -155,7 +155,6 @@ export default {
 
 .welcome{
   margin-left: 1.5vw;
-  width: 86.6vw;
 }
 
 .posts-item-user-name{

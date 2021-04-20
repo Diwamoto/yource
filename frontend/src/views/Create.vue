@@ -61,6 +61,9 @@ export default {
       return this.icons[this.iconIndex];
     },
   },
+  mounted(){
+    this.$setTitle("セットアップ | yource", "yourceはポートフォリオを簡単に公開できるサービスです。")
+  },
 
   methods: {
     toggleMarker() {

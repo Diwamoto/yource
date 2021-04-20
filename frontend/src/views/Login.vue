@@ -236,7 +236,7 @@ export default {
         .then((response) => {
           switch (response.status) {
             case 200: //ユーザidが取得できたらログインさせる。
-              this.$router.push({ path: "home" }).catch(() => {});
+              this.$router.push({ path: "app" }).catch(() => {});
           }
         })
         .catch(() => {
@@ -249,6 +249,7 @@ export default {
   },
   mounted() {
     this.flash_msg()
+    this.$setTitle("ログイン | yource", "yourceはポートフォリオを簡単に公開できるサービスです。")
   },
   updated() {
     this.flash_msg()
@@ -317,7 +318,7 @@ export default {
                         switch (response.status) {
                           case 200: //存在しているのでそのページに遷移
                             this.$router
-                              .push({ path: "/home" })
+                              .push({ path: "/app" })
                               .catch(() => {});
                         }
                       })

@@ -67,6 +67,9 @@ export default {
         }
       });
   },
+  mounted(){
+    this.$setTitle("本登録完了 | yource", "yourceはポートフォリオを簡単に公開できるサービスです。")
+  },
   methods: {},
 };
 </script>

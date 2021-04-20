@@ -16,6 +16,9 @@
 <script>
 export default {
   name: "maintenance",
+  mounted(){
+    this.$setTitle("メンテナンス中 | yource", "yourceはポートフォリオを簡単に公開できるサービスです。")
+  }
 };
 </script>
 

@@ -42,6 +42,9 @@ export default {
       this.$cookies.remove("ss")
     }
   }, 
+  mounted(){
+    this.$setTitle("仮登録完了 | yource", "yourceはポートフォリオを簡単に公開できるサービスです。")
+  },
   methods: {
   }
 };

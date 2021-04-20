@@ -218,6 +218,9 @@ export default {
     Header,
     Footer,
     Menu,
+  },
+  mounted(){
+    this.$setTitle("プライバシーポリシー | yource", "yourceはポートフォリオを簡単に公開できるサービスです。")
   }
 };
 </script>

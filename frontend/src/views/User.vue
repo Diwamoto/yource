@@ -46,6 +46,7 @@ export default {
       .catch(() => {
         this.toLoginPage()
       });
+    this.$setTitle("ユーザ情報変更 | yource", "yourceはポートフォリオを簡単に公開できるサービスです。")
   },
   methods: {
     toLoginPage(){

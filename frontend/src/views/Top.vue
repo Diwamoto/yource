@@ -82,7 +82,8 @@ export default {
     Header,
     Footer,
   },
-  created(){
+  mounted(){
+    this.$setTitle("yource", "yourceはポートフォリオを簡単に公開できるサービスです。")
   },
   methods: {
     //スクロールに応じて表示する内容を決める

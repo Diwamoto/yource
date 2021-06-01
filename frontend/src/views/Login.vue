@@ -373,11 +373,6 @@ export default {
             this.$cookies.set(
               "ss",
               Math.random().toString(32).substring(2),
-              3600,
-              "/",
-              this.$host,
-              true,
-              "None"
             );
             this.$router.push({ path: `/register` });
           })

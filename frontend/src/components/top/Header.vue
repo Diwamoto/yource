@@ -35,9 +35,8 @@
         offset-md="0"
         v-bind:class="[meh, meh_scroll]"
       >
-        <v-app-bar-nav-icon class="hamburger"></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon class="hamburger" @click="toggleSidebar"></v-app-bar-nav-icon>
       </v-col>
-      <!-- /menu -->
     </v-row>
   </div>
 </template>
@@ -81,6 +80,9 @@ export default {
         this.logo_width = "150";
       }
     },
+    toggleSidebar(){
+      this.$parent.$refs.Sidebar.toggle();
+    }
   },
 };
 </script>

@@ -1,6 +1,7 @@
 <template>
   <div class="home" v-scroll="handleScroll">
     <Header></Header>
+    <Sidebar ref="Sidebar"></Sidebar>
     <v-main id="main">
       <v-container>
         <div :class="{title:true, fadein_top:true}"> 
@@ -67,9 +68,10 @@
 <script>
 import Header from "@/components/top/Header.vue";
 import Footer from "@/components/top/Footer.vue";
+import Sidebar from "@/components/top/Sidebar.vue";
 
 export default {
-  name: "Home",
+  name: "Top",
   data: function () {
     return {
       fadein1: false,
@@ -81,6 +83,7 @@ export default {
   components: {
     Header,
     Footer,
+    Sidebar
   },
   mounted(){
     this.$setTitle("yource | yourceはポートフォリオを簡単に公開できるサービスです。", "yourceはポートフォリオを簡単に公開できるサービスです。")

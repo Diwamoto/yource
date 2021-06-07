@@ -140,7 +140,7 @@ export default {
                     .catch(() => {});
 
                   //作成したスペースへ移動する
-                  this.$router.push({ path: "home" }).catch(() => {});
+                  this.$router.push({ path: "app" }).catch(() => {});
                 })
                 .catch((err) => {
                   if (err.response) {

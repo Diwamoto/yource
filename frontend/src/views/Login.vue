@@ -112,9 +112,10 @@
           </v-tab-item>
         </v-tabs-items>
       </div>
+      <!--
       <div class="sns-login-wrapper">
         <h2 class="login-title">SNSでログインする</h2>
-        <!-- LINEログインのみアイコンを用意するため分ける-->
+        LINEログインのみアイコンを用意するため分ける
         <div class="sns-login">
           <v-btn
             depressed
@@ -127,7 +128,7 @@
             LINEでログイン
           </v-btn>
         </div>
-        <!-- 他はマテリアルアイコンを使用する -->
+         他はマテリアルアイコンを使用する 
         <div class="sns-login" v-for="item in sns" :key="item.name">
           <v-btn
             depressed
@@ -143,6 +144,7 @@
           </v-btn>
         </div>
       </div>
+      -->
     </div>
   </div>
 </template>
@@ -418,9 +420,9 @@ export default {
 }
 .login-box {
   text-align: center;
-  margin: 10vh 20vw 0 20vw;
-  height: 70%;
-  width: 60vw;
+  margin: 10vh 35vw 0 35vw;
+  height: 65%;
+  width: 30vw;
   background-color: white;
   box-shadow: 0 6px 6px -3px rgba(0, 0, 0, 0.2),
     0 10px 14px 1px rgba(0, 0, 0, 0.14), 0 4px 18px 3px rgba(0, 0, 0, 0.12) !important;
@@ -433,10 +435,10 @@ export default {
   float: left;
   padding: 0 10px 0 10px;
   height: 80%;
-  width: 50%;
-  border-width: 0 1px 0 0;
+  width: 100%;
+  /* border-width: 0 1px 0 0;
   border-style: solid;
-  border-color: #d0d0d0;
+  border-color: #d0d0d0; */
 }
 .login-logo-image {
   width: 8vw;

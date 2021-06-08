@@ -8,8 +8,8 @@
             "type": "pwa-chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "https://localhost:9092",
-            "webRoot": "${workspaceFolder}/src",
+            "url": "https://yource.localhost",
+            "webRoot": "${workspaceFolder}/frontend/src",
             "sourceMapPathOverrides": {
                 "webpack:///src/*": "${webRoot}/*"
             },

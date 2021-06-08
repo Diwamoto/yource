@@ -420,9 +420,9 @@ export default {
 }
 .login-box {
   text-align: center;
-  margin: 10vh 35vw 0 35vw;
-  height: 65%;
-  width: 30vw;
+  margin: 10vh auto;
+  height: 70vh;
+  width: 350px;
   background-color: white;
   box-shadow: 0 6px 6px -3px rgba(0, 0, 0, 0.2),
     0 10px 14px 1px rgba(0, 0, 0, 0.14), 0 4px 18px 3px rgba(0, 0, 0, 0.12) !important;
@@ -432,7 +432,6 @@ export default {
   animation-fill-mode: forwards;
 }
 .standard-login-box-wrapper {
-  float: left;
   padding: 0 10px 0 10px;
   height: 80%;
   width: 100%;
@@ -441,7 +440,7 @@ export default {
   border-color: #d0d0d0; */
 }
 .login-logo-image {
-  width: 8vw;
+  width: 30%;
   padding: 2vh 0 2vh 0;
 }
 .login-title {
@@ -453,14 +452,14 @@ export default {
 .login-form {
   text-align: center;
   margin-top: 4vh;
-  margin-left: 5vw;
-  margin-right: 5vw;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 .signup-form {
   text-align: center;
   margin-top: 4vh;
-  margin-left: 5vw;
-  margin-right: 5vw;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 .input_email input {
   ime-mode: disabled;
